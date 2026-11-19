@@ -1,6 +1,4 @@
-# Publica o site no GitHub Pages a cada mudança na branch main
-# (inclusive quando um post é salvo pelo painel /admin).
-# Antes de publicar, gera blog/posts.json a partir dos arquivos em blog/posts.
+# Publica o site no GitHub Pages a cada mudança na branch main.
 name: Publicar site
 
 on:
@@ -25,9 +23,6 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Gerar a lista de posts do blog
-        run: node scripts/gerar-lista-blog.mjs
 
       - uses: actions/configure-pages@v5
 
