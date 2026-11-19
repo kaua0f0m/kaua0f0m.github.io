@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Painel do blog — Kauã</title>
+</head>
+<body>
+  <!-- Decap CMS: lê a configuração em admin/config.yml (precisa ficar dentro do body) -->
+  <script src="https://unpkg.com/decap-cms@3.17.3/dist/decap-cms.js"></script>
+  <script>
+    // pré-visualização dos posts com a cara do blog
+    if (window.CMS) {
+      CMS.registerPreviewStyle(`
+        body{background:#000;color:#d6d6d6;font:19px/1.7 "Inter Tight",system-ui,sans-serif;padding:32px;max-width:760px;margin:0 auto}
+        h1,h2,h3{color:#f4f4f4;letter-spacing:-.03em;line-height:1.15} h1{font-size:48px}
+        a{color:#ffd23f} strong{color:#f4f4f4} img{max-width:100%;border-radius:10px}
+        blockquote{font-style:italic;font-size:26px;color:#f4f4f4;border-left:2px solid #ffd23f;padding-left:20px;margin-left:0}
+        code{background:#141414;border:1px solid #222;border-radius:5px;padding:1px 6px}
+      `, { raw: true });
+    }
+  </script>
+</body>
+</html>

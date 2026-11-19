@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HuniePop 2 — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --text:#fbf2f7; --muted:#a08c98; --soft:#c2adb9; --line:rgba(255,255,255,.1); --tint:#b8237a; --acc:#ff7ac0; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:#0a0509; scroll-behavior:smooth}
+  body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; overflow-x:hidden}
+  .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+  a{color:inherit; text-decoration:none}
+
+  .fade{position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(ellipse 75% 55% at 50% 0%, color-mix(in srgb, var(--tint) 58%, transparent), transparent 72%),
+      radial-gradient(ellipse 50% 45% at 100% 100%, rgba(120,80,255,.16), transparent 70%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tint) 26%, #0a0509) 0%, #0e070c 65%, #0a0509 100%)}
+  .grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.14; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:fixed; inset:0 0 auto; z-index:10; background:linear-gradient(color-mix(in srgb, var(--tint) 20%, #0a0509) 25%, transparent)}
+  .logo{font-weight:800; font-size:20px; letter-spacing:-.03em; display:flex; gap:10px; align-items:center}
+  .logo span{color:var(--muted); font-weight:500; transition:transform .2s}
+  .logo:hover span{transform:translateX(-3px); color:var(--text)}
+  .logo i{font-style:normal; color:var(--muted)}
+  header nav{display:flex; gap:28px}
+  header nav a{color:var(--muted); transition:color .2s}
+  header nav a:hover{color:var(--text)}
+
+  .stage{position:relative; height:clamp(420px,66vh,660px); margin-top:72px}
+  .stage canvas{position:absolute; inset:0; width:100%; height:100%}
+  .hud{position:absolute; left:48px; right:48px; bottom:18px; display:flex; justify-content:space-between; color:var(--muted); pointer-events:none}
+  .hud b{color:var(--acc); font-weight:500}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 48px}
+  .intro{display:grid; gap:30px; padding:30px 0 10px}
+  .intro > div:last-child{display:grid; grid-template-columns:1.2fr 1fr; gap:48px; align-items:end}
+  .kicker{color:var(--muted); margin-bottom:22px; display:flex; gap:10px; align-items:center}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--acc); box-shadow:0 0 10px var(--acc)}
+  .kicker b{color:var(--acc); font-weight:500; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+  h1{font-size:clamp(52px,8vw,124px); line-height:.86; letter-spacing:-.055em; font-weight:900}
+  h1 .dim{color:rgba(255,255,255,.3); font-weight:800}
+  .lead{font-size:19px; line-height:1.55; color:var(--soft)}
+  .lead b{color:var(--text); font-weight:500}
+  .facts{display:flex; gap:28px; color:var(--muted); flex-wrap:wrap}
+  .facts b{display:block; color:var(--text); font-family:"Inter Tight"; font-size:26px; font-weight:700; letter-spacing:-.02em; text-transform:none; margin-bottom:2px}
+
+  .hl{margin-top:56px; display:grid; grid-template-columns:1fr 1fr; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(255,255,255,.06); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow:hidden; scroll-margin-top:100px; box-shadow:0 30px 80px -30px color-mix(in srgb, var(--tint) 85%, transparent)}
+  .hl-part{padding:30px; display:flex; flex-direction:column}
+  .hl-part + .hl-part{border-left:1px solid rgba(255,255,255,.12)}
+  .hl-lbl{color:var(--text); display:flex; gap:12px; align-items:baseline; margin-bottom:8px}
+  .hl-lbl span{color:var(--muted)}
+  .hl-lbl em{font-style:normal; color:var(--acc); margin-left:auto}
+  .hl h3{font-size:28px; font-weight:800; letter-spacing:-.03em; margin-bottom:8px}
+  .hl-btn{align-self:flex-start; display:inline-flex; align-items:center; gap:14px; background:var(--text); color:#000; font-weight:700; font-size:19px; letter-spacing:-.02em; padding:13px 22px; border-radius:999px; transition:transform .2s, box-shadow .2s; margin-top:auto}
+  .hl-btn span{transition:transform .2s}
+  .hl-btn:hover{transform:translateY(-2px); box-shadow:0 10px 30px -8px var(--acc)}
+  .hl-btn:hover span{transform:translateX(4px)}
+  .hl-btn.ghost{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.3)}
+  .steps{list-style:none; counter-reset:s; margin:14px 0 22px}
+  .steps li{counter-increment:s; position:relative; padding:11px 0 11px 40px; border-bottom:1px solid var(--line); font-size:15px; line-height:1.6; color:#e4d6de}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(s, decimal-leading-zero); position:absolute; left:0; top:14px; font-family:"JetBrains Mono"; font-size:12px; color:var(--muted)}
+  code{font-family:"JetBrains Mono"; font-size:13px; color:var(--text); background:rgba(255,255,255,.08); padding:1px 6px; border-radius:4px; word-break:break-word}
+  .hl-foot{grid-column:1 / -1; border-top:1px solid rgba(255,255,255,.12); padding:18px 30px; color:var(--muted); display:flex; gap:22px; flex-wrap:wrap; line-height:1.8}
+  .hl-foot a{color:var(--soft); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.3)}
+  .txt{color:var(--soft); font-size:15px; line-height:1.6}
+  .txt b{color:var(--text); font-weight:500}
+
+  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px minmax(0,1fr); gap:48px}
+  .group h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.05}
+  .group h2 small{display:block; margin-top:10px; color:var(--muted); font-family:"JetBrains Mono"; font-size:12px; font-weight:400; letter-spacing:.04em; text-transform:uppercase}
+  .nums{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px}
+  .num{border:1px solid var(--line); border-radius:12px; padding:16px; background:rgba(255,255,255,.03)}
+  .num b{display:block; font-size:34px; font-weight:900; letter-spacing:-.03em; color:var(--acc); line-height:1}
+  .num span{display:block; color:var(--soft); font-size:13px; margin-top:6px; line-height:1.4}
+  .notes{list-style:none; border-top:1px solid var(--line)}
+  .notes li{position:relative; padding:16px 0 16px 40px; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; line-height:1.6}
+  .notes li::before{content:"—"; position:absolute; left:0; color:var(--muted)}
+  .notes b{color:var(--text); font-weight:500}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .chips span{border:1px solid rgba(255,122,192,.4); color:var(--acc); border-radius:999px; padding:4px 12px; font-size:13px; font-weight:700}
+
+  footer{margin-top:120px; display:flex; justify-content:space-between; padding:24px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+  .foot-r{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
+  .debug{font:inherit; text-transform:inherit; letter-spacing:inherit; color:var(--muted); background:none; border:1px dashed rgba(255,255,255,.2); border-radius:6px; padding:3px 8px; cursor:pointer}
+  .debug:hover{color:var(--text); border-color:var(--text)}
+
+  /* aviso de +18 */
+  .gate{display:none; position:fixed; inset:0; z-index:100; place-items:center; padding:16px; background:rgba(10,5,9,.55); backdrop-filter:blur(22px) saturate(.8); -webkit-backdrop-filter:blur(22px) saturate(.8)}
+  .gated .gate{display:grid}
+  .gated body{overflow:hidden}
+  .gate-card{width:min(480px,100%); border:1px solid rgba(255,255,255,.18); border-radius:18px; background:color-mix(in srgb, var(--tint) 22%, #0e070c); padding:34px 30px 28px; box-shadow:0 40px 100px -20px rgba(0,0,0,.8), 0 0 80px -30px var(--acc)}
+  .gate-card .badge{display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:14px; background:#ff3b5c; color:#000; font-weight:900; font-size:26px; margin-bottom:20px}
+  .gate-card h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.1; margin-bottom:12px}
+  .gate-card p{color:var(--soft); font-size:15px; line-height:1.6}
+  .gate-card p + p{margin-top:10px}
+  .gate-btns{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap}
+  .gate-btns button, .gate-btns a{font:700 16px "Inter Tight"; padding:13px 20px; border-radius:999px; cursor:pointer; border:1px solid rgba(255,255,255,.25); background:transparent; color:var(--text)}
+  .gate-btns button{background:var(--text); color:#000; border-color:var(--text)}
+  .gate-btns :focus-visible{outline:2px solid var(--acc); outline-offset:3px}
+
+  @media (max-width:900px){
+    header{padding:18px 16px} header nav{gap:16px}
+    .stage{height:clamp(320px,50vh,460px); margin-top:58px}
+    .hud{left:16px; right:16px}
+    .wrap{padding:0 16px}
+    .intro > div:last-child{grid-template-columns:1fr; gap:22px}
+    .hl{grid-template-columns:1fr}
+    .hl-part{padding:22px 18px}
+    .hl-part + .hl-part{border-left:0; border-top:1px solid rgba(255,255,255,.12)}
+    .hl-btn{align-self:stretch; justify-content:space-between}
+    .hl-foot{padding:16px 18px}
+    .group{grid-template-columns:minmax(0,1fr); gap:18px; margin-top:80px}
+    .nums{grid-template-columns:1fr 1fr 1fr; gap:6px} .num{padding:12px 10px} .num b{font-size:24px} .num span{font-size:11px}
+    .gate-btns > *{flex:1; display:inline-flex; align-items:center; justify-content:center; text-align:center}
+    footer{padding:20px 16px 26px}
+  }
+</style>
+</head>
+<body>
+<div class="fade" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <div class="gate-card">
+    <span class="badge">18+</span>
+    <h2 id="gate-t">Antes de continuar: conteúdo +18</h2>
+    <p>HuniePop 2 é um jogo para adultos, com conteúdo sexual, humor adulto e duplo sentido. A tradução não suaviza nada disso.</p>
+    <p>Você tem 18 anos ou mais?</p>
+    <div class="gate-btns"><button id="gate-ok">Tenho 18 anos, continuar</button><a href="#" id="gate-no">Cancelar</a></div>
+  </div>
+</div>
+
+<header>
+  <a class="logo" href="index.html#projetos"><span>←</span> kauã<i>.</i></a>
+  <nav class="mono"><a href="#instalar">Instalar</a><a href="#traducao">Tradução</a><a href="https://github.com/kaua0f0m/huniepop2-ptbr" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+
+<section class="stage" aria-hidden="true">
+  <canvas id="stage"></canvas>
+  <div class="hud mono"><span>Pontos <b id="score">0</b></span><span id="combo">combine 3 ou mais</span></div>
+</section>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="kicker mono">Tradução PT-BR — PC / Steam <b>18+</b></p>
+      <h1>HuniePop 2<br><span class="dim">em português.</span></h1>
+    </div>
+    <div>
+      <p class="lead">O puzzle de namoro em dupla, <b>localizado</b> em vez de traduzido ao pé da letra: gírias, trocadilhos, duplo sentido e a personalidade de cada personagem, com a sincronia labial intacta.</p>
+      <div class="facts mono">
+        <span><b>5.265</b>falas revisadas</span>
+        <span><b>163</b>cutscenes</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hl" id="instalar">
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>A</span> Pacote completo <em>recomendado</em></p>
+      <h3>Já vem com o BepInEx</h3>
+      <ol class="steps">
+        <li>Baixe o <code>HuniePop2-PTBR-Completo</code>.</li>
+        <li>Extraia tudo na pasta do jogo, onde fica o <code>HuniePop 2 - Double Date.exe</code>.</li>
+        <li>Abra o jogo pela Steam. A tradução carrega sozinha.</li>
+      </ol>
+      <a class="hl-btn gate18" href="https://github.com/kaua0f0m/huniepop2-ptbr/releases/download/v1.2.0/HuniePop2-PTBR-Completo-v1.2.0.zip" target="_blank" rel="noopener">Baixar o completo <span>→</span></a>
+    </div>
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>B</span> Só o plugin <em>v1.2.0</em></p>
+      <h3>Já usa o BepInEx 5?</h3>
+      <ol class="steps">
+        <li>Baixe o <code>HuniePop2-PTBR-ApenasPlugin</code>.</li>
+        <li>Extraia a pasta <code>BepInEx</code> dentro da pasta do jogo, juntando com a que você já tem.</li>
+      </ol>
+      <p class="txt" style="margin-bottom:22px">Precisa ser o <b>BepInEx 5 x64</b>.</p>
+      <a class="hl-btn ghost gate18" href="https://github.com/kaua0f0m/huniepop2-ptbr/releases/download/v1.2.0/HuniePop2-PTBR-ApenasPlugin-v1.2.0.zip" target="_blank" rel="noopener">Baixar só o plugin <span>→</span></a>
+    </div>
+    <div class="hl-foot mono">
+      <span>Desinstalar: apague <code>BepInEx/plugins/HuniePop2PTBR</code></span>
+      <a class="gate18" href="https://store.steampowered.com/app/930210/HuniePop_2_Double_Date/" target="_blank" rel="noopener">Jogo na Steam</a>
+      <a href="https://github.com/kaua0f0m/huniepop2-ptbr/releases/tag/v1.2.0" target="_blank" rel="noopener">Todas as versões</a>
+    </div>
+  </div>
+
+  <section class="group" id="traducao">
+    <h2>O que está traduzido<small>tudo, mesmo</small></h2>
+    <div>
+      <div class="nums">
+        <div class="num"><b>5.265</b><span>entradas revisadas em contexto</span></div>
+        <div class="num"><b>163</b><span>cutscenes, em ordem de roteiro</span></div>
+        <div class="num"><b>120</b><span>respostas das 20 perguntas favoritas</span></div>
+      </div>
+      <ul class="notes">
+        <li>Todos os diálogos de encontro, respostas de presentes, conversas e cenas pós-encontro, incluindo as <b>variações para protagonista masculino e feminino</b>.</li>
+        <li>Perfis, trajes, penteados, comidas, vitaminas, sapatos, presentes e bagagens.</li>
+        <li>Narração do prólogo cósmico, conversas no quarto com a Kyu, códigos secretos e toda a interface do celular <b>HunieBee</b>:
+          <div class="chips"><span>Chad / Stacy</span><span>Cara / Garota Comum</span><span>Incel / Femcel</span><span>Modo Alfa</span><span>Pacote da Polly</span></div></li>
+        <li><b>Acentos em todo o jogo:</b> as fontes do TextMeshPro são reconstruídas a partir das fontes originais, mantendo contorno, sombra e cor.</li>
+        <li><b>Sincronia labial intacta:</b> marcadores de fala, pausas dramáticas e ícones coloridos do texto continuam funcionando.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Para quem mexe<small>código aberto</small></h2>
+    <ul class="notes">
+      <li>O plugin é um <b>BepInEx 5 + Harmony</b> e compila com o <code>csc.exe</code> do próprio Windows, sem Visual Studio: <code>build.bat -GameDir "pasta do jogo"</code>.</li>
+      <li>O <code>translations.tsv</code> é editável sem recompilar. O texto original do jogo <b>não é distribuído</b>: cada linha usa o hash da frase em inglês, que dá para calcular com <code>ferramentas/hash.py</code>.</li>
+      <li>Código sob licença MIT. Detalhes no <a href="https://github.com/kaua0f0m/huniepop2-ptbr" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">README</a>.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="mono">
+  <span>Mod não oficial, feito por fã, sem afiliação com a HuniePot</span>
+  <span class="foot-r"><button type="button" class="debug" id="debug18" title="Apaga a confirmação salva e mostra o aviso de novo">debug: aviso +18</button><a href="index.html#projetos">← voltar aos projetos</a></span>
+</footer>
+
+<script>
+/* ===== aviso de +18 nos links de download e da Steam (o navegador lembra a resposta) ===== */
+(() => {
+  const KEY = 'huniepop2-18', root = document.documentElement, ok = document.getElementById('gate-ok'), no = document.getElementById('gate-no');
+  let pending = null;
+  const confirmed = () => { try { return localStorage.getItem(KEY) === 'ok'; } catch(e){ return false; } };
+  const close = () => { root.classList.remove('gated'); if (pending) pending.focus(); pending = null; };
+  document.querySelectorAll('a.gate18').forEach(a => a.addEventListener('click', e => {
+    if (confirmed()) return; e.preventDefault(); pending = a; root.classList.add('gated'); ok.focus(); }));
+  ok.addEventListener('click', () => { try { localStorage.setItem(KEY, 'ok'); } catch(e){} root.classList.remove('gated');
+    if (pending) window.open(pending.href, '_blank', 'noopener'); pending = null; });
+  no.addEventListener('click', e => { e.preventDefault(); close(); });
+  document.getElementById('gate').addEventListener('click', e => { if (e.target.id === 'gate') close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('gated')) close(); });
+  document.getElementById('debug18').addEventListener('click', () => { try { localStorage.removeItem(KEY); } catch(e){} pending = null; root.classList.add('gated'); ok.focus(); });
+})();
+
+/* ===== palco: tabuleiro de combinar 3 que joga sozinho (peças originais) ===== */
+(() => {
+  const cv = document.getElementById('stage'), ctx = cv.getContext('2d');
+  const scoreEl = document.getElementById('score'), comboEl = document.getElementById('combo');
+  const KINDS = [
+    {c:'#ff5fa2', draw:'heart'}, {c:'#4dd9ff', draw:'drop'}, {c:'#7ae6c8', draw:'diamond'},
+    {c:'#ffd23f', draw:'star'},  {c:'#ff9a3d', draw:'flower'}, {c:'#b18cff', draw:'bell'} ];
+  let COLS = 9, ROWS = 5, W = 0, H = 0, cell = 50, bx = 0, by = 0;
+  let board = [], phase = 'idle', timer = 0, swapPair = null, score = 0, shown = 0, cascade = 0;
+  const parts = [], pops = [];
+
+  function size(){ const dpr = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const nc = W < 600 ? 6 : W < 900 ? 7 : 9; if (nc !== COLS){ COLS = nc; init(); }
+    cell = Math.min((W - 32)/COLS, (H - 70)/ROWS, 92); bx = (W - cell*COLS)/2; by = (H - 40 - cell*ROWS)/2 + 10; }
+
+  const rnd = n => Math.random()*n | 0;
+  const tok = t => ({t, ox:0, oy:0, s:1, dying:false});
+  function init(){
+    board = [];
+    for (let r = 0; r < ROWS; r++){ board.push([]);
+      for (let c = 0; c < COLS; c++){ let t; do t = rnd(KINDS.length); while ((c > 1 && board[r][c-1].t === t && board[r][c-2].t === t) || (r > 1 && board[r-1][c].t === t && board[r-2][c].t === t)); board[r].push(tok(t)); } }
+    phase = 'idle'; timer = 0;
+  }
+  function matches(){
+    const hit = new Set();
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS - 2; c++){ const t = board[r][c].t; if (board[r][c+1].t === t && board[r][c+2].t === t){ let k = c; while (k < COLS && board[r][k].t === t){ hit.add(r*COLS + k); k++; } } }
+    for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS - 2; r++){ const t = board[r][c].t; if (board[r+1][c].t === t && board[r+2][c].t === t){ let k = r; while (k < ROWS && board[k][c].t === t){ hit.add(k*COLS + c); k++; } } }
+    return hit;
+  }
+  const swap = (a, b) => { const t = board[a[0]][a[1]]; board[a[0]][a[1]] = board[b[0]][b[1]]; board[b[0]][b[1]] = t; };
+  function findMoves(){
+    const moves = [];
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) for (const [dr, dc] of [[0,1],[1,0]]){
+      const r2 = r + dr, c2 = c + dc; if (r2 >= ROWS || c2 >= COLS) continue;
+      swap([r,c],[r2,c2]); const n = matches().size; swap([r,c],[r2,c2]); if (n) moves.push([[r,c],[r2,c2], n]); }
+    return moves;
+  }
+
+  function shape(kind, x, y, s){
+    const k = KINDS[kind]; ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    const g = ctx.createRadialGradient(-.15, -.2, .05, 0, 0, .5); g.addColorStop(0, '#fff'); g.addColorStop(.35, k.c); g.addColorStop(1, k.c);
+    ctx.fillStyle = g; ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = .05; ctx.beginPath();
+    if (k.draw === 'heart'){ ctx.moveTo(0, .34); ctx.bezierCurveTo(-.55, -.02, -.32, -.5, 0, -.2); ctx.bezierCurveTo(.32, -.5, .55, -.02, 0, .34); }
+    else if (k.draw === 'drop'){ ctx.moveTo(0, -.4); ctx.bezierCurveTo(.2, -.1, .32, .05, .32, .15); ctx.arc(0, .15, .32, 0, Math.PI); ctx.bezierCurveTo(-.32, .05, -.2, -.1, 0, -.4); }
+    else if (k.draw === 'diamond'){ ctx.moveTo(0, -.38); ctx.lineTo(.36, 0); ctx.lineTo(0, .38); ctx.lineTo(-.36, 0); }
+    else if (k.draw === 'star'){ for (let i = 0; i < 10; i++){ const a = -Math.PI/2 + i*Math.PI/5, r = i % 2 ? .17 : .4; ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r); } }
+    else if (k.draw === 'flower'){ for (let i = 0; i < 5; i++){ const a = i/5*Math.PI*2 - Math.PI/2; ctx.moveTo(Math.cos(a)*.2 + .16, Math.sin(a)*.2); ctx.arc(Math.cos(a)*.2, Math.sin(a)*.2, .16, 0, Math.PI*2); } }
+    else { ctx.moveTo(-.3, .22); ctx.quadraticCurveTo(-.28, -.36, 0, -.36); ctx.quadraticCurveTo(.28, -.36, .3, .22); ctx.lineTo(.36, .26); ctx.lineTo(-.36, .26); ctx.closePath(); ctx.moveTo(.08, .32); ctx.arc(0, .32, .08, 0, Math.PI*2); }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    if (k.draw === 'flower'){ ctx.fillStyle = '#fff3b0'; ctx.beginPath(); ctx.arc(0, 0, .11, 0, Math.PI*2); ctx.fill(); }
+    ctx.restore();
+  }
+
+  function step(dt){
+    timer += dt;
+    for (const row of board) for (const t of row){ t.ox -= t.ox*Math.min(1, dt*14); t.oy -= t.oy*Math.min(1, dt*9); if (t.dying) t.s = Math.max(0, t.s - dt*4.5); }
+    if (phase === 'idle' && timer > .45){
+      const moves = findMoves();
+      if (!moves.length){ init(); return; }
+      moves.sort((a, b) => b[2] - a[2]); const m = moves[Math.random() < .5 ? 0 : rnd(moves.length)];
+      swapPair = m; const [a, b] = m; swap(a, b);
+      board[a[0]][a[1]].ox = (b[1] - a[1]); board[a[0]][a[1]].oy = (b[0] - a[0]);
+      board[b[0]][b[1]].ox = (a[1] - b[1]); board[b[0]][b[1]].oy = (a[0] - b[0]);
+      cascade = 0; phase = 'swap'; timer = 0;
+    } else if (phase === 'swap' && timer > .28){ swapPair = null; phase = 'check'; timer = 0; }
+    else if (phase === 'check'){
+      const hit = matches();
+      if (!hit.size){ phase = 'idle'; timer = 0; comboEl.textContent = 'combine 3 ou mais'; return; }
+      cascade++; const pts = hit.size*10*cascade; score += pts;
+      let sx = 0, sy = 0;
+      for (const id of hit){ const r = id/COLS | 0, c = id % COLS, t = board[r][c]; t.dying = true; sx += c; sy += r;
+        for (let i = 0; i < 5; i++) parts.push({x:c + .5, y:r + .5, vx:(Math.random() - .5)*4, vy:(Math.random() - .8)*4, life:.6, col:KINDS[t.t].c}); }
+      pops.push({x:sx/hit.size + .5, y:sy/hit.size + .5, txt:'+' + pts, life:1});
+      comboEl.textContent = cascade > 1 ? `combo x${cascade}!` : `${hit.size} peças`;
+      phase = 'clear'; timer = 0;
+    } else if (phase === 'clear' && timer > .26){
+      // gravidade + reposição
+      for (let c = 0; c < COLS; c++){
+        const keep = []; for (let r = ROWS - 1; r >= 0; r--) if (!board[r][c].dying) keep.push({t:board[r][c], from:r});
+        for (let r = ROWS - 1, i = 0; r >= 0; r--, i++){
+          if (i < keep.length){ const k = keep[i]; board[r][c] = k.t; k.t.oy = -(r - k.from); }
+          else { const n = tok(rnd(KINDS.length)); n.oy = -(r + 1 + (i - keep.length)); board[r][c] = n; }
+        }
+      }
+      phase = 'fall'; timer = 0;
+    } else if (phase === 'fall' && timer > .38){ phase = 'check'; timer = 0; }
+  }
+
+  function frame(now, dt){
+    step(dt);
+    shown += (score - shown)*Math.min(1, dt*8); scoreEl.textContent = Math.round(shown).toLocaleString('pt-BR');
+    ctx.clearRect(0, 0, W, H);
+    // tabuleiro
+    ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(bx - 8, by - 8, cell*COLS + 16, cell*ROWS + 16, 16); ctx.fill(); ctx.stroke();
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++){ if ((r + c) % 2) continue; ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fillRect(bx + c*cell, by + r*cell, cell, cell); }
+    ctx.save(); ctx.beginPath(); ctx.rect(bx - 8, by - 8, cell*COLS + 16, cell*ROWS + 16); ctx.clip();
+    if (swapPair){ for (const p of swapPair.slice(0, 2)){ ctx.fillStyle = 'rgba(255,122,192,.18)'; ctx.beginPath(); ctx.roundRect(bx + p[1]*cell + 3, by + p[0]*cell + 3, cell - 6, cell - 6, 10); ctx.fill(); } }
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++){
+      const t = board[r][c]; if (t.s <= 0) continue;
+      const bob = Math.sin(now*2.2 + r*.7 + c*.5)*.03;
+      shape(t.t, bx + (c + .5 + t.ox)*cell, by + (r + .5 + t.oy + bob)*cell, cell*.92*t.s*(t.dying ? 1.15 : 1));
+    }
+    ctx.restore();
+    // partículas e pontos
+    for (let i = parts.length - 1; i >= 0; i--){ const p = parts[i]; p.life -= dt; if (p.life <= 0){ parts.splice(i, 1); continue; }
+      p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 6*dt; ctx.globalAlpha = p.life/.6; ctx.fillStyle = p.col;
+      ctx.beginPath(); ctx.arc(bx + p.x*cell, by + p.y*cell, cell*.06, 0, Math.PI*2); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    for (let i = pops.length - 1; i >= 0; i--){ const p = pops[i]; p.life -= dt*1.1; if (p.life <= 0){ pops.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.min(1, p.life*2); ctx.fillStyle = '#fff'; ctx.font = `900 ${cell*.42}px "Inter Tight"`; ctx.textAlign = 'center';
+      ctx.shadowColor = '#ff7ac0'; ctx.shadowBlur = 12; ctx.fillText(p.txt, bx + p.x*cell, by + (p.y - (1 - p.life)*.8)*cell); ctx.shadowBlur = 0; }
+    ctx.globalAlpha = 1;
+  }
+
+  init(); size(); addEventListener('resize', size);
+  let running = false, last = 0, clock = 0;
+  function loop(ms){ if (!running) return; const dt = Math.min((ms - last)/1000, .05); last = ms; clock += dt; frame(clock, dt); requestAnimationFrame(loop); }
+  new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && !running){ running = true; last = performance.now(); requestAnimationFrame(loop); }
+    else if (!e.isIntersecting) running = false;
+  })).observe(cv);
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(size);
+})();
+</script>
+</body>
+</html>

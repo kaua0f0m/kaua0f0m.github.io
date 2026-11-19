@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNBEATABLE — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --text:#f4f1f5; --muted:#8f8a94; --soft:#b3adb8; --line:rgba(255,255,255,.1); --pink:#ff5fa2; --cyan:#4dd9ff; --tint:#c21f66; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:#050505; scroll-behavior:smooth}
+  body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; overflow-x:hidden}
+  .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+  a{color:inherit; text-decoration:none}
+
+  /* fundo: degradê rosa + luzes de sirene bem discretas */
+  .fade{position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 0%, color-mix(in srgb, var(--tint) 55%, transparent), transparent 70%),
+      radial-gradient(ellipse 60% 50% at 100% 100%, color-mix(in srgb, #4a1a8a 40%, transparent), transparent 70%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tint) 26%, #050505) 0%, #0a0508 70%, #050505 100%)}
+  .fade::before, .fade::after{content:""; position:absolute; top:-10vh; width:50vw; height:60vh; filter:blur(60px); opacity:0; animation:siren 4s infinite}
+  .fade::before{left:-15vw; background:radial-gradient(circle, rgba(255,40,60,.55), transparent 65%)}
+  .fade::after{right:-15vw; background:radial-gradient(circle, rgba(40,110,255,.55), transparent 65%); animation-delay:-2s}
+  @keyframes siren{0%,40%,100%{opacity:0}10%,25%{opacity:.5}}
+  .grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.14; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:fixed; inset:0 0 auto; z-index:10; background:linear-gradient(color-mix(in srgb, var(--tint) 20%, #050505) 25%, transparent)}
+  .logo{font-weight:800; font-size:20px; letter-spacing:-.03em; display:flex; gap:10px; align-items:center}
+  .logo span{color:var(--muted); font-weight:500; transition:transform .2s}
+  .logo:hover span{transform:translateX(-3px); color:var(--text)}
+  .logo i{font-style:normal; color:var(--muted)}
+  header nav{display:flex; gap:28px}
+  header nav a{color:var(--muted); transition:color .2s}
+  header nav a:hover{color:var(--text)}
+
+  /* ---------- palco (topo, decorativo) ---------- */
+  .stage{position:relative; height:clamp(440px,68vh,700px); margin-top:0}
+  .stage canvas{position:absolute; inset:0; width:100%; height:100%}
+  .hud{position:absolute; left:48px; right:48px; bottom:22px; display:flex; justify-content:space-between; color:var(--muted); pointer-events:none}
+  .hud b{color:var(--text); font-weight:500}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 48px}
+  .intro{display:grid; grid-template-columns:1fr; gap:30px; padding:30px 0 10px}
+  .intro > div:last-child{display:grid; grid-template-columns:1.2fr 1fr; gap:48px; align-items:end}
+  .intro .facts{margin-top:0}
+  .kicker{color:var(--muted); margin-bottom:22px; display:flex; gap:10px; align-items:center}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--pink); box-shadow:0 0 10px var(--pink)}
+  h1{font-size:clamp(54px,8vw,124px); line-height:.86; letter-spacing:-.055em; font-weight:900}
+  h1 .dim{color:rgba(255,255,255,.3); font-weight:800}
+  .lead{font-size:19px; line-height:1.55; color:var(--soft)}
+  .lead b{color:var(--text); font-weight:500}
+  .facts{display:flex; gap:28px; margin-top:26px; color:var(--muted); flex-wrap:wrap}
+  .facts b{display:block; color:var(--text); font-family:"Inter Tight"; font-size:26px; font-weight:700; letter-spacing:-.02em; text-transform:none; margin-bottom:2px}
+
+  /* ---------- bloco em destaque ---------- */
+  .hl{margin-top:56px; display:grid; grid-template-columns:1.2fr 1fr; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(255,255,255,.06); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow:hidden; scroll-margin-top:100px; box-shadow:0 30px 80px -30px color-mix(in srgb, var(--tint) 70%, transparent)}
+  .hl-part{padding:30px}
+  .hl-part + .hl-part{border-left:1px solid rgba(255,255,255,.12)}
+  .hl-lbl{color:var(--text); display:flex; gap:12px; align-items:baseline; margin-bottom:18px}
+  .hl-lbl span{color:var(--muted)}
+  .hl-lbl em{font-style:normal; color:var(--muted); margin-left:auto}
+  .hl-btn{display:inline-flex; align-items:center; gap:14px; background:var(--text); color:#000; font-weight:700; font-size:20px; letter-spacing:-.02em; padding:14px 22px; border-radius:999px; transition:transform .2s, box-shadow .2s}
+  .hl-btn span{transition:transform .2s}
+  .hl-btn:hover{transform:translateY(-2px); box-shadow:0 10px 30px -8px var(--pink)}
+  .hl-btn:hover span{transform:translateX(4px)}
+  .steps{list-style:none; counter-reset:s; margin-top:18px}
+  .steps li{counter-increment:s; position:relative; padding:12px 0 12px 40px; border-bottom:1px solid var(--line); font-size:15px; line-height:1.6; color:#d6d1da}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(s, decimal-leading-zero); position:absolute; left:0; top:15px; font-family:"JetBrains Mono"; font-size:12px; color:var(--muted)}
+  code{font-family:"JetBrains Mono"; font-size:13px; color:var(--text); background:rgba(255,255,255,.08); padding:1px 6px; border-radius:4px; word-break:break-word}
+  .steps a, .txt a{text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.35)}
+  .steps a:hover, .txt a:hover{text-decoration-color:var(--text)}
+  .hl-alt{color:var(--muted); margin-top:10px; line-height:1.8}
+  .hl-alt a{color:var(--soft); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.3)}
+  .warn .hl-lbl{color:#ffd23f}
+  .txt{color:var(--soft); font-size:15px; line-height:1.6}
+  .txt + .txt{margin-top:12px}
+  .txt b{color:var(--text); font-weight:500}
+
+  /* ---------- seções ---------- */
+  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px 1fr; gap:48px}
+  .group h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.05}
+  .group h2 small{display:block; margin-top:10px; color:var(--muted); font-family:"JetBrains Mono"; font-size:12px; font-weight:400; letter-spacing:.04em; text-transform:uppercase}
+  .rows{border-top:1px solid var(--line)}
+  .row{display:grid; grid-template-columns:1fr 40px 1fr; gap:12px; align-items:center; padding:20px 0; border-bottom:1px solid var(--line)}
+  .row .en{color:var(--muted); font-size:clamp(20px,2.2vw,28px); font-weight:500; letter-spacing:-.02em; text-decoration:line-through; text-decoration-color:rgba(255,95,162,.6); text-decoration-thickness:2px}
+  .row .ar{color:var(--pink); text-align:center}
+  .row .pt{font-size:clamp(20px,2.2vw,28px); font-weight:800; letter-spacing:-.02em}
+  .row .pt small{display:block; color:var(--muted); font-weight:400; font-size:13px; letter-spacing:0; margin-top:2px}
+  .ratings{display:flex; gap:10px; flex-wrap:wrap; padding:22px 0; border-bottom:1px solid var(--line); align-items:center}
+  .ratings span{font-weight:900; font-style:italic; letter-spacing:.02em; font-size:22px; padding:2px 4px; transform:skewX(-8deg)}
+  .r1{color:#ffd23f; text-shadow:0 0 18px rgba(255,210,63,.5)} .r2{color:var(--cyan)} .r3{color:#b18cff} .r4{color:#ff4d5e}
+  .ratings em{font-style:normal; color:var(--muted); margin-right:8px}
+  .notes{list-style:none}
+  .notes li{position:relative; padding:16px 0 16px 40px; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; line-height:1.6}
+  .notes li::before{content:"—"; position:absolute; left:0; color:var(--muted)}
+  .notes b{color:var(--text); font-weight:500}
+  .tech{list-style:none; border-top:1px solid var(--line)}
+  .tech li{padding:14px 0; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; display:grid; grid-template-columns:200px 1fr; gap:16px}
+  .tech li span{color:var(--muted)}
+
+  footer{margin-top:120px; display:flex; justify-content:space-between; padding:24px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+
+  @media (max-width:900px){
+    header{padding:18px 16px} header nav{gap:16px}
+    .stage{height:clamp(360px,58vh,520px)}
+    .hud{left:16px; right:16px}
+    .wrap{padding:0 16px}
+    .intro{gap:22px}
+    .intro > div:last-child{grid-template-columns:1fr; gap:22px}
+    .hl{grid-template-columns:1fr}
+    .hl-part{padding:22px 18px}
+    .hl-part + .hl-part{border-left:0; border-top:1px solid rgba(255,255,255,.12)}
+    .hl-lbl em{display:none}
+    .hl-btn{width:100%; justify-content:space-between}
+    .group{grid-template-columns:1fr; gap:18px; margin-top:80px}
+    .row{grid-template-columns:1fr 24px 1fr}
+    .tech li{grid-template-columns:1fr; gap:2px}
+    footer{padding:20px 16px 26px}
+  }
+  @media (prefers-reduced-motion:reduce){ .fade::before,.fade::after{animation:none} }
+</style>
+</head>
+<body>
+<div class="fade" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="index.html#projetos"><span>←</span> kauã<i>.</i></a>
+  <nav class="mono"><a href="#instalar">Instalar</a><a href="#escolhas">Tradução</a><a href="https://github.com/kaua0f0m/unbeatable-ptbr" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+
+<section class="stage" aria-hidden="true">
+  <canvas id="stage"></canvas>
+  <div class="hud mono"><span>UNBEATABLE · PT-BR</span><span><b>140</b> BPM</span></div>
+</section>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="kicker mono">Mod de tradução — PT-BR</p>
+      <h1>UNBEATABLE<br><span class="dim">em português.</span></h1>
+    </div>
+    <div>
+      <p class="lead">Um jogo de ritmo em que <b>música é proibida</b> e você comete crimes. Agora com todas as falas da história, menus, tutoriais e desafios do Arcade em português.</p>
+      <div class="facts mono">
+        <span><b>17.745</b>linhas de diálogo</span>
+        <span><b>BepInEx 5</b>mod, sem mexer no jogo</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hl" id="instalar">
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>01</span> Instalar o mod <em>Steam / PC</em></p>
+      <a class="hl-btn" href="https://github.com/kaua0f0m/unbeatable-ptbr/releases/latest" target="_blank" rel="noopener">Baixar a última versão <span>→</span></a>
+      <ol class="steps">
+        <li>Instale o <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5</a> (<code>win_x64</code>) na pasta do jogo. Na Steam: botão direito no jogo → Gerenciar → Procurar arquivos locais.</li>
+        <li>Abra o jogo uma vez, para o BepInEx criar as pastas, e feche.</li>
+        <li>Extraia o <code>.zip</code> dentro da pasta do jogo. Deve ficar em <code>BepInEx/plugins/UnbeatablePTBR</code>.</li>
+        <li>No jogo, deixe o idioma em <b>English</b>. O mod troca o inglês pelo português.</li>
+      </ol>
+      <p class="hl-alt mono">Para desinstalar, apague a pasta <code>UnbeatablePTBR</code> · <a href="https://store.steampowered.com/app/2240620/UNBEATABLE/" target="_blank" rel="noopener">Jogo na Steam</a></p>
+    </div>
+    <div class="hl-part warn">
+      <p class="hl-lbl mono"><span>02</span> Aviso sobre testes</p>
+      <p class="txt">Até agora só foram testados no jogo <b>os acentos</b> e <b>o começo do capítulo 1</b> (o pseudo tutorial, as configurações e a calibração).</p>
+      <p class="txt">O jogo espalha texto por tudo quanto é canto e em caixas de tamanho fixo, então outras partes podem aparecer mal colocadas: palavras grandes demais, texto estourando a borda, encavalando ou cortado.</p>
+      <p class="txt">Achou um caso? Abra uma <a href="https://github.com/kaua0f0m/unbeatable-ptbr/issues" target="_blank" rel="noopener">issue</a> com print e o lugar do jogo onde aconteceu.</p>
+    </div>
+  </div>
+
+  <section class="group" id="escolhas">
+    <h2>Escolhas de tradução<small>sem spoilers</small></h2>
+    <div>
+      <div class="rows">
+        <div class="row"><span class="en">HARM</span><span class="ar mono">→</span><span class="pt">DANO<small>a sigla também foi traduzida, mas não vou estragar aqui</small></span></div>
+        <div class="row"><span class="en">Whacktown</span><span class="ar mono">→</span><span class="pt">Tacolândia</span></div>
+        <div class="row"><span class="en">Silence</span><span class="ar mono">→</span><span class="pt">Silêncio</span></div>
+        <div class="ratings"><em class="mono">Avaliações</em><span class="r1">PERFEITO</span><span class="r2">ÓTIMO</span><span class="r3">QUASE</span><span class="r4">ERROU</span></div>
+      </div>
+      <ul class="notes">
+        <li>Palavrões <b>não foram suavizados</b>.</li>
+        <li>Nos folios (desafios do Arcade), trechos de letras de música, memes e trocadilhos que só funcionam no original <b>ficaram em inglês de propósito</b>.</li>
+        <li>Tom, vozes dos personagens e glossário estão no <a class="u" href="https://github.com/kaua0f0m/unbeatable-ptbr/blob/main/GUIA_DE_ESTILO.md" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">guia de estilo</a>. Aviso: tem <b>vários</b> spoilers do jogo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Quer ajudar?<small>fork à vontade</small></h2>
+    <div>
+      <p class="txt">Os arquivos <code>traducao/dialogos.csv</code> e <code>traducao/interface.csv</code> têm só o texto traduzido. O texto original não é distribuído.</p>
+      <p class="txt">Para ver o inglês ao lado, rode o extrator, que tira os textos da sua própria cópia do jogo em menos de um minuto: <code>pip install UnityPy</code> e depois <code>python extrator/extrair_textos.py</code>.</p>
+      <p class="txt">Não garanto que vou conseguir consertar todos os bugs, mas as issues ajudam quem quiser continuar a tradução num fork. Detalhes no <a href="https://github.com/kaua0f0m/unbeatable-ptbr" target="_blank" rel="noopener">README</a>.</p>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Como funciona<small>por baixo do capô</small></h2>
+    <ul class="tech">
+      <li><span class="mono">Plugin</span>BepInEx 5 com patches Harmony (Unity 6, Mono)</li>
+      <li><span class="mono">Diálogos</span>Yarn Spinner</li>
+      <li><span class="mono">Interface</span>Tabelas do Unity Localization</li>
+      <li><span class="mono">Textos fixos</span>Avaliações e nomes de cor, trocados no TextMeshPro</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="mono">
+  <span>Mod não oficial, feito por fã com ajuda de IA · sem ligação com a D-CELL GAMES ou a Playstack</span>
+  <a href="index.html#projetos">← voltar aos projetos</a>
+</footer>
+
+<script>
+/* ===== palco: notas em 4 faixas (alta e baixa, dos dois lados) explodindo nos alvos ===== */
+(() => {
+  const cv = document.getElementById('stage'), ctx = cv.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const BPM = 140, STEP = 60/BPM/2, TRAVEL = 1.35;            // passo = colcheia
+  // LA = esquerda alta, LB = esquerda baixa, RA = direita alta, RB = direita baixa
+  const PATTERN = ['LA','','RA','','LB','','RB','RA', 'LA','','RB','LB','RA','','LA','', 'RB','','LB','','RA','LA','','LB', 'RA','RB','','LA','LB','','RA','RB'];
+  const LANES = ['LA','LB','RA','RB'];
+  const COL = {LA:'#ff5fa2', RA:'#ff5fa2', LB:'#4dd9ff', RB:'#4dd9ff'};
+  const side = d => d[0] === 'L' ? -1 : 1;
+  const laneY = d => d[1] === 'A' ? cy - u*.72 : cy + u*1.02;
+  const tpos = d => [cx + side(d)*D, laneY(d)];
+  const RAT = [['PERFEITO','#ffd23f'],['ÓTIMO','#4dd9ff'],['QUASE','#b18cff'],['ERROU','#ff4d5e']];
+
+  let W = 0, H = 0, u = 40, cx = 0, cy = 0, D = 100;
+  function size(){ const dpr = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    u = Math.min(H/7.2, W/8); cx = W/2; cy = H*.5; D = u*2.55; }
+  addEventListener('resize', size); size();
+
+  const notes = [], bursts = []; let step = 0, nextHit = 0, t0 = performance.now()/1000, combo = 0;
+  let swing = {dir:'RA', t:-9}, face = 1;
+
+  function spawnUntil(now){
+    while (nextHit - TRAVEL <= now){
+      const d = PATTERN[step % PATTERN.length];
+      if (d) notes.push({d, hit:nextHit});
+      step++; nextHit += STEP;
+    }
+  }
+  nextHit = 1.2;
+
+  function judge(n, now){
+    const r = Math.random(), k = r < .74 ? 0 : r < .92 ? 1 : r < .97 ? 2 : 3;
+    const [lab, col] = RAT[k], [tx, ty] = tpos(n.d);
+    if (k === 3){ combo = 0; bursts.push({x:tx, y:ty, t:now, lab, col, miss:true}); }
+    else { combo++; swing = {dir:n.d, t:now}; face = side(n.d);
+      bursts.push({x:tx, y:ty, t:now, lab, col:COL[n.d], tcol:col}); }
+  }
+
+  function rr(x, y, w, h, r){ ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+
+  function frame(now){
+    const beat = (now / (STEP*2)) % 1;
+    if (!reduce) spawnUntil(now);
+    ctx.clearRect(0, 0, W, H);
+
+    // anéis da batida
+    const pulse = 1 - beat;
+    for (let i = 0; i < 3; i++){ const r = D*(.55 + i*.55) + pulse*u*.25; ctx.strokeStyle = `rgba(255,95,162,${.12 - i*.03})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke(); }
+    // trilhos: duas faixas horizontais (alta e baixa)
+    ctx.lineCap = 'butt';
+    for (const [y, c] of [[cy - u*.72, 'rgba(255,95,162,.09)'], [cy + u*1.02, 'rgba(77,217,255,.08)']]){
+      ctx.strokeStyle = c; ctx.lineWidth = u*.9; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    // alvos
+    for (const d of LANES){ const [x, y] = tpos(d), s = 1 + pulse*.08;
+      ctx.strokeStyle = COL[d]; ctx.globalAlpha = .55; ctx.lineWidth = u*.06; ctx.beginPath(); ctx.arc(x, y, u*.46*s, 0, Math.PI*2); ctx.stroke(); ctx.globalAlpha = 1; }
+
+    // notas
+    for (let i = notes.length - 1; i >= 0; i--){
+      const n = notes[i], left = n.hit - now;
+      if (left <= 0){ judge(n, now); notes.splice(i, 1); continue; }
+      const far = W*.55, x = cx + side(n.d)*(D + (left/TRAVEL)*far), y = laneY(n.d);
+      ctx.fillStyle = COL[n.d]; ctx.shadowColor = COL[n.d]; ctx.shadowBlur = u*.5;
+      ctx.beginPath(); ctx.arc(x, y, u*.4, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = u*.07; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.arc(x - u*.12, y - u*.12, u*.1, 0, Math.PI*2); ctx.fill();
+    }
+
+    // centro: combo grande pulsando no ritmo (no lugar da personagem)
+    { const sinceHit = now - swing.t, pop = sinceHit < .15 ? 1 + (1 - sinceHit/.15)*.12 : 1, sz = u*1.5*pop;
+      ctx.save(); ctx.translate(cx, cy + u*.15); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `italic 900 ${sz}px "Inter Tight", sans-serif`; ctx.transform(1, 0, -.12, 1, 0, 0);
+      ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.shadowColor = '#ff5fa2'; ctx.shadowBlur = u*.6*(.4 + pulse*.6);
+      ctx.fillText(String(combo), 0, 0); ctx.shadowBlur = 0;
+      ctx.font = `500 ${Math.max(11, u*.22)}px "JetBrains Mono", monospace`; ctx.fillStyle = 'rgba(255,255,255,.5)';
+      ctx.fillText('COMBO', 0, -sz*.62); ctx.restore(); }
+
+    // acertos
+    for (let i = bursts.length - 1; i >= 0; i--){
+      const b = bursts[i], k = (now - b.t)/.55; if (k >= 1){ bursts.splice(i, 1); continue; }
+      if (!b.miss){ ctx.strokeStyle = b.col; ctx.globalAlpha = 1 - k; ctx.lineWidth = u*.12*(1 - k);
+        ctx.beginPath(); ctx.arc(b.x, b.y, u*(.45 + k*.9), 0, Math.PI*2); ctx.stroke();
+        for (let j = 0; j < 6; j++){ const a = j/6*Math.PI*2 + b.t, r = u*(.5 + k*1.3); ctx.fillStyle = b.col; ctx.fillRect(b.x + Math.cos(a)*r - u*.05, b.y + Math.sin(a)*r - u*.05, u*.1, u*.1); } }
+      ctx.globalAlpha = 1 - k*k; ctx.fillStyle = b.tcol || b.col;
+      ctx.font = `italic 900 ${u*.42}px "Inter Tight", sans-serif`; ctx.textAlign = 'center';
+      ctx.save(); ctx.translate(b.x, b.y - u*.75 - k*u*.5); ctx.transform(1, 0, -.15, 1, 0, 0); ctx.fillText(b.lab, 0, 0); ctx.restore();
+      ctx.globalAlpha = 1;
+    }
+  }
+  // relógio próprio: só anda enquanto o palco está visível (pausa fora da tela)
+  let running = false, last = 0, clock = 0;
+  function loop(ms){ if (!running) return; clock += Math.min((ms - last)/1000, .05); last = ms; frame(clock); requestAnimationFrame(loop); }
+  new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && !running){ running = true; last = performance.now(); requestAnimationFrame(loop); }
+    else if (!e.isIntersecting) running = false;
+  })).observe(cv);
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(size);
+})();
+</script>
+</body>
+</html>

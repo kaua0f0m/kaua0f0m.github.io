@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hush Hush — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{ --text:#f8f1f2; --muted:#9a8b8f; --soft:#bdaeb2; --line:rgba(255,255,255,.1); --tint:#8a1530; --acc:#ff6b8a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:#080406; scroll-behavior:smooth}
+  body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; overflow-x:hidden}
+  .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+  a{color:inherit; text-decoration:none}
+
+  .fade{position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 55% at 75% 0%, color-mix(in srgb, var(--tint) 60%, transparent), transparent 72%),
+      radial-gradient(ellipse 50% 45% at 0% 60%, rgba(255,107,138,.10), transparent 70%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tint) 24%, #080406) 0%, #0d0608 65%, #080406 100%)}
+  .grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.15; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:fixed; inset:0 0 auto; z-index:10; background:linear-gradient(color-mix(in srgb, var(--tint) 20%, #080406) 25%, transparent)}
+  .logo{font-weight:800; font-size:20px; letter-spacing:-.03em; display:flex; gap:10px; align-items:center}
+  .logo span{color:var(--muted); font-weight:500; transition:transform .2s}
+  .logo:hover span{transform:translateX(-3px); color:var(--text)}
+  .logo i{font-style:normal; color:var(--muted)}
+  header nav{display:flex; gap:28px}
+  header nav a{color:var(--muted); transition:color .2s}
+  header nav a:hover{color:var(--text)}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 48px}
+  .intro{padding:22vh 0 10px; display:grid; gap:34px}
+  .intro > div:last-child{display:grid; grid-template-columns:1.2fr 1fr; gap:48px; align-items:end}
+  .kicker{color:var(--muted); margin-bottom:22px; display:flex; gap:10px; align-items:center}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--acc); box-shadow:0 0 10px var(--acc)}
+  .kicker b{color:var(--acc); font-weight:500; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+  h1{font-size:clamp(64px,10vw,150px); line-height:.84; letter-spacing:-.06em; font-weight:900}
+  h1 .dim{color:rgba(255,255,255,.3); font-weight:800}
+  .tag{font-family:"Instrument Serif"; font-style:italic; font-size:clamp(24px,2.8vw,38px); color:var(--acc); margin-top:14px; letter-spacing:-.01em}
+  .lead{font-size:19px; line-height:1.55; color:var(--soft)}
+  .lead b{color:var(--text); font-weight:500}
+  .facts{display:flex; gap:28px; color:var(--muted); flex-wrap:wrap}
+  .facts b{display:block; color:var(--text); font-family:"Inter Tight"; font-size:26px; font-weight:700; letter-spacing:-.02em; text-transform:none; margin-bottom:2px}
+
+  .hl{margin-top:56px; display:grid; grid-template-columns:1.2fr 1fr; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(255,255,255,.06); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow:hidden; scroll-margin-top:100px; box-shadow:0 30px 80px -30px color-mix(in srgb, var(--tint) 85%, transparent)}
+  .hl-part{padding:30px}
+  .hl-part + .hl-part{border-left:1px solid rgba(255,255,255,.12)}
+  .hl-lbl{color:var(--text); display:flex; gap:12px; align-items:baseline; margin-bottom:18px}
+  .hl-lbl span{color:var(--muted)}
+  .hl-lbl em{font-style:normal; color:var(--muted); margin-left:auto}
+  .hl-btn{display:inline-flex; align-items:center; gap:14px; background:var(--text); color:#000; font-weight:700; font-size:20px; letter-spacing:-.02em; padding:14px 22px; border-radius:999px; transition:transform .2s, box-shadow .2s}
+  .hl-btn span{transition:transform .2s}
+  .hl-btn:hover{transform:translateY(-2px); box-shadow:0 10px 30px -8px var(--acc)}
+  .hl-btn:hover span{transform:translateX(4px)}
+  .steps{list-style:none; counter-reset:s; margin-top:18px}
+  .steps li{counter-increment:s; position:relative; padding:12px 0 12px 40px; border-bottom:1px solid var(--line); font-size:15px; line-height:1.6; color:#e0d6d8}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(s, decimal-leading-zero); position:absolute; left:0; top:15px; font-family:"JetBrains Mono"; font-size:12px; color:var(--muted)}
+  code{font-family:"JetBrains Mono"; font-size:13px; color:var(--text); background:rgba(255,255,255,.08); padding:1px 6px; border-radius:4px; word-break:break-word}
+  .hl-alt{color:var(--muted); margin-top:10px; line-height:1.8}
+  .hl-alt a{color:var(--soft); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.3)}
+  .warn .hl-lbl{color:#ffd23f}
+  .txt{color:var(--soft); font-size:15px; line-height:1.6}
+  .txt + .txt{margin-top:12px}
+  .txt b{color:var(--text); font-weight:500}
+  .txt a{text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.35)}
+  .ages{display:flex; gap:10px; margin-bottom:16px}
+  .ages span{display:inline-flex; align-items:center; justify-content:center; min-width:46px; height:46px; padding:0 8px; border-radius:10px; font-weight:900; font-size:19px; color:#000}
+  .a16{background:#ff8a3d} .a18{background:#ff3b5c}
+  .ages small{align-self:center; color:var(--muted); font-size:13px; line-height:1.35}
+
+  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px minmax(0,1fr); gap:48px}
+  .group h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.05}
+  .group h2 small{display:block; margin-top:10px; color:var(--muted); font-family:"JetBrains Mono"; font-size:12px; font-weight:400; letter-spacing:.04em; text-transform:uppercase}
+  .notes{list-style:none; border-top:1px solid var(--line)}
+  .notes li{position:relative; padding:16px 0 16px 40px; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; line-height:1.6}
+  .notes li::before{content:"—"; position:absolute; left:0; color:var(--muted)}
+  .notes b{color:var(--text); font-weight:500}
+  .big{font-family:"Instrument Serif"; font-style:italic; font-size:clamp(26px,2.8vw,36px); line-height:1.15; color:#fff; margin-bottom:22px}
+  .big em{color:var(--acc)}
+  pre{font-family:"JetBrains Mono"; font-size:13px; line-height:1.7; background:rgba(0,0,0,.35); border:1px solid var(--line); border-radius:10px; padding:16px 18px; overflow-x:auto; color:#e8dfe1; margin:14px 0}
+  .credits{list-style:none; border-top:1px solid var(--line)}
+  .credits li{padding:14px 0; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; display:grid; grid-template-columns:200px 1fr; gap:16px}
+  .credits li span{color:var(--muted)}
+
+  footer{margin-top:120px; display:flex; justify-content:space-between; padding:24px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+  .foot-r{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
+  .debug{font:inherit; text-transform:inherit; letter-spacing:inherit; color:var(--muted); background:none; border:1px dashed rgba(255,255,255,.2); border-radius:6px; padding:3px 8px; cursor:pointer}
+  .debug:hover{color:var(--text); border-color:var(--text)}
+
+  /* ---------- aviso de +18 ---------- */
+  .gate{display:none; position:fixed; inset:0; z-index:100; place-items:center; padding:16px; background:rgba(8,4,6,.55); backdrop-filter:blur(22px) saturate(.8); -webkit-backdrop-filter:blur(22px) saturate(.8)}
+  .gated .gate{display:grid}
+  .gated body{overflow:hidden}
+  .gate-card{width:min(480px,100%); border:1px solid rgba(255,255,255,.18); border-radius:18px; background:color-mix(in srgb, var(--tint) 22%, #0d0608); padding:34px 30px 28px; box-shadow:0 40px 100px -20px rgba(0,0,0,.8), 0 0 80px -30px var(--acc); text-align:left}
+  .gate-card .badge{display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:14px; background:#ff3b5c; color:#000; font-weight:900; font-size:26px; margin-bottom:20px}
+  .gate-card h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.1; margin-bottom:12px}
+  .gate-card p{color:var(--soft); font-size:15px; line-height:1.6}
+  .gate-card p + p{margin-top:10px}
+  .gate-btns{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap}
+  .gate-btns button, .gate-btns a{font:700 16px "Inter Tight"; padding:13px 20px; border-radius:999px; cursor:pointer; border:1px solid rgba(255,255,255,.25); background:transparent; color:var(--text)}
+  .gate-btns button{background:var(--text); color:#000; border-color:var(--text)}
+  .gate-btns button:hover{box-shadow:0 10px 30px -8px var(--acc)}
+  .gate-btns a:hover{border-color:var(--text)}
+  .gate-btns :focus-visible{outline:2px solid var(--acc); outline-offset:3px}
+
+  @media (max-width:900px){
+    header{padding:18px 16px} header nav{gap:16px}
+    .wrap{padding:0 16px}
+    .intro{padding-top:16vh}
+    .intro > div:last-child{grid-template-columns:1fr; gap:22px}
+    .hl{grid-template-columns:1fr}
+    .hl-part{padding:22px 18px}
+    .hl-part + .hl-part{border-left:0; border-top:1px solid rgba(255,255,255,.12)}
+    .hl-lbl em{display:none}
+    .hl-btn{width:100%; justify-content:space-between}
+    .group{grid-template-columns:minmax(0,1fr); gap:18px; margin-top:80px}
+    .credits li{grid-template-columns:1fr; gap:2px}
+    .gate-btns > *{flex:1; text-align:center; display:inline-flex; align-items:center; justify-content:center}
+    footer{padding:20px 16px 26px}
+  }
+</style>
+</head>
+<body>
+<div class="fade" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <div class="gate-card">
+    <span class="badge">18+</span>
+    <h2 id="gate-t">Antes de continuar: conteúdo +18</h2>
+    <p>Hush Hush tem temas pesados: terror psicológico, conteúdo sexual, menção a abuso e uso de drogas e álcool. A tradução cobre também a DLC de conteúdo adulto.</p>
+    <p>Você tem 18 anos ou mais?</p>
+    <div class="gate-btns"><button id="gate-ok">Tenho 18 anos, continuar</button><a href="#" id="gate-no">Cancelar</a></div>
+  </div>
+</div>
+
+<header>
+  <a class="logo" href="index.html#projetos"><span>←</span> kauã<i>.</i></a>
+  <nav class="mono"><a href="#instalar">Instalar</a><a href="#traducao">Tradução</a><a href="https://github.com/kaua0f0m/hushhush-ptbr" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="kicker mono">Tradução PT-BR — PC / Steam <b>18+</b></p>
+      <h1>Hush Hush<br><span class="dim">em português.</span></h1>
+      <p class="tag">Only your love can save them.</p>
+    </div>
+    <div>
+      <p class="lead">Uma visual novel com uma reviravolta: melhore suas habilidades, conquiste cinco garotas e descubra <b>segredos perigosos</b>. Agora com todos os diálogos, mensagens e menus em português.</p>
+      <div class="facts mono">
+        <span><b>~24 mil</b>frases</span>
+        <span><b>ã õ ê ç</b>acentos no jogo</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hl" id="instalar">
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>01</span> Instalar a tradução <em>v1.0.0 · Windows</em></p>
+      <a class="hl-btn gate18" id="dl" href="https://github.com/kaua0f0m/hushhush-ptbr/releases/latest" target="_blank" rel="noopener">Baixar a tradução <span>→</span></a>
+      <ol class="steps">
+        <li>Baixe o <code>.zip</code> da última versão e extraia.</li>
+        <li>Feche o jogo.</li>
+        <li>Abra o <code>Instalar-HushHush-PTBR.exe</code> e escolha <code>1 — Instalar</code>. Leva cerca de 1 minuto.</li>
+        <li>Abra o jogo normalmente pela Steam.</li>
+      </ol>
+      <p class="hl-alt mono">Para desfazer: rode de novo e escolha <code>2 — Restaurar</code> · <a class="gate18" href="https://store.steampowered.com/app/782250/Hush_Hush_Only_Your_Love_Can_Save_Them/" target="_blank" rel="noopener">Jogo na Steam</a></p>
+    </div>
+    <div class="hl-part warn">
+      <p class="hl-lbl mono"><span>02</span> Antes de instalar</p>
+      <div class="ages"><span class="a16">16</span><span class="a18">18+</span><small>jogo base para 16 anos ou mais;<br>cenas adultas na DLC 18+</small></div>
+      <p class="txt">A tradução cobre as duas variantes do jogo, a normal e a 18+.</p>
+      <p class="txt">O <code>.exe</code> não é assinado e o Windows pode avisar. Clique em <b>Mais informações → Executar assim mesmo</b>, ou use o código-fonte em Python, que faz a mesma coisa.</p>
+      <p class="txt">Testada na <b>build 26470028</b> da Steam. Depois de uma atualização do jogo, é só rodar o instalador de novo.</p>
+    </div>
+  </div>
+
+  <section class="group" id="traducao">
+    <h2>O que está traduzido<small>quase tudo</small></h2>
+    <ul class="notes">
+      <li>Todos os <b>diálogos, opções de resposta, mensagens de celular, dicas e conquistas</b>, em todas as variantes do jogo.</li>
+      <li>Menus e interface: menu principal, configurações, save/load, agenda, habilidades, trabalhos, mapa, galeria e créditos.</li>
+      <li>Textos fixos do código, como a estação do ano no relógio e nos slots de save.</li>
+      <li><b>Acentos funcionando:</b> as fontes do jogo não tinham <code>ã õ ê í ó ú ç</code>, então o instalador gera esses caracteres nelas.</li>
+    </ul>
+  </section>
+
+  <section class="group">
+    <h2>Problemas conhecidos<small>por enquanto</small></h2>
+    <ul class="notes">
+      <li>Os nomes dos meses e dos dias da semana vêm do sistema e continuam em inglês.</li>
+      <li>Algumas imagens com texto desenhado não dá para traduzir por este método.</li>
+      <li>Os rótulos do mapa foram traduzidos. Se algum lugar não abrir, <a href="https://github.com/kaua0f0m/hushhush-ptbr/issues" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">abra uma issue</a> dizendo qual.</li>
+    </ul>
+  </section>
+
+  <section class="group">
+    <h2>Se o jogo atualizar<small>e a tradução quebrar</small></h2>
+    <div>
+      <p class="big">Eu <em>não vou conseguir</em> manter a tradução a cada atualização. Mas dá para resolver sem mim.</p>
+      <ul class="notes">
+        <li><b>Faça um fork e atualize com a ajuda de uma IA.</b> O repositório inclui as ferramentas usadas para gerar a tradução, e o código é pequeno o bastante para uma IA entender e ajustar.</li>
+        <li><b>Ou baixe a versão compatível do jogo pelos depots da Steam</b> (precisa ter o jogo na sua conta). No console da Steam, que abre com <code>steam://open/console</code> no navegador:
+          <pre>download_depot 782250 782251 5155249699670900129
+download_depot 2070760 2070763 6224966165265546425
+download_depot 2070900 2070901 484771098001674209</pre>
+          Copie o que baixar por cima da pasta do jogo e rode o instalador.</li>
+        <li>Para a Steam não atualizar sozinha: <b>Propriedades → Atualizações</b> → “Atualizar este jogo somente quando eu o iniciar”.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Créditos<small>quem fez o quê</small></h2>
+    <ul class="credits">
+      <li><span class="mono">Criação</span>kaua0f0m</li>
+      <li><span class="mono">Tradução</span>Claude Code (Sonnet), da Anthropic, com curadoria do criador em certas linhas, onde a IA se recusou a localizar</li>
+      <li><span class="mono">Jogo original</span>Sad Panda Studios</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="mono">
+  <span>Tradução de fãs, sem fins lucrativos e sem vínculo com a Sad Panda Studios</span>
+  <span class="foot-r"><button type="button" class="debug" id="debug18" title="Apaga a confirmação salva e mostra o aviso de novo">debug: aviso +18</button><a href="index.html#projetos">← voltar aos projetos</a></span>
+</footer>
+
+<script>
+  // aviso de +18 aparece ao clicar em baixar ou no link da Steam (o navegador lembra a resposta)
+  const root = document.documentElement, ok = document.getElementById('gate-ok'), no = document.getElementById('gate-no');
+  let pending = null;
+  const confirmed = () => { try { return localStorage.getItem('hush-18') === 'ok'; } catch(e){ return false; } };
+  const close = () => { root.classList.remove('gated'); if (pending) pending.focus(); pending = null; };
+  document.querySelectorAll('a.gate18').forEach(a => a.addEventListener('click', e => {
+    if (confirmed()) return; e.preventDefault(); pending = a; root.classList.add('gated'); ok.focus(); }));
+  ok.addEventListener('click', () => { try { localStorage.setItem('hush-18', 'ok'); } catch(e){} root.classList.remove('gated');
+    if (pending) window.open(pending.href, '_blank', 'noopener'); pending = null; });
+  no.addEventListener('click', e => { e.preventDefault(); close(); });
+  document.getElementById('gate').addEventListener('click', e => { if (e.target.id === 'gate') close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('gated')) close(); });
+  // debug: esquece a confirmação e abre o aviso de novo
+  document.getElementById('debug18').addEventListener('click', () => {
+    try { localStorage.removeItem('hush-18'); } catch(e){}
+    root.classList.add('gated'); ok.focus();
+  });
+</script>
+</body>
+</html>

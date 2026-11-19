@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Traduções legado — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#000; --text:#e8e8e8; --muted:#6d6d6d; --line:#1e1e1e; --phos:#7dff9a; --amber:#ffb000; --dos:#0000aa; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
+  body{color:var(--text); font-family:VT323,ui-monospace,monospace; font-size:22px; line-height:1.2; overflow-x:hidden}
+  a{color:inherit; text-decoration:none}
+  ::selection{background:var(--phos); color:#000}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:22px 48px; position:fixed; inset:0 0 auto; z-index:20; background:linear-gradient(#000 45%, transparent)}
+  .back{display:flex; gap:10px; align-items:center; font-size:24px}
+  .back span{color:var(--muted); transition:transform .2s}
+  .back:hover span{transform:translateX(-4px); color:var(--text)}
+  header nav{display:flex; gap:24px; color:var(--muted)}
+  header nav a:hover{color:var(--text)}
+
+  main{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:32px; padding:0 48px}
+  .left{padding:20vh 0 14vh; position:relative; z-index:2}
+  .path{color:var(--muted); margin-bottom:22px}
+  .path b{color:var(--phos); font-weight:400}
+  h1{font-size:clamp(64px,8.5vw,132px); line-height:.82; font-weight:400; letter-spacing:-.01em; text-transform:uppercase}
+  h1 .cur{display:inline-block; width:.45em; height:.8em; background:var(--text); margin-left:.08em; vertical-align:-.04em; animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .lead{margin-top:26px; max-width:500px; color:#9b9b9b; font-size:24px}
+  .lead b{color:var(--text); font-weight:400}
+
+  /* ---------- carta ---------- */
+  .letter{margin-top:48px; max-width:560px}
+  .letter .lh{color:var(--muted); margin-bottom:10px}
+  .letter .lh b{color:var(--phos); font-weight:400}
+  .paper{border:2px solid var(--text); padding:22px 24px 18px; position:relative; color:#cfcfcf; font-size:22px; line-height:1.3; box-shadow:8px 8px 0 #1c1c1c}
+  .paper::before{content:"✉"; position:absolute; top:-16px; right:18px; background:#000; padding:0 8px; font-size:26px; color:#ff5555; line-height:1}
+  .paper p + p{margin-top:12px}
+  .paper a{color:var(--phos); text-decoration:underline; text-underline-offset:3px}
+  .paper .ps{color:#9b9b9b}
+  .paper .sig{text-align:right; color:var(--amber); font-size:26px}
+
+  /* ---------- switch NSFW ---------- */
+  .bar{display:flex; justify-content:space-between; align-items:center; margin-top:56px; padding:12px 0; border-bottom:1px solid var(--line); color:var(--muted); gap:16px; flex-wrap:wrap}
+  .switch{display:flex; align-items:center; gap:12px; cursor:pointer; color:var(--text); background:none; border:0; font:inherit}
+  .switch .track{width:54px; height:26px; border:2px solid var(--text); position:relative; transition:background .2s}
+  .switch .knob{position:absolute; top:3px; left:3px; width:16px; height:16px; background:var(--text); transition:left .2s steps(3), background .2s}
+  .switch[aria-checked="true"] .track{background:#2a0d0d; border-color:#ff5555}
+  .switch[aria-checked="true"] .knob{left:31px; background:#ff5555}
+  .switch:focus-visible{outline:2px dashed var(--phos); outline-offset:4px}
+
+  /* ---------- lista ---------- */
+  .game{border-bottom:1px solid var(--line)}
+  .game summary{list-style:none; display:grid; grid-template-columns:44px 1fr auto 28px; gap:14px; align-items:center; padding:16px 10px 16px 0; cursor:pointer; position:relative; isolation:isolate; transition:padding .25s, color .15s}
+  .game summary::-webkit-details-marker{display:none}
+  .game summary::before{content:""; position:absolute; inset:0; background:var(--text); transform:scaleX(0); transform-origin:left; transition:transform .25s steps(6); z-index:-1}
+  .game summary:hover, .game.hot summary{color:#000; padding-left:12px}
+  .game summary:hover::before, .game.hot summary::before{transform:scaleX(1)}
+  .game summary:focus-visible{outline:2px dashed var(--phos); outline-offset:-2px}
+  .n{color:var(--muted)}
+  .game summary:hover .n, .game.hot summary .n{color:#555}
+  .nm{font-size:32px; line-height:1}
+  .tags{display:flex; gap:6px}
+  .tag{border:1px solid currentColor; padding:0 7px; font-size:17px; line-height:1.3; opacity:.75}
+  .tag.x{color:#ff5555; opacity:1}
+  .game summary:hover .tag.x, .game.hot summary .tag.x{color:#b00000}
+  .pm{font-size:28px; text-align:center}
+  .game[open] .pm{transform:rotate(45deg)}
+  .pm{transition:transform .2s}
+
+  .censored .nm{color:transparent; text-shadow:none; background:repeating-linear-gradient(90deg, #555 0 14px, transparent 14px 17px); -webkit-background-clip:text; background-clip:text}
+  .censored .nm::after{content:attr(data-mask); color:#555}
+  .game.censored summary:hover .nm::after{color:#333}
+
+  .body{padding:6px 0 26px 58px; color:#b5b5b5; font-size:22px; overflow:hidden}
+  .game[open] .body{animation:type .35s steps(8)}
+  @keyframes type{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+  .body .prompt{color:var(--phos)}
+  .body ul{list-style:none; margin-top:8px}
+  .body li{padding:3px 0 3px 24px; position:relative}
+  .body li::before{content:">"; position:absolute; left:0; color:var(--amber)}
+  .body .empty{color:var(--muted)}
+  .body li + li{margin-top:8px}
+  .body li a{color:var(--phos); text-decoration:underline; text-underline-offset:3px}
+  .links{display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; margin-top:16px}
+  .links .prompt{width:100%}
+  .links a{color:var(--amber)}
+  .links a:hover{background:var(--amber); color:#000}
+  .links .na{color:var(--muted)}
+
+  /* ---------- monitor CRT ---------- */
+  .right{position:sticky; top:0; height:100vh; min-height:560px; display:flex; align-items:center; justify-content:center; padding-top:40px}
+  .crt{width:min(100%, 620px); position:relative; filter:drop-shadow(0 40px 60px rgba(0,0,0,.9))}
+  .bezel{background:linear-gradient(160deg,#ddd5c1 0%,#c9c0aa 45%,#a99f88 100%); border-radius:28px 28px 22px 22px; padding:30px 32px 66px; position:relative;
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.6), inset 0 -6px 12px rgba(0,0,0,.25), inset 6px 0 10px rgba(255,255,255,.2)}
+  .inset{background:#24221d; border-radius:22px; padding:16px; box-shadow:inset 0 6px 16px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.5)}
+  .screen{position:relative; aspect-ratio:4/3; border-radius:18px / 22px; overflow:hidden; background:radial-gradient(ellipse at center, #0b130d 0%, #030604 75%);
+    box-shadow:inset 0 0 50px rgba(0,0,0,.95), inset 0 0 6px rgba(0,0,0,1); animation:power 1.1s cubic-bezier(.2,.9,.2,1) both}
+  @keyframes power{0%{filter:brightness(4); clip-path:inset(49.5% 10% 49.5% 10%)}35%{filter:brightness(3); clip-path:inset(49.5% 0 49.5% 0)}70%{clip-path:inset(0)}100%{filter:none; clip-path:inset(0)}}
+  #scr{position:absolute; left:4%; top:4%; width:92%; height:80%; image-rendering:pixelated}
+  .screen::before{content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.32) 0 2px, transparent 2px 4px), radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.65) 100%);
+    animation:flick .12s steps(2) infinite}
+  @keyframes flick{50%{opacity:.92}}
+  .screen::after{content:""; position:absolute; inset:0; z-index:3; pointer-events:none; border-radius:inherit;
+    background:linear-gradient(125deg, rgba(255,255,255,.09) 0%, rgba(255,255,255,.02) 30%, transparent 31%), radial-gradient(ellipse at 30% 15%, rgba(255,255,255,.07), transparent 40%)}
+  .status{position:absolute; left:5%; right:5%; bottom:5%; z-index:1; color:var(--phos); font-size:clamp(16px,2.2vw,24px); text-shadow:0 0 6px rgba(125,255,154,.8); white-space:nowrap; overflow:hidden}
+  .status .c{display:inline-block; width:.55em; height:.9em; background:var(--phos); vertical-align:-.1em; animation:blink 1s steps(1) infinite; box-shadow:0 0 6px var(--phos)}
+  .glow{position:absolute; inset:-30px; z-index:-1; background:radial-gradient(ellipse at center, var(--g, rgba(125,255,154,.18)), transparent 65%); filter:blur(20px); transition:background .6s}
+  .brand{position:absolute; left:40px; bottom:20px; color:#6b6453; font-size:20px; letter-spacing:.2em; text-shadow:0 1px 0 rgba(255,255,255,.45)}
+  .brand b{font-weight:400; color:#4d4739}
+  .knobs{position:absolute; right:40px; bottom:20px; display:flex; gap:14px; align-items:center}
+  .knobs i{width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #d8d0bb, #8e8572); box-shadow:0 1px 2px rgba(0,0,0,.5)}
+  .led{width:9px !important; height:9px !important; background:#3dff6a !important; box-shadow:0 0 8px #3dff6a !important; animation:led 3s infinite}
+  @keyframes led{92%{opacity:1}94%{opacity:.4}96%{opacity:1}}
+  .vents{position:absolute; left:50%; bottom:24px; transform:translateX(-50%); width:120px; height:14px; background:repeating-linear-gradient(90deg, #8f8672 0 3px, transparent 3px 8px); border-radius:3px; opacity:.6}
+  .neck{width:34%; height:22px; margin:0 auto; background:linear-gradient(#9d947e,#7f7764)}
+  .foot{width:58%; height:22px; margin:0 auto; background:linear-gradient(#c8bfa9,#958c76); border-radius:6px 6px 14px 14px; box-shadow:inset 0 2px 0 rgba(255,255,255,.4)}
+
+  footer{display:flex; justify-content:space-between; padding:22px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+
+  /* ---------- popup DOS ---------- */
+  .modal{position:fixed; inset:0; z-index:50; display:none; place-items:center; background:rgba(0,0,0,.7); padding:16px}
+  .modal.on{display:grid}
+  .dlg{background:var(--dos); color:#fff; padding:6px; box-shadow:12px 12px 0 #000; width:min(520px,100%); animation:pop .18s steps(3)}
+  @keyframes pop{from{transform:scale(.6); opacity:0}}
+  .dlg .in{border:4px double #fff; padding:22px 24px 20px}
+  .dlg h3{font-weight:400; font-size:28px; background:#fff; color:var(--dos); display:inline-block; padding:0 10px; margin:-38px 0 14px}
+  .dlg p{font-size:23px; margin-bottom:10px}
+  .dlg .warn{color:#ffff55}
+  .dlg .btns{display:flex; gap:18px; justify-content:center; margin-top:22px}
+  .dlg button{font:inherit; font-size:24px; background:#aaa; color:#000; border:0; padding:4px 18px; cursor:pointer; box-shadow:4px 4px 0 #000}
+  .dlg button:hover,.dlg button:focus-visible{background:#fff; outline:none}
+  .dlg button:active{transform:translate(4px,4px); box-shadow:none}
+  .dlg button u{text-decoration:none; color:#a00}
+
+  @media (max-width:900px){
+    header{padding:16px}
+    main{grid-template-columns:1fr; padding:0 16px; gap:0}
+    .right{order:-1; height:auto; min-height:0; padding:64px 0 10px; z-index:5; background:#000; margin:0 -16px}
+    .right::after{content:""; position:absolute; left:0; right:0; bottom:-40px; height:40px; background:linear-gradient(#000,transparent); pointer-events:none}
+    .crt{width:min(86vw, 50vh)}
+    .bezel{padding:16px 16px 40px; border-radius:18px}
+    .inset{padding:8px; border-radius:14px}
+    .brand{left:20px; bottom:10px; font-size:15px} .knobs{right:20px; bottom:11px; gap:8px} .knobs i{width:12px; height:12px} .vents{display:none}
+    .neck,.foot{height:12px}
+    .left{padding:6vh 0 30vh}
+    .game summary{grid-template-columns:32px 1fr 24px}
+    .game summary .tags{grid-column:2; grid-row:2}
+    .game summary .pm{grid-row:1; grid-column:3}
+    .body{padding-left:46px}
+    footer{padding:18px 16px 24px}
+  }
+  @media (prefers-reduced-motion:reduce){ .screen{animation:none} .screen::before{animation:none} }
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html"><span>←</span> kauã.</a>
+  <nav><a href="index.html#projetos">projetos</a><a href="https://github.com/kaua0f0m" target="_blank" rel="noopener">github</a></nav>
+</header>
+
+<main>
+  <section class="left">
+    <p class="path">C:\KAUA\<b>LEGADO</b>&gt;</p>
+    <h1>Traduções<br>legado<span class="cur"></span></h1>
+    <p class="lead">As primeiras traduções, <b>todas num lugar só</b>. Passe o mouse num jogo para ver no monitor e clique para abrir as curiosidades.</p>
+
+    <article class="letter" id="letter">
+      <p class="lh">C:\LEGADO&gt; type <b>LEIA-ME.TXT</b></p>
+      <div class="paper">
+        <p>Oi! Boas-vindas ao meu repositório de traduções feitas muito tempo antes de qualquer IA existir. Tenho muito orgulho de ter feito algumas delas (outras eu fiz pq me pagaram bem, kkk) e tinha esperança de que um dia pudesse ser contratado por uma empresa maior como a TinyBuild ou alguma de gamelocs.</p>
+        <p>Com as IAs (e parte também por conta dessas empresas mencionadas, que fazem publishers e devs escolherem o seguro ao extraordinário), esse sonho de carreira sumiu. E, para contra-atacar essas empresas, eu mesmo estarei fazendo traduções de IA.</p>
+        <p class="ps">(Se você chegou nesta página sem entrar na principal, <a href="index.html#projetos">volta lá</a> para ver o que eu venho fazendo hoje em dia!)</p>
+        <p class="sig">— Kauã</p>
+      </div>
+    </article>
+
+    <div class="bar">
+      <span id="count">10 jogos</span>
+      <button class="switch" id="nsfw" role="switch" aria-checked="true">
+        <span class="track"><span class="knob"></span></span><span id="nsfwLabel">ocultar +18</span>
+      </button>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <section class="right" aria-label="Monitor de tubo mostrando o ícone do jogo em pixels">
+    <div class="crt">
+      <div class="glow" id="glow"></div>
+      <div class="bezel">
+        <div class="inset"><div class="screen"><canvas id="scr"></canvas><div class="status" id="status"></div></div></div>
+        <span class="brand"><b>KAUÃ</b>-TRON 95</span>
+        <span class="vents"></span>
+        <span class="knobs"><i></i><i></i><i class="led"></i></span>
+      </div>
+      <div class="neck"></div><div class="foot"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Kauã — C:\LEGADO</span>
+  <a href="index.html">← voltar ao início</a>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="dlg"><div class="in">
+    <h3 id="mt">AVISO</h3>
+    <p class="warn" id="mtext">Este jogo tem conteúdo adulto (+18).</p>
+    <p>Você tem 18 anos ou mais e quer ver mesmo assim?</p>
+    <div class="btns"><button id="yes"><u>S</u>im, mostrar</button><button id="no"><u>N</u>ão</button></div>
+  </div></div>
+</div>
+
+<script>
+/* =====================================================================
+   JOGOS — edite aqui.
+   trivia: lista de curiosidades (deixe [] se ainda não tiver)
+   art:    nome de um desenho em pixel (veja ART) — ou img:'icones/x.png'
+   ===================================================================== */
+// links de loja (steam(...) = busca na Steam, usada quando não há link direto)
+const steam = q => ({ label:'Steam', url:'https://store.steampowered.com/search/?term=' + encodeURIComponent(q) });
+const NEKO = 'Às vezes a gente tem que se submeter a algumas coisas como essas para alcançar nossos objetivos monetários… (não que eu odeie esse tipo de jogo, como você pode perceber com algumas traduções da <a href="index.html#projetos">aba principal</a> hahaha)';
+
+const GAMES = [
+  { id:'dude_stop', name:'Dude, Stop', art:'stop', color:'#ff4d4d', tags:[], links:[{label:'Steam', url:'https://store.steampowered.com/app/574560/Dude_Stop/'}], trivia:[
+    'Minha primeira tradução comercial (originalmente não ia ser assim, e ia ser apenas uma tradução de fã). Ganhei apenas a chave do jogo como pagamento, infelizmente.',
+    'Fiz essa tradução também com 3 amigos, que todos se esvaíram para outros lugares da vida.',
+    'Mesmo em 2016, com conhecimento de localização limitado, ainda fico embasbacado com algumas ideias que nós tivemos (como adaptar a briga entre Gif e Jif por Biscoito e Bolacha), ainda que eu quisesse corrigir vários dos problemas que essa tradução tem hoje em dia.' ]},
+  { id:'human_sim', name:'Human Simulator', art:'human', color:'#ffc48a', tags:[], links:[{label:'Steam', url:'https://store.steampowered.com/app/1175060/Human_Simulator/'}], trivia:[
+    'A ordem de exibição dos jogos aqui não é a ordem em que eles foram lançados.',
+    'Fui pago por essa tradução para além da key (e eu não havia gostado do jogo, então pelo menos tenho isso). Eles prometeram que iriam me adicionar como um NPC em algum update ou DLC, mas isso nunca ocorreu.',
+    'Muito feliz de ter conseguido um acrônimo localizado antes das IAs conseguirem fazer isso com facilidade: A.S.S. (Automatic Safety System) virou B.U.N.D.A. (Brutalmente Útil Nexo Defensivo Automático).' ]},
+  { id:'mosaique', name:'Mosaique Neko Waifus', art:'paw', color:'#ff8fc7', tags:['série'], nsfw:true, links:[steam('Mosaique Neko Waifus')], trivia:[
+    NEKO,
+    'Nota: também não lembro qual(is) jogo(s) da série eu traduzi.' ]},
+  { id:'deep_space', name:'Deep Space Waifu', img:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAAuCAYAAABjwOorAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABG9SURBVGhD3ZlrkF3XVed/e+9z9nnc2/f2W/20JD9kRRJRxsGOY4eQpxOwgQoJpICaAZJ5pAYoIDCFGV5m/GGYqqFmgKJmSDGuJMUAmQHK5ZByQcCJHWzHiRNb2LIiWVZHanWrdVvdfW/3vee5H3y4kizJNjAfR/+qU/vu3Xufs9dZa//X/6wWi4uLnusQ8tqB6wUSQAhx1eD10JcA3l8djddD//oOxesR161hYmFhwQsh8N5fdQgv9a9s52cE1WCbMGjibIBSAhU4lPI4UxPWMa9sW7QH4x1aKP7repPYw69P9DmvHPbiM17v/otzBb6uESLGGQFegPCAxbkSGY2x2nFvuP7K/Yv/lzz21kM1R762RjOBnW1IE2i0IE0lWeE4EE7xJreLfasltlaELmDcBAil6IaWHVfyUuL46zDnXPDax9669xydVUN7BDprr44LoMjgTYdneHEpvHLJG+INDbvyDaSxwPQ7VHlJuw2m9gwGEGqIIhAaBlYyY1Pe4WfZX6QsZBGNKgDASjBKEIYKV5WIMOC8yXkyzXkk7aPwtMIuVZpTlxYJOBNgjAcx7IsSpAzZGsSMz4wxyN1raP5KqHa7/cC1g1yTG5qJp9zZ5PwmxIlExw3SpkYEnrJ27JRQhp68qEhQUFe0Qk3oHUVoqCKP1Y6degcvLUU1QGKYrCy3BDETiWdTdDibeaoKPJrSKCwKi8N7TxRA57yjPVIRxg1q+4/Tw2vO2KV23ghujjWn+8t8q28R2pBVQw+NjqZY45EywBiHlxXL52qaCcwaePNYwAk5zaK1pN7h8bysAiSSW6oSISWFgJYOuT0SHMvO87eZ4eU+YOCmm8cpB4YoCsmKHlEo6G/XRAEYC2UR0BoN8eHka/Z9qX3dUFysA36526CYS3ho6yhP9TPCJlQelIRIxwBIBf1BQdKAfQehoWEigFndZnNjks62QYcCBCgB0guscXgEpYcogMO7PF51ORv06KAYbMccf2FA3ocwkDTihJ3+AGshDMEaGGQwOa5weu7arV/GVR5LvOD92QgfyJs0XElvrsmntk7yZHaeaBSEAltHlGWN845iALIBgYJTr/wgo8kFGlGA2+kiwxCEAW0AD06CU5BbUAoCP9yligDIQsFAjLG9PsFbDvwxJhtO8R4a6ZBBVAi2Vgwyy+RUAxeMv8ZTr+uxHxm0uKeexFUlocvpzbb4g+5JnszOEY9BGIfkWc2gD3O74Tce+AhZfZpAHucjPzBHO70AviTLd2g2I7xwFIDHowCNgMohVACqTd/30KXFOodMY/IqJQkP8un/9TjK3oBiL7/73x7nzGkINKhQYmvBILNM7RrBytErnXQVxMLCggdoOsmDvVnGfIC0hqCueG5e8X87L/CSK5EajBuGg1dw7/fD7/z+fRh3jokRD6yT9VdxWJIUrAUpQKoUnED4HLxDOLAIjNJYKRFOooQn9BXOKISYRkbj1JVFyEV+/mce5ZGHoXRQ15pIB2T9jInRhEpMXGsPXCS+yx67Lxvhh7IxnHAMZMmfxF2eTmpu7J/j6z3DxGRCnudYC5/78+/h9rdnIE+QRpbuVodWM6Eoc2oHQQA6BK1AiSagQOTg6uGTAw0qwBrPoCiwuaPswUgEUksMgpHpJsa1OXd2lJeOjvGhDz+OkBBp6PbgpgVBKRauMelVSO89qRf8UN7ACcOSHvDr7Qv8XVxhvWezESNbGsIxLuxAKeDGW1OCsEu/d47BRo7Zkay+kpNtgMjA7oAbgKjBGwPO4V2I8zEODVZAaVF5SZQ54hLaAZgctjuO/oZl9WSPnU6XmekBN91oSAKQdnieR5ohqATvPf6isr/0+1JfCiG4xUUgDMvBDr+fdtmUFw+gEGyKMean54mLjAQYj2CwdRKtLE89AS88v8OJlxwvn4DeBgibEMqUupBkmcZYTe0UxmssMdYm1GWAGThcJtBWkciIJJ1i5TQcfQHOnIJjL8LTT26DzMiKU5QFuArmpzULC7OUbuLyHrkUflf2b1hY8J/sphzXNV9Ia4ZK7GpMJwG3hwWH3z7H/rdt8+4P3QjRBs8+/03OnvXs23czylcksWBqaoILG2ukzZC86LKwbze4jLIqL95Nohyo2rOxdoFYhWxtFnTOVczP7qWXdxE6wqKxOmfvwRhTt3nsLwVPPB7w6F8vkZsG7jVJ6mqIxcVFP2a57KVLuESbALOhZ0/3LLe9J+W77pujW59hebPCKrjr7u/jK195mrWVC9TlkMGzAtqj0BiBxiiEEQSXJJ4H6QALO1uwvgbvuHOC+akDfOmxv2Oz5wlTKAEj4aY3w8JCi6C8ic88dIYnvhoghYAgeMP9ciUr/mO4a65Bwx7n+A5ELVg6A+sb8OnP/BQf+bFP8CMf/gG++OgpAg2mgO0S2g3IS2iPw9wcCDf8RnJumJtOLEFdQxzDU0/8LvsPfDffuecwy+eG2rNTQTMFHw3X7J6FsQQSYP1sk83ojakeQDx+94e9tzVFsYWiRnqP8g6tJEVgOFV22HXbGB+8/w7YHVLVgs/98dP81Cee42Mf/1H+42/+Jsury/yrH/0oL59cZ2E6RuLJ8hILfPL+G/jYx95DO6mQGJxvYt0oTzx9in/ziYfZWIeP/8sf5rd+47/zraMn+Hf//l/z8qmTTE43cGLAVh9aY/CNZ3+WduzR3VEeevAR9CnJRKaJjSV0IFB4Xv3SUQ/u2vfAglbcMtpg3BsmlGRvs8ViEDMlPc0oR02sM3FHTha9TKK7nD21xsN/sc2LL75MOjfDBz/0YY6fWOGFF/4elEaImEA1GFQZ93yox+G3bRPFR/HhMdBLqLTD4u42X3rsBMsn4ZlvHOWu99zHu7/3XaxuFnzz+efxfsiogx1PpOAXfnmcRnwS2VmnOnKM+Y7kO9Qkc04wJzSzoWYmDNkVhswFIeq7VrceqMqckUZEpAO8DMBBlZXIUUl6MGb0rZLxt5QUwRkaqaHdHGffzfv4yy+e4qkjf4NOI37tV36F6YkRHv7zL2BNTp1lvPtdcP+v3kWoT5JEJVoZnDJUZUagBTfMj/LoIxcIFDz+zJfRjZT/8PM/zb59c/zJH/0pW7nnzfvhoc/ey+ItKyjzCsJ60i3LWD1BsV6jRUQoAjxD2eUvXrKRNuj1eqysrGILQ0slKCfJXUm3sU15YEB1aw8mSrQusWwwe1PGR34i5S8efS+tFI4d+TzN4CwHD0QcuBUO7YN774HffvD7mMSy9kLGiW/WvPJSk289l/D1p7ZYXVnmrXfM8f7vhd17oN89zfGjn8OY59lzQ59bD8DHfhIe+tN3cfjOHZw4T0EBrQFyj0HcULOTdCldQRjoa48Y4msLt/m11RWiKGL33AKL0xM4X9Mtumzv3mD7PevIQ13ueOcctVmjdg6lI7zcRW32UFSHEG6ObHNA0e+T6BrcBo1oh/HxmAd+9WE++1mYnIO0Cf1tWF6Dn7sffvH+uzm33MDWU1SVJtIjCKEYaSqEXMcF54gb55DhJlXdIcAT2TYnH9sgOTZP9lVFcqbNQrybvMrxwuEuEqO8ac9uFvfcwvlcsbzpyIzA4VEIbGUIwwDnYHN1E2nU8G2oEi8uIORxkvCv0PZ/k9Z/xkzyN4w3vsjExNcI2kegOUCksJ1Ddx26a5BvgtuBQReErWiNHmdu/huMjnyZKPwCjeTz6OgRosbjxPGzCHkKyQY69NTWsJVvIEagUBkD20dpRVleypGvQkopmZmZZXZ6kX6WIQKBCgRBGKGDAB164gCUc2BByGEM4zNCsYl2pwjMMRrJy6TJcaJkiTA5x8h4RSV7rHWHAjYvYburyPshjfSijlQVUiwj+BYuX0Lkr2AHJ9m5cIJQnCUUm0gGQIFzBufAuiH9i38iSQ21YiTYPaUZjQoUBUJ6JAohJKHcIVAgRQXCDA/pRSgHQSlxGZBA3XC4JMbHKTkOLeDf/szdfOrTH2ByTtEvLVOLnt/+vfv48Z+8k2y7QxwM582OwUw7YFerxbhuYHohgWsgDeBevYI6ICoUUZ0SmRjpX79EIHUU4ExBohzzU6MIU+Nqi/UGYTzxoEU8AGU1XHET6cEZg8ktWJABEIHUBhnUWJuxwzIHDgnuuW+KWw95mmOw7zsM77vvBmbnBVFSDxWJADQwqiEJsLbClBXeiWHp0wqkUQRVTFi0Ccs2cdkkMDGCEHspiq6AuHDX93hXOyKfILE4SlA1PrRspZucHV0lW9xk/E4YuRla09BoQxpBYEPMNvR7NaN7EggMeVUj9fAFVzVEoca5BbqrN1JmKXGSMT5VEMVreM5SuQItQVTgSpAStraGX8vxSIiOQ6rCUmeK1ZMZ28vQ+SosdnaRro0Rl+NEroHyDumvIA+EQ8hXzZVCAA7nS7QJGM8XCDstgjwgsKAlpFqR9SEva4xziDDg6HM5W2uKRLcIfEhCQhJATEXIedqjK0xMLjPSXkEGa2z2ztEvDFoGWCdBz9ArYk6eAZWCCcBLg/MCHY5gc0lTjpGUUyRZjNqISOsGUoaXjbkSw9iSniqoKZWjVkOrlYOoUjQyQSuPifoxYalJRYMgbBFo2O5D7i3tuZt46htw+zsKfuHntnnpSBNXzVP1Rsi2UvrnPb4eoIIM5ys2tzIEE+SDCbL8Bo4fa/JLn1zjbXcUfOlxCNO9FDXkpaesDFVZI9DD49CPaVUTjGVjtIoW2gxrl9dCbNz1fu+FxF5kBYlB+YrQG5wwVIFjc+QCnV2nGXkrjB6Ckd0QTQ6VfGcJTpyAd37wXn7841/g0c/D3Azc9i+gvzMUunkOSQt0DEUF3e7wC1tKWFyE4y/B8rfhfe+F//GH7+KZr32ZXdMwPwtaCVSdsLFU0Tli6D6rmN3aze71ORrFCJk21GoYhtJz2Xuie/c93gPO+2GCkw7lHJGrUd5hBWRRwXmxQnobmMPr7LozQk6W6DBm9bmClbPwpu8+jE/28j9/7zH+y3/ehnBI8SoAZ4cEIeVQ5Rs7VPhCgtbga3jwP03z0Y/ejZSneObJI+y7GQ7tT9nuZNhuxLefLem/JGktTTO2NcNYtYvQBjhZDEMWiRfXGCa9A2fx0lFLEFgiA+qiF610iJbmlDvK+sI6b/nhNmNvn4JyB7ZjaM/xxSefZnLxZm65+QMcee48gZ4gKwUqbOCsBxyBFHgMztQ4b5HSEuoAazfYvz/lzNLTrJ05yTvvnGckAaIUKo0/lvHYHy3R6kyy0F+kXYxjS430IEQGwmKFwiOvNkw5R2SKYbksGP4xtKCcgouTDWCbA1bUMRpvsvTHMjYCmL4FJvbOcHJti1I49t44w+T4GI10gqL06DDGOocXBqnAe4uxFu8NQnp0qDE2Y+n0MTorGUENh26cZuXFDgxgKpkmW5JsPQ3j2Ryjto22EdaCp0aKAQCO6LJh364rRPfu93nlIDIFCEehJFYqlAPp5TDDe4kXEhEYNvKzqOmKpfo03SbM3Anp7halUGT0qITj0GFFa7RNWeaEOsB5gxcOKUE6i7EGAzgpCSKNLSVPPJbR1jCfasRGyCvPDMjOga5hwjTZy0HiQQtfWnAeEYCQbvjfCsATgZfkOO5dPT00THpQfpjaL9f6veRKFvXeIj2ERlPLin7QZ6fZY3u8S3+kh2/V2BHYd/soPdclbMGNB0aAPs55HIIYCfUwodNOsVLxyvIOdgDmfMjS12vSLkwUYwTrIWmZoo0mNDG6ahLY6LKU8t4hhMTLi1Wai+LhE+srfKXIhoYBSH9xgrh64qUxi0HZkKhOEUJhtaMf9OnqC/T1BQrVIZmTtPe3WTEbJIuweDDEyXrIuB4iIKmHtsk27JTwzFNQr8OtzWk6z2+jO5opO8Vo3SaqNcqDdBLh5bA+eQkX93el4vid7gU+tbMFgDh757uHhr1ufWqIYe1leAcJCIah4FxF5Uu8L1CiwrdqNtIeZ4Me9TxMH4RKQwUoC6EYrjd2mITrHjzxf8CtwFtGNfsnD9KoG9heTSJjJAYrKxCO0IYI/8aGfTkf8Eub51+t3f9zijn/P0JeWUm9nlp5ZSX1emqv8til63ro/wOycK9TuVJczQAAAABJRU5ErkJggg==' /* icones/deep-space-waifus.png embutido */, color:'#ffd23f', tags:['série'], nsfw:true,
+    links:[], noLinks:'fora da Steam — abandonware', trivia:[
+    NEKO,
+    'Descobri em algum momento que o dev era brasileiro, o que torna essa tradução muito esquisita overall. Não lembro em específico de qual jogo que eu traduzi, mas não foi a série inteira.',
+    'Queira o dev goste que eu fale disso ou não: SUPOSTAMENTE (foco no SUPOSTAMENTE) ele deslistou o jogo da Steam (por conta disso: abandonware, gnt, pode piratear!) para poder começar com uma ficha limpa e fazer o orgulho indie brasileiro <a href="https://store.steampowered.com/search/?term=MULLET+MADJACK" target="_blank" rel="noopener">Mullet Madjack</a>.' ]},
+  { id:'progressbar95', name:'Progressbar95', art:'progress', color:'#4f7dff', tags:[],
+    links:[{label:'Steam', url:'https://store.steampowered.com/app/1304550/Progressbar95/'},
+      {label:'Google Play', url:'https://play.google.com/store/apps/details?id=com.spookyhousestudios.progressbar95&hl=en-US'},
+      {label:'App Store', url:'https://apps.apple.com/us/app/progressbar95-retro-arcade/id1474374114'}], trivia:[
+    'A primeira tradução de um "game-as-a-service" que eu fiz. Me rendeu um bom dinheiro e é de um nicho que eu adoro (PCs e SOs antigos). Também consegui abrasileirar o jogo de forma muito legal aqui.',
+    'Seja pura coincidência ou não, ao redor do lançamento do GPT-3.5 e do ChatGPT, eu fui recebendo traduções de forma cada vez menos frequente. Leia isso como quiser.',
+    'Pelo menos meu nome segue nos créditos :)' ]},
+  { id:'old_school', name:'Old School Musical', art:'arrows', color:'#c77dff', tags:[], links:[{label:'Steam', url:'https://store.steampowered.com/app/398030/Old_School_Musical/'}], trivia:[
+    'Outro que eu traduzi com meus 3 amigos do Dude, Stop. A parte de ritmo dele não é a mais agradável do mundo, mas vale sua compra pela história e pelos visuais incríveis em pixel art.',
+    'Os devs haviam nos falado que passaram nossa tradução para uma equipe profissional pós-lançamento, e que por isso nossa tradução ia ser removida, mas que eles ainda iam manter nossos créditos in-game e permitir que a gnt use o jogo no nosso portfólio (por isso que ele está aqui!).',
+    'De forma até irônica, eu não sei se a equipe profissional mudou alguma coisa, pois ainda sinto que todos os textos que a gnt escreveu ainda estão lá…' ]},
+  { id:'protagonism', name:'Protagonism', art:'narrator', color:'#ffe066', tags:['demo'], links:[{label:'Steam (demo)', url:'https://store.steampowered.com/app/1204790/Protagonism/'}], trivia:[
+    'No desespero de encher meu portfólio, cheguei a esse jogo, do qual traduzi a demo em uma noite e recebi o pagamento e uma chave para a versão completa.',
+    'Spoiler: ela nunca aconteceu e, se acontecer, a IA com certeza vai tomar o meu lugar.',
+    'Hoje tenho um jogo com um "Jogo ainda não lançado" no botão de play e, sinceramente, guardo como relíquia.' ]},
+  { id:'indiecalypse', name:'Indiecalypse', art:'gamepad', color:'#ff8a3d', tags:[], links:[{label:'Steam', url:'https://store.steampowered.com/app/1123610/Indiecalypse/'}], trivia:[
+    'Mais um da tropa do Dude, Stop! Um jogo sobre fazer jogos, numa pegada episódica meio Telltale, mas com inúmeros minigames espalhados pela história.',
+    'O hype não correspondeu, na minha opinião, e ele é um jogo só OK (o que hoje em dia, com tantos jogos melhores que OK…).' ]},
+  { id:'goop_loop', name:'Goop Loop', art:'goopring', color:'#7dff6a', tags:[], links:[{label:'Steam', url:'https://store.steampowered.com/app/1454550/Goop_Loop/'}], trivia:[
+    'Eu e outro tradutor, que estávamos no Discord do dev por conta da live do Felps jogando o jogo, decidimos pegar o jogo para traduzir.',
+    'Valeu meramente a key do jogo, e conseguimos localizar várias coisas legais para o português :)' ]},
+  { id:'aura', name:'AURA: Hentai Cards', art:'card', color:'#ff4d6d', tags:[], nsfw:true, links:[{label:'Steam', url:'https://store.steampowered.com/app/2440200/AURA_Hentai_Cards/'}], trivia:[
+    NEKO,
+    'Um adendo: traduzi apenas o jogo base e a 1ª DLC. A 2ª e a 3ª foram feitas por outra pessoa/time/(IA?).' ]},
+];
+
+/* ---------- pixel art original (cada letra = uma cor) ---------- */
+const ART = {
+  stop:{ pal:{W:'#f2f2f2',R:'#e3262f',r:'#b3141c',G:'#8a8f99'}, rows:[
+    '.....WWWWWW.....','....WRRRRRRW....','...WRRRRRRRRW...','..WRRRRRRRRRRW..','.WRRRRRRRRRRRRW.','WRRRRRRRRRRRRRRW',
+    'WRRWWWWWWWWWWRRW','WRRWWWWWWWWWWRRW','WRRWWWWWWWWWWRRW','WRRRRRRRRRRRRRRW','.WrRRRRRRRRRRrW.','..WrRRRRRRRRrW..',
+    '...WrrRRRRrrW...','....WrrrrrrW....','.....WWWWWW.....','.......GG.......','.......GG.......','.......GG.......']},
+  human:{ pal:{H:'#5b3a1e',S:'#f1c08b',K:'#111',M:'#c2604a',B:'#3d7bff',b:'#2a56b8',D:'#3a3f55',F:'#222'}, rows:[
+    '......HHHH......','.....HHHHHH.....','....HHHHHHHH....','....HSSSSSSH....','....SKSSSSKS....','....SSSSSSSS....',
+    '.....SSMMSS.....','......SSSS......','...BBBBBBBBBB...','..BBBBBBBBBBBB..','..SBBBBBBBBBBS..','..SBBbBBBBbBBS..',
+    '..S.BBBBBBBB.S..','....BBBBBBBB....','....DDDD.DDD....','....DDD..DDD....','....DDD..DDD....','...FFFF..FFFF...']},
+  paw:{ pal:{P:'#ff8fc7',p:'#ffc4e1',D:'#d1609a'}, rows:[
+    '.....PPP...PPP.....','....PpPPP.PpPPP....','....PPPPP.PPPPP....','.PP..PPP...PPP..PP.','PpPP...........PpPP',
+    'PPPP...........PPPP','.PPD....PPP....DPP.','.......PpPPP.......','.....PPpPPPPPP.....','....PPPPPPPPPPP....',
+    '...PPPPPPPPPPPPP...','...PPPPPPPPPPPPP...','....PPPPPPPPPPP....','.....DPPP.PPPD.....']},
+  progress:{ pal:{T:'#1a3fbf',t:'#5577e6',W:'#fff',X:'#c0c0c0',L:'#c0c0c0',K:'#404040',b:'#1a3fbf',H:'#ffffff'}, rows:[
+    'TTTTTTTTTTTTTTTTTTTTTT','TtttttttttttttttXXXXXX','TTTTTTTTTTTTTTTTXKXXKX','LLLLLLLLLLLLLLLLLLLLLL','LHHHHHHHHHHHHHHHHHHHHL',
+    'LH..................HL','LH.KKKKKKKKKKKKKKKK.HL','LH.Kbb.bb.bb.bb...K.HL','LH.Kbb.bb.bb.bb...K.HL','LH.KKKKKKKKKKKKKKKK.HL',
+    'LH..................HL','LHHHHHHHHHHHHHHHHHHHHL','LLLLLLLLLLLLLLLLLLLLLL']},
+  arrows:{ pal:{A:'#c77dff',B:'#4dd2ff',C:'#7dff6a',D:'#ff5c8a'}, rows:[
+    '...A.......BBB..','..AA.......BBB..','.AAAAAA....BBB..','AAAAAAA..BBBBBBB','.AAAAAA...BBBBB.','..AA.......BBB..','...A........B...',
+    '................',
+    '...C........D...','..CCC.......DD..','.CCCCC..DDDDDD..','CCCCCCC.DDDDDDD.','..CCC...DDDDDD..','..CCC.......DD..','..CCC.......D...']},
+  star:{ pal:{Y:'#ffe066',y:'#e0a800',W:'#fff8c4'}, rows:[
+    '.......Y.......','.......Y.......','......YWY......','......YWY......','.....YYYYY.....','YYYYYYYYYYYYYYY',
+    '.YYYYYYYYYYYYY.','..YYYYYYYYYYY..','...YYYYYYYYY...','...yYYYYYYYy...','..yYYYY.YYYYy..','..yYYy...yYYy..','.yYy.......yYy.','.yy.........yy.']},
+  bomb:{ pal:{K:'#3c4058',k:'#262838',H:'#9aa3c7',F:'#ffe066',O:'#ff7a1a',W:'#c8a46e'}, rows:[
+    '..........F.O.','.........FOF..','........W.F...','.......W......','......W.......','....KKKK......',
+    '..KKKKKKKK....','.KKHHKKKKKK...','KKHHKKKKKKKK..','KKHKKKKKKKKK..','KKKKKKKKKKKk..','KKKKKKKKKKKk..',
+    '.KKKKKKKKKk...','.kKKKKKKKkk...','..kkKKKKkk....','....kkkk......']},
+  goop:{ pal:{G:'#5fe34a',L:'#c7ff9e',D:'#2f9e2a',K:'#0b1a0b',W:'#ffffff'}, rows:[
+    '.......GG.......','......GGGG......','.....GGLGGG.....','....GGLLGGGG....','...GGGGGGGGGG...','..GGGGGGGGGGGG..',
+    '..GGKKGGGGKKGG..','.GGGKWGGGGKWGGG.','.GGGKKGGGGKKGGG.','GGGGGGGGGGGGGGGG','GGGGGGDDDDGGGGGG','GGGGGGGDDGGGGGGG',
+    '.GGGGGGGGGGGGGG.','DDGGDDGGGGDDGGDD','.D..DD.DD.DD..D.']},
+  card:{ pal:{K:'#8a8f99',W:'#f4f4f4',R:'#e3262f',P:'#ff8fc7'}, rows:[
+    '.KKKKKKKKKKKK....','KWWWWWWWWWWWWK...','KWRWWWWWWWWWWK...','KWWWWWWWWWWWWK...','KWWRRWWWRRWWWK...','KWRRRRWRRRRWWK...',
+    'KWRRRRRRRRRWWK...','KWWRRRRRRRWWWK.PP','KWWWRRRRRWWWWKPPPP','KWWWWRRRWWWWWKPPPP','KWWWWWRWWWWWWK.PP.',
+    'KWWWWWWWWWWRWK..P.','KWWWWWWWWWWWWK....','.KKKKKKKKKKKK.....']},
+  floppy:{ pal:{B:'#3d4a6b',b:'#2a3450',M:'#b8bcc6',m:'#8a8f99',L:'#ecebe4',l:'#9aa4b2'}, rows:[
+    'BBBMMMMMMMMMMBBB.','BBBMMMMmmMMMMBBBB','BBBMMMMmmMMMMBBBB','BBBMMMMmmMMMMBBBB','BBBMMMMMMMMMMBBBB','BBBBBBBBBBBBBBBBB',
+    'BBBBBBBBBBBBBBBBB','BBLLLLLLLLLLLLLBB','BBLlllllllllllLBB','BBLLLLLLLLLLLLLBB','BBLlllllllLLLLLBB','BBLLLLLLLLLLLLLBB','bbLLLLLLLLLLLLLbb']},
+  adult:{ pal:{R:'#ff5555'}, rows:[
+    '.R...RRR.......','RR..R...R...R..','.R..R...R...R..','.R...RRR..RRRRR','.R..R...R...R..','.R..R...R...R..','RRR..RRR.......']},
+};
+
+/* ---------- monitor ---------- */
+const GW = 60, GH = 40;
+const scr = document.getElementById('scr'), sx = scr.getContext('2d'), statusEl = document.getElementById('status'), glowEl = document.getElementById('glow');
+const N = GW*GH, cur = new Array(N).fill(null), tgt = new Array(N).fill(null), dly = new Float32Array(N);
+let t0 = 0, animating = false, noise = false, cell = 8;
+const SCR = '#%&@$?!*+=<>/\\|{}[]01ABCDEFXYZ▓▒░';
+
+function artGrid(a){
+  const rows = a.rows, h = rows.length, w = Math.max(...rows.map(r => r.length));
+  const s = Math.max(1, Math.floor(Math.min((GW-4)/w, (GH-4)/h))), ox = Math.floor((GW - w*s)/2), oy = Math.floor((GH - h*s)/2);
+  const g = new Array(N).fill(null);
+  rows.forEach((r, y) => [...r].forEach((ch, x) => { const c = a.pal[ch]; if (!c) return;
+    for (let yy = 0; yy < s; yy++) for (let xx = 0; xx < s; xx++) g[(oy + y*s + yy)*GW + ox + x*s + xx] = c; }));
+  return g;
+}
+const imgCache = {};
+function imgGrid(src){
+  if (imgCache[src]) return Promise.resolve(imgCache[src]);
+  return new Promise(res => { const im = new Image(); im.onload = () => {
+    const k = Math.min(1, (GW-2)/im.width, (GH-2)/im.height), w = Math.max(1, Math.round(im.width*k)), h = Math.max(1, Math.round(im.height*k));
+    const s = Math.max(1, Math.floor(Math.min((GW-2)/w, (GH-2)/h)));
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const g2 = c.getContext('2d'); g2.imageSmoothingEnabled = false; g2.drawImage(im, 0, 0, w, h);
+    let d; try { d = g2.getImageData(0,0,w,h).data; } catch(e){ return res(artGrid(ART.letter)); }
+    const g = new Array(N).fill(null), ox = Math.floor((GW - w*s)/2), oy = Math.floor((GH - h*s)/2);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){ const i = (y*w+x)*4; if (d[i+3] < 100) continue;
+      const col = `rgb(${d[i]},${d[i+1]},${d[i+2]})`; for (let yy = 0; yy < s; yy++) for (let xx = 0; xx < s; xx++) g[(oy+y*s+yy)*GW + ox+x*s+xx] = col; }
+    res(imgCache[src] = g); }; im.onerror = () => res(artGrid(ART.floppy)); im.src = src; });
+}
+
+function resize(){
+  const r = scr.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+  scr.width = r.width*dpr; scr.height = r.height*dpr; sx.setTransform(dpr,0,0,dpr,0,0);
+  cell = Math.min(r.width/GW, r.height/GH); draw(performance.now());
+}
+
+function lum(c){ const m = c.match(/\d+/g); let r, g, b;
+  if (m && c.startsWith('rgb')) [r,g,b] = m.map(Number); else { const n = parseInt(c.slice(1),16); r = n>>16; g = n>>8&255; b = n&255; }
+  return (r*.3 + g*.59 + b*.11)/255; }
+const lumCache = {}; const L = c => lumCache[c] ??= lum(c);
+
+function draw(now){
+  const r = scr.getBoundingClientRect(), W = r.width, H = r.height;
+  const ox = (W - cell*GW)/2, oy = (H - cell*GH)/2, t = (now - t0)/1000;
+  sx.clearRect(0,0,W,H);
+  sx.font = `${cell*1.35}px VT323`; sx.textAlign = 'center'; sx.textBaseline = 'middle';
+  let busy = false;
+  for (let y = 0; y < GH; y++) for (let x = 0; x < GW; x++){
+    const i = y*GW + x, px = ox + x*cell, py = oy + y*cell;
+    let c = cur[i], scramble = false;
+    if (animating){ const d = dly[i]; if (t < d) c = cur[i]; else if (t < d + .14){ c = tgt[i] || cur[i]; scramble = !!c; busy = true; } else c = tgt[i]; if (t < d) busy = true; }
+    if (noise && !c && Math.random() < .5){ const v = 20 + Math.random()*45|0; sx.fillStyle = `rgb(${v},${v+6},${v})`; sx.fillRect(px, py, cell, cell); continue; }
+    if (!c){ sx.fillStyle = '#16301c'; sx.fillRect(px + cell*.45, py + cell*.45, Math.max(1, cell*.12), Math.max(1, cell*.12)); continue; }
+    sx.shadowColor = c; sx.shadowBlur = cell*.6;
+    if (scramble){ sx.fillStyle = c; sx.fillText(SCR[Math.random()*SCR.length|0], px + cell/2, py + cell/2); sx.shadowBlur = 0; continue; }
+    sx.fillStyle = c; sx.fillRect(px + .5, py + .5, cell - 1, cell - 1);
+    sx.shadowBlur = 0;
+    // textura de "caractere": ▓ e ▒ nas cores mais escuras
+    const l = L(c);
+    if (l < .55){ sx.fillStyle = 'rgba(0,0,0,.28)'; const q = cell/4; for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) if ((a + b) % 2 === (l < .3 ? 0 : (a % 2))) sx.fillRect(px + a*q + .5, py + b*q + .5, q*.6, q*.6); }
+  }
+  sx.shadowBlur = 0;
+  if (animating && !busy){ animating = false; for (let i = 0; i < N; i++) cur[i] = tgt[i]; }
+  if (animating || noise) requestAnimationFrame(draw);
+}
+
+function show(grid, label, color, withNoise = false){
+  for (let i = 0; i < N; i++){ tgt[i] = grid[i]; const y = (i / GW)|0; dly[i] = y*.012 + Math.random()*.12; }
+  t0 = performance.now(); const wasIdle = !animating && !noise; animating = true; noise = withNoise;
+  glowEl.style.setProperty('--g', color ? color + '33' : 'rgba(125,255,154,.18)');
+  typeStatus(label);
+  if (wasIdle) requestAnimationFrame(draw);
+}
+let typeTimer = 0;
+function typeStatus(text){
+  clearInterval(typeTimer); let k = 0; const base = 'C:\\LEGADO&gt; ';
+  statusEl.innerHTML = base + '<span class="c"></span>';
+  if (!text) return;
+  typeTimer = setInterval(() => { k++; statusEl.innerHTML = base + text.slice(0, k) + '<span class="c"></span>'; if (k >= text.length) clearInterval(typeTimer); }, 28);
+}
+// Protagonism: o narrador (balão) falando com o protagonista
+ART.narrator = { pal:{K:'#8a8f99',W:'#f4f4f4',Y:'#e0a800',H:'#5b3a1e',S:'#f1c08b',k:'#111',B:'#c0392b',D:'#3a3f55'}, rows:[
+  '....KKKKKKKKKKKK....','...KWWWWWYYWWWWWK...','...KWWWWWYYWWWWWK...','...KWWWWWYYWWWWWK...','...KWWWWWWWWWWWWK...','...KWWWWWYYWWWWWK...',
+  '....KKKKKWKKKKKK....','........KWK.........','........KK..........','.......HHHH.........','......HSSSSH........','......SkSSkS........',
+  '......SSSSSS........','.......SSSS.........','.....BBBBBBBB.......','.....SBBBBBBS.......','......BBBBBB........','......DD..DD........']};
+
+// Indiecalypse: controle rachado pegando fogo
+ART.gamepad = (() => {
+  const rows = [
+    '..........O.O.........','.........OFOFO........','..........FYF.........',
+    '....KKKKKKKKKKKKKK....','..KKKKKKKKKKKKKKKKKK..','.KKKKGKKKKKKKKKKRKKKK.','KKKGGGKKKKKKKKKYKBKKKK','KKKKGKKKKMKKMKKKGKKKKK',
+    'KKKKKKKKKKKKKKKKKKKKKK','KKKKKKKKKKKKKKKKKKKKKK','KKKKKK..........KKKKKK','.KKKK............KKKK.','..KK..............KK..'].map(r => [...r]);
+  [[3,11],[4,10],[5,11],[6,12],[7,11],[8,12],[9,11]].forEach(([y,x]) => rows[y][x] = '.');
+  return { pal:{K:'#4a4f6a',G:'#c9cde0',M:'#8a8f99',R:'#e3262f',Y:'#ffd23f',B:'#4f7dff',O:'#ff7a1a',F:'#ffb000'}, rows:rows.map(r => r.join('')) };
+})();
+
+// Goop Loop: um anel de gosma (o "loop") com pingos
+ART.goopring = (() => {
+  const W = 20, H = 18, cx = 9.5, cy = 8.5, rows = [];
+  for (let y = 0; y < H; y++){ let r = '';
+    for (let x = 0; x < W; x++){
+      const d = Math.hypot(x - cx, (y - cy)*1.05), a = Math.atan2(y - cy, x - cx);
+      if (d <= 8.6 && d >= 4.6){ r += (d > 7.2 && a < -1.2 && a > -2.9) ? 'L' : (d < 5.8 && a > .2 && a < 2.6) ? 'D' : (a > .3 && a < 1.6 && d > 7.4) ? 'D' : 'G'; }
+      else if ((x === 7 && y === 17) || (x === 12 && (y === 17)) || (x === 13 && y === 16)) r += 'G';
+      else r += '.';
+    } rows.push(r); }
+  return { pal:{G:'#5fe34a',L:'#c7ff9e',D:'#2f9e2a'}, rows };
+})();
+
+// cartinha (envelope com selo de coração) — gerada por código
+ART.letter = (() => {
+  const W = 25, H = 17, c = (W-1)/2, rows = [];
+  const heart = ['.RR.RR.','RRRRRRR','RRRRRRR','.RRRRR.','..RRR..','...R...'];
+  for (let y = 0; y < H; y++){ let r = '';
+    for (let x = 0; x < W; x++){
+      const hy = y - 7, hx = x - (c - 3);
+      if (hy >= 0 && hy < heart.length && hx >= 0 && hx < 7 && heart[hy][hx] === 'R'){ r += (hy < 2 && (hx === 1 || hx === 4)) ? 'P' : 'R'; continue; }
+      const edge = x === 0 || x === W-1 || y === 0 || y === H-1;
+      const flap = y <= 9 && Math.abs(Math.abs(x - c) - (c - y*c/9)) < .75;
+      const low = y >= 11 && Math.abs(Math.abs(x - c) - ((y - 11)*c/(H - 12)) - 2) < .6 && Math.abs(x - c) > 5;
+      r += edge || flap ? 'w' : low ? 's' : 'W';
+    } rows.push(r); }
+  return { pal:{W:'#f3ead7', w:'#a8977a', s:'#d6c8ad', R:'#e3262f', P:'#ff8a8a'}, rows };
+})();
+const IDLE = () => show(artGrid(ART.letter), 'type LEIA-ME.TXT', '#e3262f');
+document.getElementById('letter').addEventListener('mouseenter', () => { clearTimeout(leaveT); active = null; document.querySelectorAll('.game').forEach(d => d.classList.remove('hot')); IDLE(); });
+
+/* ---------- NSFW ---------- */
+let hideNSFW = true;
+try { if (localStorage.getItem('legado-nsfw') === 'show') hideNSFW = false; } catch(e){}
+const censored = g => g.nsfw && hideNSFW;
+
+const modal = document.getElementById('modal'), yes = document.getElementById('yes'), no = document.getElementById('no');
+let onYes = null, lastFocus = null;
+function ask(text, cb){ document.getElementById('mtext').textContent = text; onYes = cb; lastFocus = document.activeElement; modal.classList.add('on'); no.focus(); }
+function closeModal(ok){ modal.classList.remove('on'); const f = onYes; onYes = null; if (ok && f) f(); else lastFocus?.focus(); }
+yes.onclick = () => closeModal(true); no.onclick = () => closeModal(false);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(false); });
+addEventListener('keydown', e => { if (!modal.classList.contains('on')) return;
+  const k = e.key.toLowerCase(); if (k === 's'){ e.preventDefault(); closeModal(true); } if (k === 'n' || k === 'escape'){ e.preventDefault(); closeModal(false); } });
+
+const sw = document.getElementById('nsfw'), swl = document.getElementById('nsfwLabel');
+function syncSwitch(){ sw.setAttribute('aria-checked', String(hideNSFW)); swl.textContent = hideNSFW ? 'ocultar +18: ligado' : 'ocultar +18: desligado'; }
+function setHide(v){ hideNSFW = v; try{ localStorage.setItem('legado-nsfw', v ? 'hide' : 'show'); }catch(e){} syncSwitch(); active = null; renderList(); }
+const ASK18 = 'Esta página tem jogos com conteúdo adulto (+18). Isso vai mostrar todos eles.';
+function askShowAll(after){ ask(ASK18, () => { setHide(false); after && after(); }); }
+sw.onclick = () => { if (hideNSFW) askShowAll(); else setHide(true); };
+
+/* ---------- lista ---------- */
+const list = document.getElementById('list'); let active = null, leaveT = 0;
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+
+async function preview(g){
+  clearTimeout(leaveT); if (active === g) return; active = g;
+  document.querySelectorAll('.game').forEach(d => d.classList.toggle('hot', d.dataset.id === g.id));
+  if (censored(g)){ show(artGrid(ART.adult), 'censurado.exe', '#ff5555', true); return; }
+  const grid = g.img ? await imgGrid(g.img) : artGrid(ART[g.art]);
+  if (active === g) show(grid, g.id + '.exe', g.color);
+}
+function unpreview(){ clearTimeout(leaveT); leaveT = setTimeout(() => { if (document.querySelector('.game[open]')) return; active = null; document.querySelectorAll('.game').forEach(d => d.classList.remove('hot')); IDLE(); }, 400); }
+
+function renderList(){
+  const open = new Set([...document.querySelectorAll('.game[open]')].map(d => d.dataset.id));
+  list.innerHTML = '';
+  GAMES.forEach((g, i) => {
+    const c = censored(g), d = document.createElement('details');
+    d.className = 'game' + (c ? ' censored' : ''); d.dataset.id = g.id; if (open.has(g.id) && !c) d.open = true;
+    const tags = [...(g.nsfw ? ['<span class="tag x">+18</span>'] : []), ...g.tags.map(t => `<span class="tag">${esc(t)}</span>`)].join('');
+    const nm = c ? `<span class="nm" data-mask="▓▓▓▓▓▓▓▓▓▓▓▓"></span>` : `<span class="nm">${esc(g.name)}</span>`;
+    // curiosidades aceitam HTML (links etc.)
+    const triv = c ? '' : g.trivia.length ? `<ul>${g.trivia.map(t => `<li>${t}</li>`).join('')}</ul>` : `<p class="empty">&gt; sem curiosidades ainda. em breve!</p>`;
+    const links = c ? '' : `<div class="links"><span class="prompt">C:\\LEGADO\\${g.id.toUpperCase()}&gt; dir /lojas</span>` +
+      (g.links && g.links.length ? g.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">[ ${esc(l.label)} ↗ ]</a>`).join('') : `<span class="na">${esc(g.noLinks || 'sem loja no momento')}</span>`) + `</div>`;
+    d.innerHTML = `<summary><span class="n">${String(i+1).padStart(2,'0')}</span>${nm}<span class="tags">${tags}</span><span class="pm">+</span></summary>
+      <div class="body">${c ? '' : `<p class="prompt">C:\\LEGADO\\${g.id.toUpperCase()}&gt; type curiosidades.txt</p>`}${triv}${links}</div>`;
+    if (c) d.dataset.id = 'x' + i;
+    const s = d.querySelector('summary');
+    s.addEventListener('mouseenter', () => preview(g));
+    s.addEventListener('focus', () => preview(g));
+    s.addEventListener('mouseleave', unpreview);
+    s.addEventListener('click', e => {
+      if (censored(g)){ e.preventDefault(); askShowAll(() => {
+        const nd = list.querySelector(`[data-id="${g.id}"]`); nd.open = true; preview(g); nd.querySelector('summary').focus(); }); return; }
+    });
+    d.addEventListener('toggle', () => { if (d.open){ list.querySelectorAll('.game[open]').forEach(o => { if (o !== d) o.open = false; }); active = null; preview(g); } });
+    list.appendChild(d);
+  });
+  const nn = GAMES.filter(censored).length;
+  document.getElementById('count').textContent = `${GAMES.length} jogos` + (nn ? ` · ${nn} ocultos` : '');
+}
+
+syncSwitch(); renderList();
+addEventListener('resize', resize);
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { resize(); IDLE(); });
+</script>
+</body>
+</html>

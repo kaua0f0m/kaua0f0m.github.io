@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111216">
+<title>VoxStage — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Site normal montado com as peças do app VoxStage (menu-shell v2): cores, Nunito, botões, cartões, pílulas e o logo */
+  :root{--bg:#111216;--panel:#181a20;--card:#191b21;--line:#2c2e35;--muted:#989ba7;--text:#f6f5f3;--lime:#d4fb69}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer;color:inherit;border:0;background:none}
+  .menu-icon{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* topo */
+  .top{position:sticky;top:0;z-index:10;background:#16171cf2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex;align-items:center;gap:10px;min-height:64px}
+  .brand{display:flex;align-items:center;gap:9px;font:900 20px 'Nunito',sans-serif;letter-spacing:-.7px;margin-right:auto}
+  .vx-brand-mark{width:32px;height:34px;flex:0 0 32px;color:var(--lime);display:grid;place-items:center;padding:4px;background:#17191a;border:1px solid #d4fb6944;border-radius:10px;box-shadow:inset 0 0 0 1px #ffffff08}
+  .vx-brand-mark svg{width:100%;height:100%;display:block}
+  .nav-btn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:8px 13px;border:1px solid transparent;border-radius:11px;color:#a3a6b2;font:750 13px 'Nunito',sans-serif;white-space:nowrap;transition:background .15s,color .15s}
+  .nav-btn:hover{background:#23252d;color:var(--text)}
+  .nav-btn[aria-current="true"]{color:var(--lime);background:color-mix(in srgb,var(--lime) 10%,#181a1c)}
+  .btn{border-radius:12px;min-height:44px;font-size:14px;padding:10px 18px;background:var(--lime);color:#171811;font-weight:800;display:inline-flex;align-items:center;gap:8px;transition:.18s;white-space:nowrap}
+  .btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+  .btn.secondary{background:#222226;color:#fff;border:1px solid #36363a}
+  .btn .menu-icon{width:18px;height:18px}
+  .top .btn{min-height:40px;font-size:13px;padding:8px 14px}
+
+  /* textos */
+  .eyebrow{color:var(--lime);text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:850;margin-bottom:10px}
+  h1{font:900 clamp(40px,6vw,72px)/1.02 'Nunito',sans-serif;letter-spacing:-2px;margin:0}
+  h1 em{font-style:normal;color:var(--lime)}
+  h2{font:850 clamp(24px,2.6vw,32px)/1.15 'Nunito',sans-serif;letter-spacing:-1px;margin:0}
+  .muted{color:var(--muted)}
+  section{padding:72px 0 0;scroll-margin-top:72px}
+  .sec-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+  .sec-head p{margin:8px 0 0;color:var(--muted);font-size:14px}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:center;padding:64px 0 0}
+  .hero p.lead{font-size:17px;color:var(--muted);margin:18px 0 26px;max-width:500px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .platforms{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;min-height:33px;padding:6px 12px;border:1px solid var(--line);border-radius:30px;color:#c6c9d3;background:#181a1f}
+  .pill .menu-icon{width:16px;height:16px;color:var(--lime)}
+  .stage-card{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px}
+  .stage-art{height:250px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(130deg,#454c38,#242835);color:var(--lime)}
+  .stage-art svg{width:150px;height:150px}
+  .mini-stage{display:flex;align-items:center;gap:12px;margin-top:12px;padding:9px 12px;border:1px solid #363d48;border-radius:13px;background:#20262f;min-width:0}
+  .mini-cover{width:44px;height:44px;flex:none;border-radius:10px;background:linear-gradient(135deg,#3b4a24,#8aa83f);display:grid;place-items:center;color:#171b12}
+  .mini-cover svg{width:28px;height:28px}
+  .now{min-width:0;flex:1}
+  .now-title{font-size:12px;font-weight:800;color:#a2adbb}
+  .now-lyric{font-size:16px;font-weight:700;line-height:1.3;margin-top:2px;color:#7d8694;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .now-lyric span{transition:color .12s}
+  .now-lyric span.sung{color:var(--lime)}
+  .play{width:38px;height:38px;flex:none;border-radius:50%;background:var(--lime);color:#17200e;display:grid;place-items:center}
+  .play .menu-icon{width:18px;height:18px}
+
+  /* recursos */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .search{flex:1 1 220px;min-width:0;height:42px;padding:0 13px;font:13px 'Nunito';background:#191b20;border:1px solid #30333c;border-radius:10px;color:#eee;outline:none}
+  .search::placeholder{color:#6f7380}
+  .chips{display:flex;gap:7px;overflow:auto;scrollbar-width:none;margin-bottom:16px}
+  .chips button{font-size:12px;font-weight:800;min-height:34px;padding:7px 13px;border:1px solid var(--line);border-radius:30px;color:#a3a6b2;white-space:nowrap;transition:.15s}
+  .chips button:hover{color:var(--text);border-color:#424753}
+  .chips button[aria-pressed="true"]{color:var(--lime);background:color-mix(in srgb,var(--lime) 10%,#181a1c);border-color:color-mix(in srgb,var(--lime) 35%,var(--line))}
+  .count{background:#24262e;color:var(--muted);font-size:12px;padding:3px 8px;border-radius:7px;font-weight:800;vertical-align:middle;margin-left:6px}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .track{display:flex;gap:14px;align-items:center;min-height:83px;padding:11px 12px;border:1px solid #2a2d35;border-radius:13px;background:var(--card);transition:background .15s,border-color .15s}
+  .track:hover{background:#1f2229;border-color:#424753}
+  .cover{flex:0 0 56px;width:56px;height:56px;border-radius:10px;display:grid;place-items:center;color:#fff}
+  .cover .menu-icon{width:25px;height:25px;stroke-width:1.8}
+  .c1{background:linear-gradient(140deg,#3b4a24,#8aa83f)} .c2{background:linear-gradient(140deg,#193748,#52a7a2)} .c3{background:linear-gradient(140deg,#32254d,#8162ae)}
+  .c4{background:linear-gradient(140deg,#4a2433,#d0607e)} .c5{background:linear-gradient(140deg,#1d3153,#586ca8)}
+  .track-info{min-width:0;flex:1}
+  .track-title{font-weight:800;font-size:14px}
+  .track-artist{color:var(--muted);font-size:12px;margin-top:3px;line-height:1.5}
+  .tag{flex:none;padding:4px 8px;border-radius:6px;color:#ffcf6e;background:#33291a;font-size:10px;font-weight:800}
+  .empty{grid-column:1/-1;border:1px dashed #39393d;border-radius:13px;text-align:center;color:var(--muted);font-size:13px;padding:40px 24px}
+
+  /* como começar */
+  .start{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+  .panel{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px}
+  .step{display:flex;gap:12px;align-items:center;padding:10px 6px;border-radius:10px}
+  .step + .step{border-top:1px solid #23252c}
+  .step-n{width:42px;height:42px;flex:none;border-radius:8px;background:#363c30;display:grid;place-items:center;color:var(--lime);font-weight:900;font-size:17px}
+  .step strong{display:block;font-size:14px}
+  .step small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-top:2px}
+  .dl-card{text-align:center}
+  .dl-card .stage-art{height:150px}
+  .dl-card .stage-art svg{width:90px;height:90px}
+  .dl-card .label{font-size:10px;font-weight:850;letter-spacing:1.4px;color:var(--lime);margin-top:14px}
+  .dl-card strong{display:block;font-size:18px;margin-top:4px}
+  .dl-card small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .dl-card .btn{width:100%;justify-content:center;margin-top:16px}
+  .dl-card .btn.secondary{margin-top:8px}
+
+  footer{margin-top:90px;border-top:1px solid var(--line)}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px;color:var(--muted);font-size:13px}
+  footer a{color:var(--lime)}
+
+  @media (max-width:860px){
+    .wrap{padding:0 16px}
+    .top .wrap{overflow-x:auto;scrollbar-width:none}
+    .top .nav-btn .menu-icon{display:none}
+    .hero{grid-template-columns:minmax(0,1fr);gap:28px;padding-top:40px}
+    .stage-art{height:180px}
+    .grid,.start{grid-template-columns:minmax(0,1fr)}
+    .tag{display:none}
+  }
+  @media (max-width:520px){ .top .nav-btn{display:none} }
+  @media (prefers-reduced-motion:reduce){ .vx-motion{display:none} .vx-static{display:block!important} }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="vx" viewBox="10 3 90 86"><g transform="translate(-3.5 -12)">
+    <g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M26 49L39 78L52 49"/><path d="M66 49L84 78M84 49L66 78"/></g>
+    <g class="vx-static" style="display:none"><g fill="currentColor"><circle cx="54" cy="24" r="1.8" opacity=".2"/><circle cx="61" cy="24" r="2.3" opacity=".4"/><circle cx="68" cy="28" r="2.8" opacity=".65"/><circle cx="75" cy="35" r="4.5"/></g></g>
+    <g class="vx-motion">
+      <g fill="currentColor" opacity="0.16"><circle r="1.8"/><animateMotion path="M39 35Q57 5 75 35Q57 5 39 35" dur="2.6s" begin="-2.39s" repeatCount="indefinite" calcMode="spline" keyPoints="0;.5;.5;1;1" keyTimes="0;.38;.5;.88;1" keySplines=".3 0 .4 1;0 0 1 1;.3 0 .4 1;0 0 1 1"/></g>
+      <g fill="currentColor" opacity="0.3"><circle r="2.3"/><animateMotion path="M39 35Q57 5 75 35Q57 5 39 35" dur="2.6s" begin="-2.46s" repeatCount="indefinite" calcMode="spline" keyPoints="0;.5;.5;1;1" keyTimes="0;.38;.5;.88;1" keySplines=".3 0 .4 1;0 0 1 1;.3 0 .4 1;0 0 1 1"/></g>
+      <g fill="currentColor" opacity="0.5"><circle r="2.8"/><animateMotion path="M39 35Q57 5 75 35Q57 5 39 35" dur="2.6s" begin="-2.53s" repeatCount="indefinite" calcMode="spline" keyPoints="0;.5;.5;1;1" keyTimes="0;.38;.5;.88;1" keySplines=".3 0 .4 1;0 0 1 1;.3 0 .4 1;0 0 1 1"/></g>
+      <g fill="currentColor"><circle r="4.5"/><animateMotion path="M39 35Q57 5 75 35Q57 5 39 35" dur="2.6s" begin="0s" repeatCount="indefinite" calcMode="spline" keyPoints="0;.5;.5;1;1" keyTimes="0;.38;.5;.88;1" keySplines=".3 0 .4 1;0 0 1 1;.3 0 .4 1;0 0 1 1"/></g>
+    </g></g></symbol>
+  <!-- ícones de linha, no traço do app -->
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 20h8"/></symbol>
+  <symbol id="i-pc" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 2.5 14.4 0 17M12 3.5c-2.5 2.6-2.5 14.4 0 17"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4l8.5 4.5L12 13 3.5 8.5z"/><path d="M3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M6 4v16M12 4v16M18 4v16"/><circle cx="6" cy="14" r="2" fill="currentColor"/><circle cx="12" cy="8" r="2" fill="currentColor"/><circle cx="18" cy="16" r="2" fill="currentColor"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="M4 17l5-5 4 4 2.5-2.5L20 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M6 11.5a6 6 0 0012 0M12 17.5V21"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 100 17c1.4 0 1.8-1.2 1.2-2.1-.7-1 .1-2.4 1.3-2.4h2.2a3.8 3.8 0 003.8-3.8C20.5 7 16.7 3.5 12 3.5z"/><circle cx="7.8" cy="11" r="1.1" fill="currentColor"/><circle cx="10.5" cy="7.6" r="1.1" fill="currentColor"/><circle cx="14.6" cy="7.8" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7.5 18.5h10a4 4 0 00.6-7.95A6 6 0 006.6 9.2 4.7 4.7 0 007.5 18.5z"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="5" cy="6.5" r="1" fill="currentColor"/><circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="5" cy="17.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19.5s-7.5-4.4-7.5-9.6A4.1 4.1 0 0112 7.6a4.1 4.1 0 017.5 2.3c0 5.2-7.5 9.6-7.5 9.6z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+  <symbol id="i-gh" viewBox="0 0 24 24"><path d="M9 19c-4 1.3-4-2-5.5-2.5M14.5 21v-3.3a2.9 2.9 0 00-.8-2.2c2.7-.3 5.5-1.3 5.5-6a4.6 4.6 0 00-1.3-3.2 4.3 4.3 0 00-.1-3.2s-1-.3-3.3 1.3a11.4 11.4 0 00-6 0C6.2 2.8 5.2 3.1 5.2 3.1a4.3 4.3 0 00-.1 3.2A4.6 4.6 0 003.8 9.5c0 4.6 2.8 5.7 5.5 6a2.9 2.9 0 00-.8 2.2V21"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M7 6v12M18 6l-8 6 8 6z"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M17 6v12M6 6l8 6-8 6z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8.5 6v12l9.5-6z" fill="currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 6v12M15.5 6v12" stroke-width="3"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="vx-brand-mark"><svg><use href="#vx"/></svg></span><span>voxstage</span></a>
+    <a class="nav-btn hide-sm" href="index.html#projetos"><svg class="menu-icon"><use href="#i-back"/></svg>Portfólio</a>
+    <a class="nav-btn" href="#recursos" data-sec="recursos"><svg class="menu-icon"><use href="#i-grid"/></svg>Recursos</a>
+    <a class="nav-btn" href="#comecar" data-sec="comecar"><svg class="menu-icon"><use href="#i-list"/></svg>Como começar</a>
+    <a class="btn" href="https://github.com/kaua0f0m/VoxStage/releases/latest" target="_blank" rel="noopener"><svg class="menu-icon"><use href="#i-down"/></svg>Baixar</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" style="padding-top:64px">
+    <div>
+      <div class="eyebrow">Seu palco</div>
+      <h1>Karaokê no<br><em>seu palco.</em></h1>
+      <p class="lead">Importe suas músicas, separe a voz do instrumental, sincronize a letra palavra por palavra e cante no PC, no celular ou na TV.</p>
+      <div class="actions">
+        <a class="btn" href="https://github.com/kaua0f0m/VoxStage/releases/latest" target="_blank" rel="noopener"><svg class="menu-icon"><use href="#i-down"/></svg>Baixar a versão mais recente</a>
+        <a class="btn secondary" href="https://github.com/kaua0f0m/VoxStage/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Novidades</a>
+      </div>
+      <div class="platforms">
+        <span class="pill"><svg class="menu-icon"><use href="#i-pc"/></svg>Windows</span>
+        <span class="pill"><svg class="menu-icon"><use href="#i-phone"/></svg>Android</span>
+        <span class="pill"><svg class="menu-icon"><use href="#i-tv"/></svg>Android TV e Google TV</span>
+      </div>
+    </div>
+    <div class="stage-card" aria-label="Logo do VoxStage e uma letra de exemplo sendo cantada">
+      <div class="stage-art"><svg><use href="#vx"/></svg></div>
+      <div class="mini-stage">
+        <div class="mini-cover"><svg><use href="#vx"/></svg></div>
+        <div class="now"><div class="now-title">Tocando agora</div><div class="now-lyric" id="lyric"></div></div>
+        <button class="play" id="playBtn" aria-label="Pausar"><svg class="menu-icon"><use href="#i-pause" id="playIco"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="recursos">
+    <div class="sec-head"><div><div class="eyebrow">O que ele faz</div><h2>Recursos <span class="count" id="count">0</span></h2></div></div>
+    <div class="filters"><input class="search" id="search" type="search" placeholder="Buscar nos recursos…" aria-label="Buscar nos recursos"></div>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por grupo"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="comecar">
+    <div class="sec-head"><div><div class="eyebrow">Primeiros passos</div><h2>Como começar</h2></div></div>
+    <div class="start">
+      <div class="panel">
+        <div class="step"><span class="step-n">1</span><span><strong>Instale no seu aparelho</strong><small>No PC é portátil, é só abrir. No Android e na TV, instale o APK.</small></span></div>
+        <div class="step"><span class="step-n">2</span><span><strong>Adicione uma música</strong><small>Arquivos locais, busca no YouTube Music ou um link do YouTube.</small></span></div>
+        <div class="step"><span class="step-n">3</span><span><strong>Prepare a letra</strong><small>Busque no LRCLIB ou sincronize por linha e por palavra.</small></span></div>
+        <div class="step"><span class="step-n">4</span><span><strong>Conecte o celular</strong><small>QR code na mesma rede, e o celular vira controle e fila de pedidos.</small></span></div>
+      </div>
+      <div class="panel dl-card">
+        <div class="stage-art"><svg><use href="#vx"/></svg></div>
+        <div class="label">VERSÃO MAIS RECENTE</div>
+        <strong>VoxStage</strong>
+        <small>Windows portátil · Android · Google TV</small>
+        <a class="btn" href="https://github.com/kaua0f0m/VoxStage/releases/latest" target="_blank" rel="noopener"><svg class="menu-icon"><use href="#i-down"/></svg>Baixar</a>
+        <a class="btn secondary" href="https://github.com/kaua0f0m/VoxStage" target="_blank" rel="noopener"><svg class="menu-icon"><use href="#i-gh"/></svg>Código no GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>O VoxStage foi inteiramente vibecodeado. <a href="https://github.com/kaua0f0m/VoxStage" target="_blank" rel="noopener">Pull requests</a> são bem-vindos, vibecodeados ou não.</span>
+    <a href="index.html#projetos">← voltar ao portfólio</a>
+  </div>
+</footer>
+
+<script>
+/* ---------- recursos (do README do VoxStage) ---------- */
+const FEATURES = [
+  ['Plataformas','i-pc','c1','Aplicativo portátil para Windows','Não precisa instalar: é só abrir.'],
+  ['Plataformas','i-phone','c1','Aplicativo para Android','O mesmo app funciona no celular e na TV.'],
+  ['Plataformas','i-tv','c1','Android TV e Google TV','Detecta a TV e adapta a navegação ao controle remoto.'],
+  ['Plataformas','i-globe','c1','Português e inglês','Interface nos dois idiomas.'],
+  ['Biblioteca','i-down','c2','Importe músicas locais','Arquivos de áudio do seu aparelho, direto para a biblioteca.'],
+  ['Biblioteca','i-layers','c2','Faixas separadas','Música completa ou separada em instrumental, vocais principais e backing vocals.'],
+  ['Biblioteca','i-sliders','c2','Volume de cada faixa','Controle independente para instrumental, vocais e backing.'],
+  ['Biblioteca','i-heart','c2','Busca, favoritos e recentes','Edite título, artista, capa e fundo; oculte ou exclua músicas.'],
+  ['Biblioteca','i-image','c2','Capas e fundos','Busca de capas e imagens ou vídeos sem áudio como fundo da apresentação.'],
+  ['Letras','i-search','c3','Letras pelo LRCLIB','Busque, insira e edite, inclusive letras sincronizadas em LRC.'],
+  ['Letras','i-clock','c3','Sincronia por linha e palavra','Ajuste o tempo e a duração; a palavra cantada fica em destaque.'],
+  ['Letras','i-text','c3','Backing vocals e pausas','Letras de backing e tempo restante nas pausas vocais.','mediante calibração'],
+  ['Letras','i-mute','c3','Censura de palavras','Tratamento visual e silenciamento dos vocais nas palavras escolhidas.'],
+  ['Letras','i-palette','c3','Apresentação do seu jeito','Tela cheia, cores, tamanho da letra e controles que se escondem sozinhos.'],
+  ['Downloads','i-search','c4','YouTube Music e YouTube','Busque ou cole um link; o áudio baixa com yt-dlp integrado.'],
+  ['Downloads','i-pc','c4','Vídeos no Windows','Download de vídeo para usar na apresentação.'],
+  ['Downloads','i-cloud','c4','Separação na nuvem pelo MVSEP','Com a sua chave API, inclusive para músicas já salvas, com guia para conseguir a chave.'],
+  ['Downloads','i-list','c4','Processamentos em andamento','Saia do formulário e volte depois; no Android, chegam notificações.'],
+  ['Celular e TV','i-qr','c5','Conexão por QR code ou link','Na mesma rede, pela câmera ou por uma imagem no Android.'],
+  ['Celular e TV','i-phone','c5','Celular como controle remoto','Controle a reprodução e configure a TV pelo celular.'],
+  ['Celular e TV','i-swap','c5','Envie músicas entre aparelhos','Do Android para o PC ou a TV, e do PC para o Android, inclusive a chave MVSEP.'],
+  ['Celular e TV','i-list','c5','Fila de pedidos','Aceita sozinha o que já existe e pede aprovação para o que pode gastar créditos.'],
+];
+const GROUPS = ['Todos', ...new Set(FEATURES.map(f => f[0]))];
+let group = 'Todos', q = '';
+const grid = document.getElementById('grid'), chips = document.getElementById('chips'), count = document.getElementById('count'), search = document.getElementById('search');
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+chips.innerHTML = GROUPS.map(g => `<button type="button" aria-pressed="${g === group}">${g}</button>`).join('');
+chips.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; group = b.textContent;
+  [...chips.children].forEach(c => c.setAttribute('aria-pressed', c === b)); render(); });
+search.addEventListener('input', () => { q = norm(search.value.trim()); render(); });
+function render(){
+  const list = FEATURES.filter(f => (group === 'Todos' || f[0] === group) && (!q || norm(f.join(' ')).includes(q)));
+  count.textContent = list.length;
+  grid.innerHTML = list.length ? list.map(([g, ic, c, t, d, note]) => `<article class="track"><div class="cover ${c}"><svg class="menu-icon"><use href="#${ic}"/></svg></div>
+    <div class="track-info"><div class="track-title">${t}</div><div class="track-artist">${d}</div></div>${note ? `<span class="tag">${note}</span>` : ''}</article>`).join('')
+    : `<div class="empty">Nenhum recurso encontrado para essa busca.</div>`;
+}
+render();
+
+/* ---------- letra de exemplo, palavra por palavra (como no app) ---------- */
+const LINES = ['Importe a sua música favorita','Sincronize a letra palavra por palavra','Separe a voz do instrumental','Cante no PC, no celular ou na TV','O palco é todo seu'];
+const lyric = document.getElementById('lyric'), playBtn = document.getElementById('playBtn'), playIco = document.getElementById('playIco');
+const WORD = .42, GAP = 1.1, durs = LINES.map(l => l.split(' ').length*WORD + GAP), total = durs.reduce((a, b) => a + b, 0);
+let t = 0, playing = !matchMedia('(prefers-reduced-motion: reduce)').matches, last = performance.now(), shown = -1;
+function where(time){ let acc = 0; for (let i = 0; i < LINES.length; i++){ if (time < acc + durs[i]) return [i, time - acc]; acc += durs[i]; } return [LINES.length - 1, durs.at(-1)]; }
+function draw(){ const [i, inLine] = where(t), words = LINES[i].split(' ');
+  if (i !== shown){ lyric.innerHTML = words.map(w => `<span>${w}</span>`).join(' '); shown = i; }
+  const sung = Math.floor(inLine/WORD) + 1; [...lyric.children].forEach((s, k) => s.classList.toggle('sung', k < sung)); }
+function tick(now){ const dt = Math.min((now - last)/1000, .1); last = now; if (playing) t = (t + dt) % total; draw(); requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+const setPlay = p => { playing = p; playIco.setAttribute('href', p ? '#i-pause' : '#i-play'); playBtn.setAttribute('aria-label', p ? 'Pausar' : 'Tocar'); };
+setPlay(playing); playBtn.onclick = () => setPlay(!playing);
+
+/* menu do topo acompanha a seção visível */
+const links = [...document.querySelectorAll('[data-sec]')];
+new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.setAttribute('aria-current', a.dataset.sec === e.target.id)); }), {threshold:.35})
+  .observe(document.getElementById('recursos'));
+new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.setAttribute('aria-current', a.dataset.sec === e.target.id)); }), {threshold:.35})
+  .observe(document.getElementById('comecar'));
+</script>
+</body>
+</html>

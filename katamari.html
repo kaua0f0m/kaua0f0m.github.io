@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Katamari Damacy REROLL — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{ --text:#f3f5fb; --muted:#8e94a6; --soft:#b0b6c7; --line:rgba(255,255,255,.1); --tint:#2b5fbf; --acc:#ffd23f; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:#04060c; scroll-behavior:smooth}
+  body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; overflow-x:hidden}
+  .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+  a{color:inherit; text-decoration:none}
+
+  .fade{position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--tint) 60%, transparent), transparent 72%),
+      radial-gradient(ellipse 50% 40% at 0% 100%, rgba(255,111,165,.16), transparent 70%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tint) 28%, #04060c) 0%, #070a14 65%, #04060c 100%)}
+  .grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.14; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:fixed; inset:0 0 auto; z-index:10; background:linear-gradient(color-mix(in srgb, var(--tint) 22%, #04060c) 25%, transparent)}
+  .logo{font-weight:800; font-size:20px; letter-spacing:-.03em; display:flex; gap:10px; align-items:center}
+  .logo span{color:var(--muted); font-weight:500; transition:transform .2s}
+  .logo:hover span{transform:translateX(-3px); color:var(--text)}
+  .logo i{font-style:normal; color:var(--muted)}
+  header nav{display:flex; gap:28px}
+  header nav a{color:var(--muted); transition:color .2s}
+  header nav a:hover{color:var(--text)}
+
+  /* ---------- palco ---------- */
+  .stage{position:relative; height:clamp(440px,70vh,720px)}
+  .stage canvas{position:absolute; inset:0; width:100%; height:100%; cursor:crosshair}
+  .hud{position:absolute; left:48px; right:48px; bottom:20px; display:flex; justify-content:space-between; color:var(--muted); pointer-events:none}
+  .hud b{color:var(--text); font-weight:500}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 48px}
+  .intro{display:grid; gap:30px; padding:34px 0 10px}
+  .intro > div:last-child{display:grid; grid-template-columns:1.2fr 1fr; gap:48px; align-items:end}
+  .kicker{color:var(--muted); margin-bottom:22px; display:flex; gap:10px; align-items:center}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--acc); box-shadow:0 0 10px var(--acc)}
+  h1{font-size:clamp(48px,7.4vw,116px); line-height:.88; letter-spacing:-.055em; font-weight:900}
+  h1 .dim{color:rgba(255,255,255,.3); font-weight:800}
+  .lead{font-size:19px; line-height:1.55; color:var(--soft)}
+  .lead b{color:var(--text); font-weight:500}
+  .facts{display:flex; gap:28px; color:var(--muted); flex-wrap:wrap}
+  .facts b{display:block; color:var(--text); font-family:"Inter Tight"; font-size:26px; font-weight:700; letter-spacing:-.02em; text-transform:none; margin-bottom:2px}
+
+  /* ---------- bloco em destaque: os dois mods ---------- */
+  .hl{margin-top:56px; display:grid; grid-template-columns:1fr 1fr; border:1px solid rgba(255,255,255,.18); border-radius:16px; background:rgba(255,255,255,.06); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow:hidden; scroll-margin-top:100px; box-shadow:0 30px 80px -30px color-mix(in srgb, var(--tint) 80%, transparent)}
+  .hl-part{padding:30px; display:flex; flex-direction:column}
+  .hl-part + .hl-part{border-left:1px solid rgba(255,255,255,.12)}
+  .hl-lbl{color:var(--text); display:flex; gap:12px; align-items:baseline; margin-bottom:8px}
+  .hl-lbl span{color:var(--muted)}
+  .hl-lbl em{font-style:normal; color:var(--muted); margin-left:auto}
+  .hl h3{font-size:30px; font-weight:800; letter-spacing:-.03em; margin-bottom:10px}
+  .hl .txt{margin-bottom:20px}
+  .hl-btn{align-self:flex-start; display:inline-flex; align-items:center; gap:14px; background:var(--text); color:#000; font-weight:700; font-size:19px; letter-spacing:-.02em; padding:13px 22px; border-radius:999px; transition:transform .2s, box-shadow .2s}
+  .hl-btn span{transition:transform .2s}
+  .hl-btn:hover{transform:translateY(-2px); box-shadow:0 10px 30px -8px var(--acc)}
+  .hl-btn:hover span{transform:translateX(4px)}
+  .feat{list-style:none; margin-top:18px}
+  .feat li{position:relative; padding:9px 0 9px 26px; border-bottom:1px solid var(--line); font-size:15px; color:#d5d9e4}
+  .feat li:last-child{border-bottom:0}
+  .feat li::before{content:"✦"; position:absolute; left:0; color:var(--acc); font-size:12px; top:12px}
+  .install{grid-column:1 / -1; border-top:1px solid rgba(255,255,255,.12); padding:24px 30px; display:grid; grid-template-columns:200px 1fr; gap:20px; align-items:start}
+  .install .txt{margin:0}
+  code{font-family:"JetBrains Mono"; font-size:13px; color:var(--text); background:rgba(255,255,255,.08); padding:1px 6px; border-radius:4px; word-break:break-word}
+  .txt{color:var(--soft); font-size:15px; line-height:1.6}
+  .txt + .txt{margin-top:10px}
+  .txt b{color:var(--text); font-weight:500}
+  .txt a{text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.35)}
+  .txt a:hover{text-decoration-color:var(--text)}
+
+  /* ---------- seções ---------- */
+  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px 1fr; gap:48px}
+  .group h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.05}
+  .group h2 small{display:block; margin-top:10px; color:var(--muted); font-family:"JetBrains Mono"; font-size:12px; font-weight:400; letter-spacing:.04em; text-transform:uppercase}
+  .rows{border-top:1px solid var(--line)}
+  .row{display:grid; grid-template-columns:1fr 40px 1fr; gap:12px; align-items:center; padding:18px 0; border-bottom:1px solid var(--line)}
+  .row .en{color:var(--muted); font-size:clamp(18px,2vw,24px); font-weight:500; letter-spacing:-.02em; text-decoration:line-through; text-decoration-color:rgba(255,210,63,.55); text-decoration-thickness:2px}
+  .row .ar{color:var(--acc); text-align:center}
+  .row .pt{font-size:clamp(18px,2vw,24px); font-weight:800; letter-spacing:-.02em}
+  .king{margin-top:34px; display:grid; gap:14px}
+  .king blockquote{font-family:"Instrument Serif"; font-style:italic; font-size:clamp(26px,2.8vw,38px); line-height:1.15; color:#fff; padding-left:20px; border-left:2px solid var(--acc)}
+  .king cite{display:block; margin-top:6px; font-style:normal; font-family:"JetBrains Mono"; font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted)}
+  .notes{list-style:none}
+  .notes li{position:relative; padding:16px 0 16px 40px; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; line-height:1.6}
+  .notes li::before{content:"—"; position:absolute; left:0; color:var(--muted)}
+  .notes b{color:var(--text); font-weight:500}
+
+  footer{margin-top:120px; display:flex; justify-content:space-between; padding:24px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+
+  @media (max-width:900px){
+    header{padding:18px 16px} header nav{gap:16px}
+    .stage{height:clamp(360px,58vh,520px)}
+    .hud{left:16px; right:16px}
+    .wrap{padding:0 16px}
+    .intro > div:last-child{grid-template-columns:1fr; gap:22px}
+    .hl{grid-template-columns:1fr}
+    .hl-part{padding:22px 18px}
+    .hl-part + .hl-part{border-left:0; border-top:1px solid rgba(255,255,255,.12)}
+    .hl-btn{align-self:stretch; justify-content:space-between}
+    .install{grid-template-columns:1fr; padding:22px 18px; gap:8px}
+    .group{grid-template-columns:1fr; gap:18px; margin-top:80px}
+    .row{grid-template-columns:1fr 24px 1fr}
+    footer{padding:20px 16px 26px}
+  }
+</style>
+</head>
+<body>
+<div class="fade" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="index.html#projetos"><span>←</span> kauã<i>.</i></a>
+  <nav class="mono"><a href="#baixar">Baixar</a><a href="#traducao">Tradução</a><a href="https://github.com/kaua0f0m/katamari-mods" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+
+<section class="stage" aria-label="Uma bola rola, gruda objetos desenhados e cresce até virar estrela">
+  <canvas id="stage"></canvas>
+  <div class="hud mono"><span>Katamari <b id="size">10 cm</b></span><span id="hint">passe o mouse para guiar</span></div>
+</section>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="kicker mono">Tradução + mod — PC / Steam</p>
+      <h1>Katamari Damacy<br>REROLL <span class="dim">em português.</span></h1>
+    </div>
+    <div>
+      <p class="lead">Dois mods para a versão Steam: a <b>tradução PT-BR</b> dos textos do jogo, com as falas do Rei revisadas, e o <b>Katamari Plus</b>, com tempo infinito, jukebox e salvamento automático.</p>
+      <div class="facts mono">
+        <span><b>1.700+</b>objetos com nome</span>
+        <span><b>1.081</b>ajustes na v0.3</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hl" id="baixar">
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>01</span> Tradução PT-BR <em>v0.3</em></p>
+      <h3>Textos em português</h3>
+      <p class="txt">Diálogos do Rei, objetivos, resultados, nomes de estrelas e as descrições de objetos. No jogo, selecione <b>English</b> nas opções.</p>
+      <a class="hl-btn" href="https://github.com/kaua0f0m/katamari-mods/releases/tag/traducao-v0.3" target="_blank" rel="noopener">Baixar a tradução <span>→</span></a>
+    </div>
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>02</span> Katamari Plus <em>v0.3</em></p>
+      <h3>Mais conforto</h3>
+      <ul class="feat">
+        <li>Tempo infinito configurável</li>
+        <li>Encerrar a fase pela pausa</li>
+        <li>Jukebox durante as fases</li>
+        <li>Salvar e carregar automático, com escolha de slot</li>
+        <li>Pular a abertura</li>
+      </ul>
+      <p class="txt" style="margin-top:14px">Menu em japonês, inglês, francês, alemão, italiano ou espanhol, e em português com a tradução instalada.</p>
+      <a class="hl-btn" style="margin-top:18px" href="https://github.com/kaua0f0m/katamari-mods/releases/tag/plus-v0.3" target="_blank" rel="noopener">Baixar o Plus <span>→</span></a>
+    </div>
+    <div class="install">
+      <p class="hl-lbl mono" style="margin:0"><span>→</span> Como instalar</p>
+      <div>
+        <p class="txt">Baixe o ZIP, extraia, <b>feche o jogo</b> e execute <code>Instalar.ps1</code> no PowerShell. O instalador confere os arquivos e guarda backup dos originais.</p>
+        <p class="txt">Se o jogo não estiver em <code>D:\SteamLibrary\steamapps\common\Katamari Damacy REROLL</code>, informe o caminho: <code>.\Instalar.ps1 -GameDir 'C:\caminho\do\jogo'</code>.</p>
+        <p class="txt">Para desfazer: <code>Restaurar.ps1</code> (tradução) e <code>Restaurar-original.ps1</code> (Plus). · <a href="https://store.steampowered.com/app/848350/" target="_blank" rel="noopener">Jogo na Steam</a></p>
+      </div>
+    </div>
+  </div>
+
+  <section class="group" id="traducao">
+    <h2>A tradução<small>trechos de verdade</small></h2>
+    <div>
+      <div class="rows">
+        <div class="row"><span class="en">Hole in one!</span><span class="ar mono">→</span><span class="pt">De primeira no buraco!</span></div>
+        <div class="row"><span class="en">Takeout food!</span><span class="ar mono">→</span><span class="pt">Comida para viagem!</span></div>
+        <div class="row"><span class="en">We have spoken.</span><span class="ar mono">→</span><span class="pt">Assim decretamos.</span></div>
+        <div class="row"><span class="en">We're talking seconds!</span><span class="ar mono">→</span><span class="pt">Dá até para repetir!</span></div>
+        <div class="row"><span class="en">Mini Pylon</span><span class="ar mono">→</span><span class="pt">Minicone</span></div>
+        <div class="row"><span class="en">India Ink</span><span class="ar mono">→</span><span class="pt">Nanquim</span></div>
+      </div>
+      <div class="king">
+        <blockquote>“Faltou um tiquinho. Por um fio de cabelo.”<cite>o Rei, num resultado</cite></blockquote>
+        <blockquote>“Se juntarmos Nossa coroa, dá para improvisar uma constelação.”<cite>o Rei, de novo</cite></blockquote>
+        <blockquote>“Isto não é um peixe. Mas é sempre uma parte do cenário.”<cite>descrição de objeto</cite></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Bom saber<small>antes de instalar</small></h2>
+    <ul class="notes">
+      <li>A base foi <b>traduzida automaticamente</b> e a revisão 0.3 é contextual, com prioridade para o Rei e as primeiras fases. Várias descrições de objetos ainda usam a tradução anterior.</li>
+      <li>A revisão ainda <b>não foi percorrida inteira no jogo</b>. Ajustes de redação ou de encaixe podem ser necessários.</li>
+      <li>Texturas, fontes e textos dentro dos vídeos continuam originais.</li>
+      <li>Os dois mods convivem: o instalador de um preserva o outro, além dos seus saves e opções.</li>
+      <li>Projeto de fã. Use por sua conta e risco e <b>mantenha backup dos seus saves</b>.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="mono">
+  <span>Projeto de fã, sem vínculo com a Bandai Namco</span>
+  <a href="index.html#projetos">← voltar aos projetos</a>
+</footer>
+
+<script>
+/* ===== palco: uma bola rola por uma pista e gruda objetos desenhados (nomes da tradução no HUD) ===== */
+(() => {
+  const cv = document.getElementById('stage'), ctx = cv.getContext('2d');
+  const sizeEl = document.getElementById('size'), hintEl = document.getElementById('hint');
+  const touch = matchMedia('(hover: none)').matches;
+  const HINT = touch ? 'toque à direita para acelerar' : 'mouse à direita acelera, à esquerda volta';
+  hintEl.textContent = HINT;
+
+  /* ---- desenhos simples: origem no meio da base, altura 1, desenhando para cima ---- */
+  const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+  const DRAW = {
+    eraser(){ ctx.fillStyle = '#ff8fb3'; rr(-.85,-.7,1.7,.7,.12); ctx.fill(); ctx.fillStyle = '#3d7bff'; ctx.fillRect(.05,-.7,.55,.7); ctx.fillStyle = '#fff'; ctx.fillRect(.18,-.5,.3,.08); },
+    tag(){ ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.moveTo(-.7,-.15); ctx.lineTo(-.7,-.85); ctx.lineTo(.35,-.85); ctx.lineTo(.75,-.5); ctx.lineTo(.35,-.15); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#04060c'; ctx.beginPath(); ctx.arc(.35,-.5,.09,0,7); ctx.fill(); ctx.fillStyle = '#c77d00'; ctx.fillRect(-.55,-.58,.6,.08); ctx.fillRect(-.55,-.42,.4,.08); },
+    ink(){ ctx.fillStyle = '#2a2f45'; rr(-.42,-.72,.84,.72,.12); ctx.fill(); ctx.fillStyle = '#4a5275'; ctx.fillRect(-.2,-.9,.4,.2); ctx.fillStyle = '#e8e8e8'; rr(-.24,-1,.48,.14,.04); ctx.fill();
+      ctx.fillStyle = '#f3f5fb'; ctx.fillRect(-.3,-.5,.6,.25); ctx.fillStyle = '#04060c'; ctx.fillRect(-.18,-.42,.36,.06); },
+    lure(){ ctx.fillStyle = '#7ddc5a'; ctx.beginPath(); ctx.ellipse(0,-.45,.6,.3,0,0,7); ctx.fill(); ctx.fillStyle = '#ff6fa5'; ctx.beginPath(); ctx.moveTo(.5,-.45); ctx.lineTo(.85,-.72); ctx.lineTo(.85,-.18); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#04060c'; ctx.beginPath(); ctx.arc(-.32,-.52,.07,0,7); ctx.fill(); ctx.strokeStyle = '#c0c6d6'; ctx.lineWidth = .06; ctx.beginPath(); ctx.moveTo(0,-.15); ctx.lineTo(0,-.02); ctx.arc(.1,-.02,.1,Math.PI,0,true); ctx.stroke(); },
+    cone(){ ctx.fillStyle = '#ff7a1a'; ctx.beginPath(); ctx.moveTo(-.38,-.12); ctx.lineTo(-.08,-1); ctx.lineTo(.08,-1); ctx.lineTo(.38,-.12); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-.27,-.42); ctx.lineTo(-.18,-.64); ctx.lineTo(.18,-.64); ctx.lineTo(.27,-.42); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#c45200'; rr(-.55,-.14,1.1,.14,.04); ctx.fill(); },
+    cage(){ ctx.fillStyle = '#7ddc5a'; rr(-.6,-.85,1.2,.85,.08); ctx.fill(); ctx.fillStyle = 'rgba(4,6,12,.55)'; for (let i = 0; i < 5; i++) ctx.fillRect(-.48 + i*.24,-.72,.08,.62);
+      ctx.strokeStyle = '#2f9e2a'; ctx.lineWidth = .07; ctx.beginPath(); ctx.arc(0,-.85,.25,Math.PI,0); ctx.stroke(); ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(.12,-.4,.07,0,7); ctx.fill(); },
+    rake(){ ctx.strokeStyle = '#c8945a'; ctx.lineWidth = .09; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-.9,-.08); ctx.lineTo(.55,-.9); ctx.stroke();
+      ctx.strokeStyle = '#ff6fa5'; ctx.lineWidth = .08; ctx.beginPath(); ctx.moveTo(.32,-1.05); ctx.lineTo(.85,-.62); ctx.stroke();
+      ctx.lineWidth = .05; ctx.beginPath(); for (let i = 0; i < 5; i++){ const x = .38 + i*.12, y = -1 + i*.1; ctx.moveTo(x, y); ctx.lineTo(x + .14, y + .14); } ctx.stroke(); },
+    plant(){ ctx.fillStyle = '#7ddc5a'; for (const [a, l] of [[-2.2,.55],[-1.57,.7],[-.95,.55],[-1.9,.45],[-1.25,.45]]){ ctx.save(); ctx.translate(0,-.45); ctx.rotate(a + Math.PI/2); ctx.beginPath(); ctx.ellipse(0,-l/2,.12,l/2,0,0,7); ctx.fill(); ctx.restore(); }
+      ctx.fillStyle = '#c86b3c'; ctx.beginPath(); ctx.moveTo(-.38,-.48); ctx.lineTo(.38,-.48); ctx.lineTo(.28,0); ctx.lineTo(-.28,0); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#a4532a'; ctx.fillRect(-.42,-.52,.84,.1); },
+    sign(){ ctx.fillStyle = '#8e94a6'; ctx.fillRect(-.05,-.55,.1,.55); ctx.fillStyle = '#3d7bff'; rr(-.55,-1,1.1,.5,.06); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = .04; rr(-.48,-.93,.96,.36,.04); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-.2,-.68); ctx.lineTo(0,-.84); ctx.lineTo(.2,-.68); ctx.closePath(); ctx.fill(); ctx.fillRect(-.14,-.68,.28,.06); },
+    bath(){ ctx.fillStyle = '#f3e9d8'; ctx.fillRect(-.7,-.6,1.4,.6); ctx.fillStyle = '#4dd9ff'; ctx.beginPath(); ctx.moveTo(-.85,-.58); ctx.lineTo(0,-.9); ctx.lineTo(.85,-.58); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#8e94a6'; ctx.fillRect(.4,-1.1,.14,.4); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = .05; ctx.beginPath(); for (const x of [.42,.52]){ ctx.moveTo(x,-1.14); ctx.bezierCurveTo(x - .1,-1.24, x + .1,-1.3, x,-1.4); } ctx.stroke();
+      ctx.fillStyle = '#ff6fa5'; ctx.fillRect(-.16,-.38,.32,.38); ctx.fillStyle = '#2a2f45'; ctx.fillRect(-.55,-.45,.2,.16); ctx.fillRect(.35,-.45,.2,.16); },
+    fishbuilding(){ ctx.fillStyle = '#b18cff'; ctx.fillRect(-.35,-1,.7,1); ctx.fillStyle = 'rgba(255,255,255,.75)'; for (let y = 0; y < 5; y++) for (let x = 0; x < 2; x++) ctx.fillRect(-.24 + x*.3,-.9 + y*.17,.16,.1);
+      ctx.fillStyle = '#c0c6d6'; ctx.beginPath(); ctx.ellipse(0,-1.2,.38,.22,0,0,7); ctx.fill(); ctx.beginPath(); ctx.moveTo(-.3,-1.2); ctx.lineTo(-.55,-1.36); ctx.lineTo(-.55,-1.04); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#04060c'; ctx.beginPath(); ctx.arc(.2,-1.24,.04,0,7); ctx.fill(); },
+    lighthouse(){ ctx.fillStyle = '#f3f5fb'; ctx.beginPath(); ctx.moveTo(-.28,0); ctx.lineTo(-.16,-.9); ctx.lineTo(.16,-.9); ctx.lineTo(.28,0); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#ff4d5e'; for (const y of [-.25,-.6]){ ctx.beginPath(); ctx.moveTo(-.26,y + .08); ctx.lineTo(-.22,y - .1); ctx.lineTo(.22,y - .1); ctx.lineTo(.26,y + .08); ctx.closePath(); ctx.fill(); }
+      ctx.fillStyle = '#ffd23f'; ctx.fillRect(-.14,-1.08,.28,.18); ctx.fillStyle = '#ff4d5e'; ctx.beginPath(); ctx.moveTo(-.2,-1.08); ctx.lineTo(0,-1.25); ctx.lineTo(.2,-1.08); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,236,170,.25)'; ctx.beginPath(); ctx.moveTo(.14,-1.02); ctx.lineTo(1.2,-1.3); ctx.lineTo(1.2,-.75); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#c8945a'; ctx.beginPath(); ctx.moveTo(.45,-.2); ctx.lineTo(1.05,-.2); ctx.lineTo(.92,0); ctx.lineTo(.55,0); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(.75,-.22); ctx.lineTo(.75,-.55); ctx.lineTo(.95,-.24); ctx.closePath(); ctx.fill(); },
+  };
+  // nome (da tradução), tamanho em cm, desenho, largura relativa à altura
+  const ITEMS = [
+    ['Borracha',4,'eraser',1.8],['Etiqueta de preço',5,'tag',1.6],['Nanquim',6,'ink',.9],['Isca de pesca',7,'lure',1.8],['Borracha',4,'eraser',1.8],['Etiqueta de preço',5,'tag',1.6],
+    ['Minicone',22,'cone',1.1],['Gaiola de insetos',25,'cage',1.3],['Rastelo infantil',40,'rake',1.9],['Planta de jardim',60,'plant',1.3],['Placa da escola',90,'sign',1.2],
+    ['Banho público',130,'bath',1.8],['Prédio do peixe-lua',190,'fishbuilding',1.2],['Porto antigo',280,'lighthouse',2.5] ];
+  const STAR_LINE = ['este katamari será uma estrela cadente.', 'Assim decretamos.'];
+  const PAL = ['#ffd23f','#ff6fa5','#4dd9ff','#7ddc5a','#b18cff','#ff8a3d'];
+
+  let W = 0, H = 0, floorY = 0;
+  function size(){ const dpr = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); floorY = H*.84; }
+  addEventListener('resize', size); size();
+
+  const itemH = s => Math.max(16, Math.min(H*.3, H*.045*Math.pow(s/5, .45)));
+  const radius = d => Math.min(H*.36, H*.05*Math.sqrt(d/10));
+  let ball, floor, stuck, stars = [], phase, phaseT, mouseX = null, camX = 0, lastPick = null;
+
+  function reset(){
+    ball = {x:W*.2, v:0, rot:0, d:10};
+    stuck = []; phase = 'roll'; phaseT = 0; camX = 0; lastPick = null; hintEl.textContent = HINT;
+    let x = W*.5, prevW = 0;
+    floor = ITEMS.map(([name, s, draw, wr]) => {
+      const h = itemH(s), w = h*wr; x += prevW/2 + w/2 + 40 + h*.9; prevW = w;
+      return {name, s, draw, h, w, x, shake:0, alive:true};
+    });
+  }
+
+  const setMouse = e => { const r = cv.getBoundingClientRect(); mouseX = e.clientX - r.left; };
+  cv.addEventListener('pointermove', e => { if (!touch) setMouse(e); });
+  cv.addEventListener('pointerleave', () => { if (!touch) mouseX = null; });
+  cv.addEventListener('pointerdown', e => { setMouse(e); if (touch) setTimeout(() => mouseX = null, 1500); });
+
+  const fmt = cm => cm < 100 ? `${Math.round(cm)} cm` : `${(cm/100).toFixed(2).replace('.', ',')} m`;
+
+  function drawItem(it, x, y, h, rot = 0, alpha = 1){
+    ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(h, h); DRAW[it.draw](); ctx.restore();
+  }
+
+  function step(dt){
+    if (phase === 'roll'){
+      const r = radius(ball.d), maxV = 170 + r*2;
+      const tv = mouseX == null ? maxV*.6 : ((mouseX - W*.5)/(W*.5))*maxV;
+      ball.v += (tv - ball.v)*Math.min(1, dt*2.5);
+      ball.x = Math.max(r, ball.x + ball.v*dt);
+      ball.rot += ball.v*dt/r;
+      for (const it of floor){ if (!it.alive) continue;
+        if (Math.abs(it.x - ball.x) < r*.8 + it.w/2){
+          if (it.s <= ball.d*.8){
+            it.alive = false;
+            const side = it.x > ball.x ? Math.PI*.25 : Math.PI*.75;
+            stuck.push({draw:it.draw, h:it.h*.85, ang:side - ball.rot + (Math.random() - .5)*.8, f:.86 + Math.random()*.1});
+            ball.d += it.s*.6; lastPick = it.name; hintEl.textContent = 'pegou: ' + it.name;
+          } else if (it.shake <= 0){ it.shake = .45; ball.v = -Math.sign(it.x - ball.x)*120; ball.x -= Math.sign(it.x - ball.x)*6; }
+        }
+        it.shake = Math.max(0, it.shake - dt);
+      }
+      const target = Math.max(0, ball.x - W*.38); camX += (target - camX)*Math.min(1, dt*3);
+      if (!floor.some(it => it.alive)){ phase = 'star'; phaseT = 0; }
+    } else if (phase === 'star'){
+      phaseT += dt;
+      if (phaseT > 4.4){ stars.push({x:W*(.08 + Math.random()*.84), y:H*(.06 + Math.random()*.3), r:1.5 + Math.random()*2.5, ph:Math.random()*6}); if (stars.length > 40) stars.shift(); reset(); }
+    }
+    sizeEl.textContent = fmt(ball.d);
+  }
+
+  function drawBall(x, y, r, rot){
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(x, floorY + 2, r*.9, r*.14, 0, 0, Math.PI*2); ctx.fill();
+    // objetos grudados atrás da bola (metade) e na frente (outra metade) para dar volume
+    const back = stuck.filter((_, i) => i % 2), front = stuck.filter((_, i) => !(i % 2));
+    const drawStuck = list => { for (const s of list){ const a = s.ang + rot; drawItem(s, x + Math.cos(a)*r*s.f, y + Math.sin(a)*r*s.f, s.h, a + Math.PI/2); } };
+    drawStuck(back);
+    const g = ctx.createRadialGradient(x - r*.35, y - r*.4, r*.1, x, y, r);
+    g.addColorStop(0, '#fff3b0'); g.addColorStop(.35, '#ffd23f'); g.addColorStop(1, '#c77d00');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+    for (let i = 0; i < 12; i++){ const a = rot + i/12*Math.PI*2, k = i % 3 === 0 ? .6 : .9, bx = x + Math.cos(a)*r*k, by = y + Math.sin(a)*r*k;
+      ctx.fillStyle = PAL[i % 5 + 1]; ctx.beginPath(); ctx.arc(bx, by, r*(i % 3 === 0 ? .1 : .13), 0, Math.PI*2); ctx.fill(); }
+    drawStuck(front);
+  }
+
+  function frame(now, dt){
+    step(dt);
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars){ const tw = .5 + .5*Math.sin(now*2 + s.ph); ctx.fillStyle = `rgba(255,236,170,${.4 + tw*.6})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r*(.8 + tw*.4), 0, Math.PI*2); ctx.fill(); }
+    ctx.strokeStyle = 'rgba(255,255,255,.14)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, floorY); ctx.lineTo(W, floorY); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.12)'; for (let x = -(camX % 80); x < W; x += 80) ctx.fillRect(x, floorY + 8, 18, 1);
+    for (const it of floor){ if (!it.alive) continue; const x = it.x - camX; if (x < -it.w*2 || x > W + it.w*2) continue;
+      const sh = it.shake > 0 ? Math.sin(now*60)*4*it.shake : 0, can = it.s <= ball.d*.8;
+      drawItem(it, x + sh, floorY, it.h, 0, can ? 1 : .45); }
+    const r = radius(ball.d), bx = ball.x - camX;
+    if (phase === 'roll') drawBall(bx, floorY - r, r, ball.rot);
+    else {
+      const k = Math.min(1, phaseT/1.6), e = 1 - Math.pow(1 - k, 3);
+      const x = bx + (W*.5 - bx)*e, y = (floorY - r) + (H*.16 - (floorY - r))*e, rr2 = r*(1 - e*.96);
+      ctx.strokeStyle = 'rgba(255,236,170,.3)'; ctx.lineWidth = Math.max(2, rr2*.8); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(bx, floorY - r); ctx.lineTo(x, y); ctx.stroke();
+      if (k < 1) drawBall(x, y, rr2, ball.rot + phaseT*8);
+      else { const tw = 1 + Math.sin(now*6)*.15, sr = H*.035*tw; ctx.fillStyle = '#fff3b0'; ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = H*.06;
+        ctx.beginPath(); for (let i = 0; i < 10; i++){ const a = -Math.PI/2 + i*Math.PI/5, rad = i % 2 ? sr*.42 : sr; ctx.lineTo(W*.5 + Math.cos(a)*rad, H*.16 + Math.sin(a)*rad); } ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0; }
+      if (phaseT > 1.3){ const a = Math.min(1, (phaseT - 1.3)/.4) * Math.min(1, (4.4 - phaseT)/.5);
+        ctx.globalAlpha = Math.max(0, a); ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+        ctx.font = `italic ${Math.max(20, Math.min(W*.05, H*.055))}px "Instrument Serif"`; ctx.fillText(STAR_LINE[0], W/2, H*.44);
+        ctx.font = `italic ${Math.max(24, Math.min(W*.065, H*.075))}px "Instrument Serif"`; ctx.fillStyle = '#ffd23f'; ctx.fillText(STAR_LINE[1], W/2, H*.44 + Math.max(30, H*.085));
+        ctx.globalAlpha = 1; }
+    }
+  }
+
+  let running = false, last = 0, clock = 0;
+  function loop(ms){ if (!running) return; const dt = Math.min((ms - last)/1000, .05); last = ms; clock += dt; frame(clock, dt); requestAnimationFrame(loop); }
+  new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && !running){ running = true; last = performance.now(); requestAnimationFrame(loop); }
+    else if (!e.isIntersecting) running = false;
+  })).observe(cv);
+  addEventListener('resize', () => reset());
+  reset();
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { size(); reset(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escolha o design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f0f12; --card:#18181d; --line:#2a2a33; --text:#f1f1f4; --muted:#8d8d99; --acc:#ffd23f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg); color:var(--text); font-family:Inter,system-ui,sans-serif; padding:48px 24px 80px}
+  .wrap{max-width:1300px; margin:0 auto}
+  h1{font-size:clamp(30px,5vw,52px); font-weight:800; letter-spacing:-.03em}
+  .lead{color:var(--muted); margin:10px 0 36px; font-size:17px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:24px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden; transition:transform .25s, border-color .25s}
+  .card:hover{transform:translateY(-4px); border-color:#444}
+  .card.fav{border-color:var(--acc); box-shadow:0 0 0 2px var(--acc)}
+  .frame{position:relative; aspect-ratio:16/10; overflow:hidden; background:#000; border-bottom:1px solid var(--line)}
+  .frame iframe{position:absolute; top:0; left:0; width:1440px; height:900px; border:0; transform-origin:0 0; pointer-events:none}
+  .frame a{position:absolute; inset:0}
+  .info{padding:18px 20px 20px; display:flex; justify-content:space-between; gap:14px; align-items:flex-start}
+  .info h2{font-size:19px; margin-bottom:4px}
+  .info h2 span{color:var(--muted); font-weight:400; margin-right:6px}
+  .info p{color:var(--muted); font-size:14px; line-height:1.5}
+  .acts{display:flex; gap:8px; flex:none}
+  .acts a,.acts button{font:600 13px Inter; padding:9px 14px; border-radius:10px; border:1px solid var(--line); background:#22222a; color:var(--text); text-decoration:none; cursor:pointer; white-space:nowrap}
+  .acts a:hover,.acts button:hover{background:#2d2d37}
+  .card.fav .acts button{background:var(--acc); color:#111; border-color:var(--acc)}
+  #pick{margin-top:36px; padding:18px 22px; border:1px dashed var(--line); border-radius:14px; color:var(--muted)}
+  #pick b{color:var(--acc)}
+  @media (max-width:480px){ body{padding:32px 16px 60px} .grid{grid-template-columns:1fr} .info{flex-direction:column} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>5 páginas iniciais pro Kauã</h1>
+  <p class="lead">Clique numa prévia pra abrir o design inteiro. Marque o seu favorito com ★.</p>
+  <div class="grid" id="grid"></div>
+  <p id="pick">Nenhum favorito marcado ainda.</p>
+</div>
+<script>
+const D = [
+  ['index.html','Sua ideia: tudo preto','Título à esquerda e uma esfera 3D de mini esferas que vira um balão de fala dizendo “oi” em vários idiomas. Cada link leva a uma página com estilo próprio.'],
+  ['1-terminal.html','Terminal','Escuro, verde neon e um terminal de verdade: dá pra digitar comandos como help e projetos.'],
+  ['2-editorial.html','Editorial','Cara de revista impressa: tipografia serifada gigante, papel creme e prévias que seguem o mouse.'],
+  ['3-brutalista.html','Neo-brutalista','Cores fortes, bordas pretas grossas, sombras duras e botões que “afundam” ao clicar.'],
+  ['4-pixel.html','Retrô pixel','Tela de título de fliperama: pôr do sol synthwave, menu com setas, ficha de personagem e fases.'],
+  ['5-aurora.html','Aurora','Moderno e elegante: luzes de aurora animadas, vidro fosco, grade bento e contadores.'],
+];
+let fav = null; try { fav = localStorage.getItem('fav-design'); } catch(e){}
+const grid = document.getElementById('grid'), pick = document.getElementById('pick');
+D.forEach(([f,n,d],i) => {
+  const c = document.createElement('article'); c.className = 'card'; c.dataset.f = f;
+  c.innerHTML = `<div class="frame"><iframe src="${f}" loading="lazy" tabindex="-1" title="Prévia ${n}"></iframe><a href="${f}" target="_blank" aria-label="Abrir ${n}"></a></div>
+  <div class="info"><div><h2><span>0${i+1}</span>${n}</h2><p>${d}</p></div><div class="acts"><a href="${f}" target="_blank">Abrir ↗</a><button>★</button></div></div>`;
+  c.querySelector('button').onclick = () => { fav = fav === f ? null : f; try{ fav ? localStorage.setItem('fav-design', fav) : localStorage.removeItem('fav-design'); }catch(e){} paint(); };
+  grid.appendChild(c);
+});
+function scale(){ document.querySelectorAll('.frame').forEach(fr => fr.querySelector('iframe').style.transform = `scale(${fr.offsetWidth/1440})`); }
+function paint(){ document.querySelectorAll('.card').forEach(c => c.classList.toggle('fav', c.dataset.f === fav));
+  const d = D.find(x => x[0] === fav); pick.innerHTML = d ? `Seu favorito: <b>${d[1]}</b> — me diga no chat e eu deixo ele pronto (com seus projetos, links e textos reais).` : 'Nenhum favorito marcado ainda.'; }
+addEventListener('resize', scale); scale(); paint();
+</script>
+</body>
+</html>

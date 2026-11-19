@@ -1,0 +1,5 @@
+# arquivos locais que não vão para o site
+.claude/
+node_modules/
+.wrangler/
+*.local.*

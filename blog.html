@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<style>
+  :root{ --bg:#000; --text:#f4f4f4; --muted:#6e6e6e; --soft:#a8a8a8; --line:#1d1d1d; --acc:#ffd23f; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
+  body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; min-height:100vh; display:flex; flex-direction:column}
+  .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+  a{color:inherit; text-decoration:none}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:sticky; top:0; z-index:10; background:linear-gradient(#000 60%, transparent)}
+  .logo{font-weight:800; font-size:20px; letter-spacing:-.03em; display:flex; gap:10px; align-items:center}
+  .logo span{color:var(--muted); font-weight:500; transition:transform .2s}
+  .logo:hover span{transform:translateX(-3px); color:var(--text)}
+  .logo i{font-style:normal; color:var(--muted)}
+  header nav{display:flex; gap:28px}
+  header nav a{color:var(--muted); transition:color .2s}
+  header nav a:hover, header nav a[aria-current]{color:var(--text)}
+
+  main{flex:1; width:100%; max-width:1080px; margin:0 auto; padding:8vh 48px 12vh}
+
+  /* lista */
+  .kicker{color:var(--muted); margin-bottom:26px; display:flex; gap:10px; align-items:center}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--acc); box-shadow:0 0 10px var(--acc)}
+  h1.big{font-size:clamp(64px,10vw,150px); line-height:.86; letter-spacing:-.06em; font-weight:800}
+  h1.big .dim{color:#3a3a3a}
+  .intro{margin-top:24px; max-width:520px; color:var(--soft); font-size:18px; line-height:1.55}
+  .filters{display:flex; gap:8px; flex-wrap:wrap; margin:56px 0 0}
+  .filters button{font:500 12px "JetBrains Mono"; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); background:none; border:1px solid #2a2a2a; border-radius:999px; padding:6px 12px; cursor:pointer}
+  .filters button:hover{color:var(--text); border-color:#555}
+  .filters button[aria-pressed="true"]{color:#000; background:var(--text); border-color:var(--text)}
+  .list{margin-top:22px; border-top:1px solid var(--line)}
+  .post{display:grid; grid-template-columns:130px 1fr 24px; gap:20px; align-items:baseline; padding:26px 0; border-bottom:1px solid var(--line); transition:padding .3s cubic-bezier(.2,.8,.2,1)}
+  .post:hover{padding-left:12px}
+  .post .d{color:var(--muted)}
+  .post h2{font-size:clamp(24px,2.8vw,34px); font-weight:700; letter-spacing:-.03em; line-height:1.1; transition:color .2s}
+  .post:hover h2{color:var(--acc)}
+  .post p{color:#8a8a8a; font-size:15px; line-height:1.55; margin-top:8px; max-width:640px}
+  .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px}
+  .tags span{border:1px solid #2c2c2c; border-radius:999px; padding:2px 9px; font-size:10.5px; color:#9a9a9a}
+  .post .ar{color:var(--muted); transition:transform .3s}
+  .post:hover .ar{transform:translateX(4px); color:var(--acc)}
+  .empty{color:var(--muted); padding:40px 0; line-height:1.6}
+
+  /* leitura */
+  article{max-width:700px; margin:0 auto}
+  .back{color:var(--muted); display:inline-flex; gap:8px; margin-bottom:40px}
+  .back:hover{color:var(--text)}
+  article h1{font-size:clamp(38px,6vw,68px); line-height:1; letter-spacing:-.045em; font-weight:800; margin:14px 0 18px}
+  .meta{color:var(--muted); display:flex; gap:16px; flex-wrap:wrap}
+  .body{margin-top:44px; font-size:19px; line-height:1.7; color:#d6d6d6}
+  .body > * + *{margin-top:1.1em}
+  .body h2{font-size:30px; letter-spacing:-.03em; line-height:1.15; color:var(--text); margin-top:1.8em}
+  .body h3{font-size:22px; letter-spacing:-.02em; color:var(--text); margin-top:1.6em}
+  .body a{color:var(--acc); text-decoration:underline; text-underline-offset:3px}
+  .body strong{color:var(--text)}
+  .body ul, .body ol{padding-left:1.3em}
+  .body li + li{margin-top:.35em}
+  .body blockquote{font-family:"Instrument Serif"; font-style:italic; font-size:28px; line-height:1.25; color:var(--text); border-left:2px solid var(--acc); padding-left:22px}
+  .body code{font-family:"JetBrains Mono"; font-size:.82em; background:#141414; border:1px solid #222; border-radius:5px; padding:1px 6px}
+  .body pre{background:#0d0d0d; border:1px solid #222; border-radius:10px; padding:16px 18px; overflow-x:auto}
+  .body pre code{background:none; border:0; padding:0}
+  .body img{max-width:100%; height:auto; border-radius:10px; display:block}
+  .body hr{border:0; border-top:1px solid var(--line); margin:2.2em 0}
+  .nav-posts{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:70px; padding-top:24px; border-top:1px solid var(--line)}
+  .nav-posts a{display:block; color:var(--muted)}
+  .nav-posts a b{display:block; color:var(--text); font-family:"Inter Tight"; font-size:18px; letter-spacing:-.02em; text-transform:none; margin-top:6px}
+  .nav-posts a:hover b{color:var(--acc)}
+  .nav-posts .next{text-align:right}
+
+  footer{display:flex; justify-content:space-between; padding:24px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+
+  @media (max-width:760px){
+    header{padding:18px 16px} header nav{gap:16px}
+    main{padding:5vh 16px 10vh}
+    .post{grid-template-columns:1fr 20px; gap:6px 12px}
+    .post .d{grid-column:1 / -1}
+    .body{font-size:17px}
+    .nav-posts{grid-template-columns:1fr}
+    .nav-posts .next{text-align:left}
+    footer{padding:20px 16px 26px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html"><span>←</span> kauã<i>.</i></a>
+  <nav class="mono"><a href="index.html#projetos">Projetos</a><a href="blog.html" aria-current="page">Blog</a><a href="https://github.com/kaua0f0m" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+
+<main id="app" aria-live="polite"></main>
+
+<footer class="mono">
+  <span>© 2026 Kauã</span>
+  <a href="index.html">← voltar ao início</a>
+</footer>
+
+<script>
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const fmtData = d => { const [a, m, dia] = d.split('-'); return a && m && dia ? `${+dia} ${MESES[+m - 1]} ${a}` : d; };
+let posts = [], tag = null;
+
+async function carregar(){
+  try {
+    const r = await fetch('blog/posts.json', {cache:'no-cache'});
+    if (!r.ok) throw new Error(r.status);
+    posts = await r.json();
+  } catch(e){
+    app.innerHTML = `<p class="empty">Não deu para carregar os posts. Se você abriu o arquivo direto do computador, o blog precisa de um servidor (no site publicado ele funciona normalmente).</p>`;
+    return;
+  }
+  rota();
+}
+
+function lista(){
+  document.title = 'Blog — Kauã';
+  const tags = [...new Set(posts.flatMap(p => p.tags))];
+  const vis = tag ? posts.filter(p => p.tags.includes(tag)) : posts;
+  app.innerHTML = `
+    <p class="kicker mono">Escritos · ${posts.length} ${posts.length === 1 ? 'post' : 'posts'}</p>
+    <h1 class="big">Blog<span class="dim">.</span></h1>
+    <p class="intro">Notas sobre traduções, mods, projetos e o que mais eu estiver fazendo.</p>
+    ${tags.length ? `<div class="filters" role="group" aria-label="Filtrar por tag"><button aria-pressed="${!tag}" data-tag="">todos</button>${tags.map(t => `<button aria-pressed="${t === tag}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
+    <div class="list">${vis.length ? vis.map(p => `
+      <a class="post" href="#${encodeURIComponent(p.slug)}">
+        <span class="d mono">${esc(fmtData(p.data))}</span>
+        <span><h2>${esc(p.titulo)}</h2>${p.resumo ? `<p>${esc(p.resumo)}</p>` : ''}${p.tags.length ? `<span class="tags mono">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</span>` : ''}</span>
+        <span class="ar">→</span>
+      </a>`).join('') : '<p class="empty">Nenhum post por aqui ainda.</p>'}</div>`;
+  app.querySelectorAll('[data-tag]').forEach(b => b.onclick = () => { tag = b.dataset.tag || null; lista(); });
+}
+
+async function ler(slug){
+  const i = posts.findIndex(p => p.slug === slug), p = posts[i];
+  if (!p){ location.hash = ''; return; }
+  let md = '';
+  try { md = await (await fetch('blog/posts/' + encodeURIComponent(p.arquivo), {cache:'no-cache'})).text(); } catch(e){}
+  md = md.replace(/^---[\s\S]*?\n---\s*/, '');                 // tira o cabeçalho
+  const palavras = md.split(/\s+/).filter(Boolean).length, min = Math.max(1, Math.round(palavras/200));
+  const html = DOMPurify.sanitize(marked.parse(md));
+  const novo = posts[i - 1], velho = posts[i + 1];
+  document.title = `${p.titulo} — Kauã`;
+  app.innerHTML = `
+    <article>
+      <a class="back mono" href="#">← todos os posts</a>
+      <p class="meta mono"><span>${esc(fmtData(p.data))}</span><span>${min} min de leitura</span></p>
+      <h1>${esc(p.titulo)}</h1>
+      ${p.tags.length ? `<span class="tags mono">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</span>` : ''}
+      <div class="body">${html}</div>
+      <nav class="nav-posts mono">
+        ${velho ? `<a href="#${encodeURIComponent(velho.slug)}">← anterior<b>${esc(velho.titulo)}</b></a>` : '<span></span>'}
+        ${novo ? `<a class="next" href="#${encodeURIComponent(novo.slug)}">próximo →<b>${esc(novo.titulo)}</b></a>` : ''}
+      </nav>
+    </article>`;
+  // imagens e links relativos do post apontam para a pasta do blog
+  app.querySelectorAll('.body img').forEach(img => { const s = img.getAttribute('src') || ''; if (!/^(https?:|\/|data:)/.test(s)) img.src = 'blog/' + s.replace(/^\.\//, ''); img.loading = 'lazy'; });
+  app.querySelectorAll('.body a[href^="http"]').forEach(a => { a.target = '_blank'; a.rel = 'noopener'; });
+  scrollTo(0, 0);
+}
+
+function rota(){ const slug = decodeURIComponent(location.hash.slice(1)); slug ? ler(slug) : lista(); }
+addEventListener('hashchange', rota);
+carregar();
+</script>
+</body>
+</html>
