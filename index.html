@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- só os caracteres das saudações em japonês e chinês -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@800&family=Noto+Sans+SC:wght@800&text=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF%E4%BD%A0%E5%A5%BD&display=swap" rel="stylesheet">
 <style>
   :root{ --bg:#000; --text:#f4f4f4; --muted:#6e6e6e; --line:#1d1d1d; }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -152,7 +154,8 @@ const GROUPS = [
       url:'legado.html' },
   ]},
 ];
-const GREETS = [['Oi!','português'],['Hello!','english'],['Hola!','español'],['Ciao!','italiano'],['Salut!','français'],['Hallo!','deutsch']];
+// saudações da rotação das bolinhas (intercaladas com os símbolos dos projetos)
+const SAY = [['Oi!','português'],['Hello!','english'],['こんにちは','日本語'],['你好!','中文'],['Kauã!','']];
 
 /* ---------- monta a lista ---------- */
 const list = document.getElementById('projetos'); const ALL = [];
@@ -220,7 +223,7 @@ GROUPS.forEach(g => {
   function textPoints(word, n, maxW = 1.55, maxH = .68, dy = .04){
     const w = 640, h = 260, c = document.createElement('canvas'); c.width = w; c.height = h;
     const g = c.getContext('2d'); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = '800 170px "Inter Tight", system-ui, sans-serif'; g.fillText(word, w/2, h/2);
+    g.font = '800 170px "Inter Tight", "Noto Sans JP", "Noto Sans SC", system-ui, sans-serif'; g.fillText(word, w/2, h/2);
     const d = g.getImageData(0,0,w,h).data, cand = [];
     let minX = w, maxX = 0, minY = h, maxY = 0;
     for (let y = 0; y < h; y += 3) for (let x = 0; x < w; x += 3) if (d[(y*w+x)*4+3] > 128){ cand.push([x,y]); minX = Math.min(minX,x); maxX = Math.max(maxX,x); minY = Math.min(minY,y); maxY = Math.max(maxY,y); }
@@ -312,7 +315,7 @@ GROUPS.forEach(g => {
   /* ---------- partículas ---------- */
   const SPHERE = sphere(N), WHITE = '#ffffff';
   const P = SPHERE.map(p => ({fx:p.x, fy:p.y, fz:p.z, tx:p.x, ty:p.y, tz:p.z, x:p.x, y:p.y, z:p.z, d:0, ph:Math.random()*6.28, sa:WHITE, sb:WHITE}));
-  let morphT = 1, morphDur = 1.7, mode = 'sphere', active = null, faceFront = false, spin = false;
+  let morphT = 1, morphDur = 1.7, mode = 'sphere', active = null, faceFront = false, spin = false, glowColor = '#ffffff';
   let ry = 0, rz = 0, gi = -1, holdT = 0;
 
   function morphTo(target, color = WHITE, dur = 1.7){
@@ -325,13 +328,24 @@ GROUPS.forEach(g => {
   }
 
   const cap = document.getElementById('cap'), word = document.getElementById('word'), lang = document.getElementById('lang'), dots = document.getElementById('dots');
-  dots.innerHTML = GREETS.map(() => '<i></i>').join('');
+  // rotação: saudação, projeto, saudação, projeto...
+  const ROT = []; ALL.forEach((p, i) => { ROT.push({say:SAY[i % SAY.length]}); ROT.push({p}); });
+  dots.innerHTML = ROT.map(() => '<i></i>').join('');
   function label(a, b, isProj){ word.textContent = a; lang.textContent = b; cap.classList.toggle('proj-mode', !!isProj); }
 
   function nextGreeting(){
-    if (mode === 'sphere'){ gi = (gi+1) % GREETS.length; mode = 'bubble'; faceFront = true; morphTo(bubbleWith(GREETS[gi][0]));
-      label(GREETS[gi][0], GREETS[gi][1]); [...dots.children].forEach((d,i) => d.classList.toggle('on', i === gi)); }
-    else { mode = 'sphere'; faceFront = false; morphTo(SPHERE); label('—', ''); }
+    holdT = 0;
+    if (mode === 'sphere'){
+      gi = (gi+1) % ROT.length; const it = ROT[gi]; mode = 'bubble';
+      [...dots.children].forEach((d,i) => d.classList.toggle('on', i === gi));
+      if (it.say){ faceFront = true; spin = false; glowColor = WHITE; morphTo(bubbleWith(it.say[0])); label(it.say[0], it.say[1]); }
+      else {
+        const p = it.p; faceFront = p.shape !== 'katamari' || !!p.logo; spin = p.shape === 'katamari' && !p.logo; glowColor = p.color;
+        label(p.name, p.tags[0]);
+        shapeOf(p).then(pts => { if (mode === 'bubble' && ROT[gi] === it) morphTo(pts, p.color); });
+      }
+    }
+    else { mode = 'sphere'; faceFront = false; spin = false; glowColor = WHITE; morphTo(SPHERE); label('—', ''); }
   }
 
   // cache de formas por projeto
@@ -350,11 +364,11 @@ GROUPS.forEach(g => {
     active = p; ALL.forEach(q => q.el.classList.toggle('on', q === p));
     const pts = await shapeOf(p); if (active !== p) return;
     mode = 'project'; faceFront = p.shape !== 'katamari' || !!p.logo; spin = p.shape === 'katamari' && !p.logo;
-    morphTo(pts, p.color, 1.15); label(p.name, p.tags[0], true);
+    glowColor = p.color; morphTo(pts, p.color, 1.15); label(p.name, p.tags[0], true);
   }
   function deactivate(){
     if (!active) return; active = null; ALL.forEach(q => q.el.classList.remove('on'));
-    mode = 'sphere'; faceFront = false; spin = false; morphTo(SPHERE, WHITE, 1.3); label('—', ''); holdT = 0;
+    mode = 'sphere'; faceFront = false; spin = false; glowColor = WHITE; morphTo(SPHERE, WHITE, 1.3); label('—', ''); holdT = 0;
   }
 
   if (!touch){
@@ -413,9 +427,9 @@ GROUPS.forEach(g => {
     order.sort((i,j) => P[i].sz - P[j].sz);
 
     ctx.clearRect(0,0,W,H);
-    const glowC = active ? active.color : '#ffffff', n = parseInt(glowC.slice(1),16);
+    const glowC = glowColor, n = parseInt(glowC.slice(1),16);
     const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, S*1.6);
-    glow.addColorStop(0, `rgba(${n>>16},${n>>8&255},${n&255},${active ? .1 : .06})`); glow.addColorStop(1, 'rgba(0,0,0,0)');
+    glow.addColorStop(0, `rgba(${n>>16},${n>>8&255},${n&255},${glowC !== WHITE ? .1 : .06})`); glow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
 
     const base = S*.055, small = mode !== 'sphere' && morphT > .6 ? .82 : 1;
@@ -428,7 +442,8 @@ GROUPS.forEach(g => {
     requestAnimationFrame(frame);
   }
 
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+  const cjk = document.fonts ? Promise.all([document.fonts.load('800 170px "Noto Sans JP"', 'こんにちは'), document.fonts.load('800 170px "Noto Sans SC"', '你好')]).catch(() => {}) : Promise.resolve();
+  (document.fonts ? Promise.all([document.fonts.ready, cjk]) : Promise.resolve()).then(() => {
     ALL.forEach(p => setTimeout(() => shapeOf(p), 50)); // pré-calcula as formas
     requestAnimationFrame(t => { last = t; frame(t); });
   });
