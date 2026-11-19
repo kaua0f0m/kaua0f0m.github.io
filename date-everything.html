@@ -72,7 +72,7 @@
   .txt b{color:var(--text); font-weight:500}
   .age{display:inline-flex; align-items:center; justify-content:center; width:46px; height:46px; border-radius:10px; background:#ff8a3d; color:#000; font-weight:900; font-size:20px; float:left; margin:2px 14px 6px 0}
 
-  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px 1fr; gap:48px}
+  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px minmax(0,1fr); gap:48px}
   .group h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.05}
   .group h2 small{display:block; margin-top:10px; color:var(--muted); font-family:"JetBrains Mono"; font-size:12px; font-weight:400; letter-spacing:.04em; text-transform:uppercase}
   .sub{color:var(--muted); margin:0 0 12px}
@@ -114,13 +114,16 @@
     .hl-part + .hl-part{border-left:0; border-top:1px solid rgba(255,255,255,.12)}
     .hl-lbl em{display:none}
     .hl-btn{width:100%; justify-content:space-between}
-    .group{grid-template-columns:1fr; gap:18px; margin-top:80px}
+    .group{grid-template-columns:minmax(0,1fr); gap:18px; margin-top:80px}
     .row{grid-template-columns:1fr 24px 1fr}
     .specs{grid-template-columns:repeat(5,1fr); gap:6px}
     .spec{padding:12px 6px; text-align:center} .spec b{font-size:30px} .spec span{font-size:12px} .spec small{font-size:9px}
     .credits li{grid-template-columns:1fr; gap:2px}
     footer{padding:20px 16px 26px}
   }
+  .ia-tag{border:1px dashed currentColor; border-radius:4px; padding:0 6px; opacity:.85}
+  .depot pre{font-family:"JetBrains Mono",monospace; font-size:13px; line-height:1.7; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:14px 16px; overflow-x:auto; margin:10px 0; white-space:pre}
+  .depot code{word-break:break-all} .depot li{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -140,7 +143,7 @@
 <main class="wrap">
   <section class="intro">
     <div>
-      <p class="kicker mono">Tradução PT-BR — PC / Steam</p>
+      <p class="kicker mono">Tradução PT-BR — PC / Steam <span class="ia-tag">feita com Codex</span></p>
       <h1>Date Everything!<br><span class="dim">em português.</span></h1>
     </div>
     <div>
@@ -216,10 +219,20 @@
       <li><span class="mono">Jogo original</span>Sassy Chap Games, publicado pela Team17</li>
     </ul>
   </section>
+  <section class="group depot">
+    <h2>Se o jogo atualizar<small>e a tradução quebrar</small></h2>
+    <ul class="notes">
+        <li><b>Ache a versão certa no SteamDB:</b> abra <a href="https://steamdb.info/app/2201320/depots/" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">steamdb.info/app/2201320/depots</a>, entre no depot do Windows e, na aba <b>Manifests</b>, anote o número do manifest da <b>build 23889775</b>, a versão para a qual a tradução foi feita.</li>
+        <li><b>Baixe pelo console da Steam:</b> cole <code>steam://open/console</code> na barra do navegador e digite (troque DEPOT e MANIFEST pelos números que você anotou):
+          <pre>download_depot 2201320 DEPOT MANIFEST</pre></li>
+        <li><b>Copie por cima do jogo:</b> o download vai para <code>steamapps/content/app_2201320/depot_DEPOT/</code>. Copie o conteúdo para a pasta do Date Everything! e instale a tradução de novo.</li>
+        <li><b>Para a Steam não atualizar sozinha:</b> Propriedades → Atualizações → “Atualizar este jogo somente quando eu o iniciar”.</li>
+    </ul>
+  </section>
 </main>
 
 <footer class="mono">
-  <span>Tradução de fãs, sem fins lucrativos e sem vínculo com a Sassy Chap Games ou a Team17</span>
+  <span>Tradução de fãs, sem fins lucrativos e sem vínculo com a Sassy Chap Games ou a Team17 · feito com IA (Codex)</span>
   <a href="index.html#projetos">← voltar aos projetos</a>
 </footer>
 

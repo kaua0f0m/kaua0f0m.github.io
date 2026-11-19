@@ -122,6 +122,9 @@
     .gate-btns > *{flex:1; display:inline-flex; align-items:center; justify-content:center; text-align:center}
     footer{padding:20px 16px 26px}
   }
+  .ia-tag{border:1px dashed currentColor; border-radius:4px; padding:0 6px; opacity:.85}
+  .depot pre{font-family:"JetBrains Mono",monospace; font-size:13px; line-height:1.7; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:14px 16px; overflow-x:auto; margin:10px 0; white-space:pre}
+  .depot code{word-break:break-all} .depot li{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -151,7 +154,7 @@
 <main class="wrap">
   <section class="intro">
     <div>
-      <p class="kicker mono">Tradução PT-BR — PC / Steam <b>18+</b></p>
+      <p class="kicker mono">Tradução PT-BR — PC / Steam <b>18+</b> <span class="ia-tag">feita com Gemini</span></p>
       <h1>HuniePop 2<br><span class="dim">em português.</span></h1>
     </div>
     <div>
@@ -218,10 +221,20 @@
       <li>Código sob licença MIT. Detalhes no <a href="https://github.com/kaua0f0m/huniepop2-ptbr" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">README</a>.</li>
     </ul>
   </section>
+  <section class="group depot">
+    <h2>Se o jogo atualizar<small>e a tradução quebrar</small></h2>
+    <ul class="notes">
+        <li><b>Ache a versão certa no SteamDB:</b> abra <a href="https://steamdb.info/app/930210/depots/" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">steamdb.info/app/930210/depots</a>, entre no depot do Windows e, na aba <b>Manifests</b>, anote o número do manifest de por volta de 19/11/2026, quando a tradução v1.2.0 saiu.</li>
+        <li><b>Baixe pelo console da Steam:</b> cole <code>steam://open/console</code> na barra do navegador e digite (troque DEPOT e MANIFEST pelos números que você anotou):
+          <pre>download_depot 930210 DEPOT MANIFEST</pre></li>
+        <li><b>Copie por cima do jogo:</b> o download vai para <code>steamapps/content/app_930210/depot_DEPOT/</code>. Copie o conteúdo para a pasta do HuniePop 2 e instale a tradução de novo.</li>
+        <li><b>Para a Steam não atualizar sozinha:</b> Propriedades → Atualizações → “Atualizar este jogo somente quando eu o iniciar”.</li>
+    </ul>
+  </section>
 </main>
 
 <footer class="mono">
-  <span>Mod não oficial, feito por fã, sem afiliação com a HuniePot</span>
+  <span>Mod não oficial, feito por fã, sem afiliação com a HuniePot · feito com IA (Gemini)</span>
   <span class="foot-r"><button type="button" class="debug" id="debug18" title="Apaga a confirmação salva e mostra o aviso de novo">debug: aviso +18</button><a href="index.html#projetos">← voltar aos projetos</a></span>
 </footer>
 

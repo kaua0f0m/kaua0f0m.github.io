@@ -137,14 +137,16 @@
 
   @media (max-width:900px){
     header{padding:18px 16px} header nav{gap:16px}
-    main{grid-template-columns:1fr; padding:0 16px; gap:0}
+    main{grid-template-columns:minmax(0,1fr); padding:0 16px; gap:0}
     .right{order:-1; position:sticky; top:0; height:auto; z-index:3; background:color-mix(in srgb, var(--tint) 24%, #070707); padding:68px 0 14px; gap:14px; margin:0 -16px; padding-left:16px; padding-right:16px}
     .right::after{content:""; position:absolute; left:0; right:0; bottom:-36px; height:36px; background:linear-gradient(color-mix(in srgb, var(--tint) 24%, #070707),transparent); pointer-events:none}
-    .flap span{font-size:clamp(44px,15vw,72px)}
-    .code{max-width:340px}
+    .flap span{font-size:clamp(26px,9vw,40px)}
+    .code{max-width:210px; margin-top:8px}
+    .join{margin-top:8px; font-size:10px}
     .sample{min-height:0; padding-top:12px}
     .say{min-height:96px; margin-top:10px}
-    .s-wheel{font-size:24px} .s-drawful{font-size:32px} .s-drawful svg{width:80px} .s-job{font-size:17px} .s-poll{font-size:19px} .s-poll ol{display:none} .s-weap{font-size:34px} .s-default{font-size:18px}
+    .s-wheel{font-size:19px} .s-drawful{font-size:24px} .s-drawful svg{width:56px} .s-job{font-size:14px} .s-poll{font-size:15px} .s-poll ol{display:none} .s-weap{font-size:24px} .s-default{font-size:15px}
+    .say{min-height:64px} .right{gap:8px; padding-top:60px}
     .left{padding:5vh 0 30vh}
     .hl-part{padding:22px 18px}
     .hl-lbl em{display:none}
@@ -153,6 +155,9 @@
     footer{padding:20px 16px 26px}
   }
   @media (prefers-reduced-motion:reduce){ .fa,.fb{animation:none} .fb{display:none} }
+  .ia-tag{border:1px dashed currentColor; border-radius:4px; padding:0 6px; opacity:.85}
+  .depot pre{font-family:"JetBrains Mono",monospace; font-size:13px; line-height:1.7; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:14px 16px; overflow-x:auto; margin:10px 0; white-space:pre}
+  .depot code{word-break:break-all} .depot li{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -164,7 +169,7 @@
 
 <main>
   <section class="left">
-    <p class="kicker mono">Tradução não oficial — PT-BR</p>
+    <p class="kicker mono">Tradução não oficial — PT-BR <span class="ia-tag">feita com Claude Code</span></p>
     <h1>The Jackbox<br>Party Pack 8 <span class="dim">em português.</span></h1>
     <p class="lead">Os cinco jogos do pacote traduzidos e <b>abrasileirados</b>. Onde a piada dependia de trocadilho em inglês ou de referência americana demais, entrou uma nova, daqui: novela, futebol, padaria, festa junina.</p>
     <div class="facts mono">
@@ -231,6 +236,17 @@
         <li>O antivírus pode reclamar do .exe por ele não ser assinado.</li>
       </ul>
     </div>
+
+    <div class="group depot">
+      <h2 class="mono"><b>Se o jogo atualizar</b><span>e a tradução quebrar</span></h2>
+      <ul class="notes">
+        <li><b>Ache a versão certa no SteamDB:</b> abra <a href="https://steamdb.info/app/1552350/depots/" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">steamdb.info/app/1552350/depots</a>, entre no depot do Windows e, na aba <b>Manifests</b>, anote o número do manifest de por volta de 18/11/2026, quando a tradução v1.0 saiu.</li>
+        <li><b>Baixe pelo console da Steam:</b> cole <code>steam://open/console</code> na barra do navegador e digite (troque DEPOT e MANIFEST pelos números que você anotou):
+          <pre>download_depot 1552350 DEPOT MANIFEST</pre></li>
+        <li><b>Copie por cima do jogo:</b> o download vai para <code>steamapps/content/app_1552350/depot_DEPOT/</code>. Copie o conteúdo para a pasta do The Jackbox Party Pack 8 e instale a tradução de novo.</li>
+        <li><b>Para a Steam não atualizar sozinha:</b> Propriedades → Atualizações → “Atualizar este jogo somente quando eu o iniciar”.</li>
+      </ul>
+    </div>
   </section>
 
   <aside class="right" aria-label="Código da sala e exemplos da tradução">
@@ -247,7 +263,7 @@
 </main>
 
 <footer class="mono">
-  <span>Tradução feita por fã, sem vínculo com a Jackbox Games</span>
+  <span>Tradução feita por fã, sem vínculo com a Jackbox Games · feito com IA (Claude Code)</span>
   <a href="index.html#projetos">← voltar aos projetos</a>
 </footer>
 

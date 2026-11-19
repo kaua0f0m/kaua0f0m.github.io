@@ -124,6 +124,7 @@
     .gate-btns > *{flex:1; text-align:center; display:inline-flex; align-items:center; justify-content:center}
     footer{padding:20px 16px 26px}
   }
+  .ia-tag{border:1px dashed currentColor; border-radius:4px; padding:0 6px; opacity:.85}
 </style>
 </head>
 <body>
@@ -148,7 +149,7 @@
 <main class="wrap">
   <section class="intro">
     <div>
-      <p class="kicker mono">Tradução PT-BR — PC / Steam <b>18+</b></p>
+      <p class="kicker mono">Tradução PT-BR — PC / Steam <b>18+</b> <span class="ia-tag">feita com Claude Code</span></p>
       <h1>Hush Hush<br><span class="dim">em português.</span></h1>
       <p class="tag">Only your love can save them.</p>
     </div>
@@ -209,8 +210,8 @@
         <li><b>Faça um fork e atualize com a ajuda de uma IA.</b> O repositório inclui as ferramentas usadas para gerar a tradução, e o código é pequeno o bastante para uma IA entender e ajustar.</li>
         <li><b>Ou baixe a versão compatível do jogo pelos depots da Steam</b> (precisa ter o jogo na sua conta). No console da Steam, que abre com <code>steam://open/console</code> no navegador:
           <pre>download_depot 782250 782251 5155249699670900129
-download_depot 2070760 2070763 6224966165265546425
-download_depot 2070900 2070901 484771098001674209</pre>
+download_depot 2070760 2070763 6224966165265546425</pre>
+          A primeira linha é o <b>jogo base</b> e a segunda, a <b>DLC 18+ Uncensored</b>. Se você tiver a <b>Peanut DLC</b>, pegue o manifest dela em <a href="https://steamdb.info/app/2564190/depots/" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">steamdb.info/app/2564190/depots</a>, de por volta de 17/11/2026 (build <code>26470028</code>), e baixe do mesmo jeito: <code>download_depot 2564190 DEPOT MANIFEST</code>. O Artbook e a trilha sonora não precisam: a tradução não mexe neles.
           Copie o que baixar por cima da pasta do jogo e rode o instalador.</li>
         <li>Para a Steam não atualizar sozinha: <b>Propriedades → Atualizações</b> → “Atualizar este jogo somente quando eu o iniciar”.</li>
       </ul>
@@ -228,7 +229,7 @@ download_depot 2070900 2070901 484771098001674209</pre>
 </main>
 
 <footer class="mono">
-  <span>Tradução de fãs, sem fins lucrativos e sem vínculo com a Sad Panda Studios</span>
+  <span>Tradução de fãs, sem fins lucrativos e sem vínculo com a Sad Panda Studios · feito com IA (Claude Code)</span>
   <span class="foot-r"><button type="button" class="debug" id="debug18" title="Apaga a confirmação salva e mostra o aviso de novo">debug: aviso +18</button><a href="index.html#projetos">← voltar aos projetos</a></span>
 </footer>
 
