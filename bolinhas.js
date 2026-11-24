@@ -37,7 +37,7 @@ const PROJETOS = [
   { title:'Legado & labs', note:'arquivo', items:[
     { key:'legado', name:'Traduções legado', ai:'sem IA', desc:'Todas as traduções antigas reunidas em uma página', tags:['10 jogos'], color:'#9aa4b2', shape:'floppy',
       url:'legado.html' },
-    { key:'labs', name:'Configurações das bolinhas', ai:'Claude Code', desc:'Labs: escolha quais formas aparecem aqui, a ordem, o estilo e o monitor 8-bit', tags:['Labs'], color:'#5ce1e6', shape:'gear',
+    { key:'labs', name:'Configurações das bolinhas', desc:'Labs: escolha quais formas aparecem aqui, a ordem, o estilo e o monitor 8-bit', tags:['Labs'], color:'#5ce1e6', shape:'gear',
       url:'labs.html' },
   ]},
 ];
@@ -579,9 +579,205 @@ function cellsGrid({cells, w, h}){
   for (const [x, y, c] of cells) for (let yy = 0; yy < s; yy++) for (let xx = 0; xx < s; xx++) g[(oy + y*s + yy)*GW + ox + x*s + xx] = c;
   return g;
 }
+/* ---------- desenhos 8-bit feitos para o monitor ----------
+   Cada forma tem o seu desenho em pixel, com luz vindo de cima à esquerda,
+   3 a 5 tons por cor e contorno — não é a conversão das bolinhas. */
+const rgbOf = c => { const n = parseInt(hex6(c).slice(1), 16); return [n>>16, n>>8&255, n&255]; };
+const mixC = (a, b, t) => { const A = rgbOf(a), B2 = rgbOf(b); return toHex(A[0] + (B2[0]-A[0])*t, A[1] + (B2[1]-A[1])*t, A[2] + (B2[2]-A[2])*t); };
+const tones = c => ({hi:mixC(c,'#ffffff',.6), lt:mixC(c,'#ffffff',.28), md:hex6(c), dk:mixC(c,'#000000',.38), dd:mixC(c,'#000000',.62), ol:mixC(c,'#000000',.84)});
+function inPoly(x, y, pts){ let ins = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++){ const [xi, yi] = pts[i], [xj, yj] = pts[j];
+    if ((yi > y) !== (yj > y) && x < (xj - xi)*(y - yi)/(yj - yi) + xi) ins = !ins; }
+  return ins; }
+function pixBuf(w, h){
+  const g = new Array(w*h).fill(null);
+  const b = {w, h, g,
+    set(x, y, c){ x = Math.round(x); y = Math.round(y); if (x >= 0 && y >= 0 && x < w && y < h) g[y*w + x] = c; },
+    get(x, y){ return x >= 0 && y >= 0 && x < w && y < h ? g[y*w + x] : null; },
+    rect(x, y, rw, rh, c){ for (let j = 0; j < rh; j++) for (let i = 0; i < rw; i++) b.set(x + i, y + j, c); },
+    line(x0, y0, x1, y1, c, th = 1){ const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))*2 || 1;
+      for (let i = 0; i <= n; i++){ const x = x0 + (x1 - x0)*i/n, y = y0 + (y1 - y0)*i/n;
+        for (let a = 0; a < th; a++) for (let e = 0; e < th; e++) b.set(Math.round(x - (th - 1)/2) + a, Math.round(y - (th - 1)/2) + e, c); } },
+    poly(pts, c){ for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (inPoly(x + .5, y + .5, pts)) g[y*w + x] = c; },
+    each(fn){ for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){ const c = fn(x, y, g[y*w + x]); if (c !== undefined) g[y*w + x] = c; } },
+    outline(c){ const o = g.slice();
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (!g[y*w + x] && (b.get(x-1, y) || b.get(x+1, y) || b.get(x, y-1) || b.get(x, y+1))) o[y*w + x] = c;
+      for (let i = 0; i < g.length; i++) g[i] = o[i]; return b; },
+    done(){ const cells = []; for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (g[y*w + x]) cells.push([x, y, g[y*w + x]]); return {cells, w, h}; } };
+  return b;
+}
+// sólidos 3D de verdade (esfera, toro, planeta): raio por pixel e luz em faixas, como pixel art
+const nrm = v => { const l = Math.hypot(...v) || 1; return v.map(a => a/l); };
+const rotX = (p, a) => [p[0], p[1]*Math.cos(a) - p[2]*Math.sin(a), p[1]*Math.sin(a) + p[2]*Math.cos(a)];
+const sdTorus = (p, R, r) => Math.hypot(Math.hypot(p[0], p[2]) - R, p[1]) - r;
+function sdfPix(w, h, scale, scene){
+  const b = pixBuf(w, h), L = nrm([-.55, .65, .52]);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+    const px = (x + .5 - w/2)/scale, py = -(y + .5 - h/2)/scale; let z = 3, hit = null;
+    for (let i = 0; i < 80 && z > -3; i++){ const r = scene([px, py, z]); if (r[0] < .003){ hit = r; break; } z -= Math.max(r[0], .004); }
+    if (!hit) continue;
+    const p = [px, py, z], e = .004, d = k => { const a = p.slice(), c = p.slice(); a[k] += e; c[k] -= e; return scene(a)[0] - scene(c)[0]; };
+    const n = nrm([d(0), d(1), d(2)]), lam = n[0]*L[0] + n[1]*L[1] + n[2]*L[2], t = hit[1];
+    b.set(x, y, lam > .82 ? t.hi : lam > .52 ? t.lt : lam > .12 ? t.md : lam > -.3 ? t.dk : t.dd);
+  }
+  return b;
+}
+const NOTE = ['...KKKKKKKK','...KKKKKKKK','...K......K','...K......K','...K......K','...K......K','...K......K','.KKK....KKK','KKKK...KKKK','KKKK...KKKK','.KK.....KK.'];
+function isoCube(color, pips){
+  const T = tones(color), b = pixBuf(30, 32);
+  const A = [15,2], Bq = [28,8.5], C = [15,15], D = [2,8.5], C2 = [15,29], D2 = [2,22.5], B2 = [28,22.5];
+  b.poly([A, Bq, C, D], T.lt); b.poly([D, C, C2, D2], T.md); b.poly([C, Bq, B2, C2], T.dk);
+  b.line(D[0], D[1], C[0], C[1], T.hi); b.line(15, 15, 15, 28, pips ? T.md : T.lt);
+  if (pips){ const at = (P, Q, R, u, v) => [P[0] + u*(Q[0]-P[0]) + v*(R[0]-P[0]), P[1] + u*(Q[1]-P[1]) + v*(R[1]-P[1])], dot = ([x, y], c) => b.rect(Math.round(x - 1), Math.round(y - 1), 2, 2, c);
+    [[.25,.25],[.75,.25],[.5,.5],[.25,.75],[.75,.75]].forEach(([u, v]) => dot(at(A, Bq, D, u, v), '#e3262f'));
+    [[.3,.3],[.7,.7]].forEach(([u, v]) => dot(at(D, C, D2, u, v), '#b3141c'));
+    [[.25,.25],[.5,.5],[.75,.75]].forEach(([u, v]) => dot(at(C, Bq, C2, u, v), '#7a0d14')); }
+  return b.outline(T.ol).done();
+}
+function bubble(text, color = '#ffffff'){
+  const T = tones(color), cjk = /[　-鿿]/.test(text), fc = document.createElement('canvas'), g = fc.getContext('2d');
+  let fs = cjk ? 12 : 26, font;
+  const setFont = () => { font = cjk ? `800 ${fs}px "Noto Sans JP", "Noto Sans SC", sans-serif` : `${fs}px VT323, monospace`; g.font = font; };
+  setFont(); while (g.measureText(text).width > 42 && fs > 9){ fs--; setFont(); }
+  fc.width = Math.ceil(g.measureText(text).width) + 4; fc.height = fs + 6; g.font = font; g.fillStyle = '#fff'; g.textBaseline = 'middle'; g.fillText(text, 2, fc.height/2);
+  const d = g.getImageData(0, 0, fc.width, fc.height).data, px = []; let x0 = 99, x1 = 0, y0 = 99, y1 = 0;
+  for (let y = 0; y < fc.height; y++) for (let x = 0; x < fc.width; x++) if (d[(y*fc.width + x)*4 + 3] > (cjk ? 165 : 110)){ px.push([x, y]); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  const tw = x1 - x0 + 1, th = y1 - y0 + 1, W = Math.max(tw + 10, 18), H = th + 9, b = pixBuf(W + 2, H + 7), inside = mixC(color, '#000000', .86);
+  b.rect(2, 1, W - 2, H, inside); b.rect(1, 2, W, H - 2, inside);
+  b.poly([[5, H], [11, H], [3, H + 6]], inside);
+  b.each((x, y, c) => { if (c && (!b.get(x-1, y) || !b.get(x+1, y) || !b.get(x, y-1) || !b.get(x, y+1))) return T.md; });
+  const ox = Math.floor((W + 2 - tw)/2) - x0, oy = 5 - y0;
+  px.forEach(([x, y]) => { b.set(x + ox + 1, y + oy + 1, T.dd); });   // sombrinha do texto
+  px.forEach(([x, y]) => b.set(x + ox, y + oy, color === '#ffffff' ? '#ffffff' : T.hi));
+  return b.done();
+}
+
+const PIX = {
+  phone(){ const T = tones('#ffcc33'), b = pixBuf(20, 32);
+    b.rect(2,1,16,30,T.md); b.rect(2,1,1,30,T.lt); b.rect(3,1,14,1,T.hi); b.rect(17,1,1,30,T.dk); b.rect(2,30,16,1,T.dk);
+    [[2,1],[17,1],[2,30],[17,30]].forEach(([x, y]) => b.set(x, y, null));
+    b.rect(4,4,12,20,'#1b1b22'); b.rect(5,5,3,1,'#34343f');
+    ['.###.','#...#','#...#','.###.','#...#','#...#','.###.'].forEach((r, y) => [...r].forEach((ch, x) => { if (ch === '#') b.rect(5 + x*2, 7 + y*2, 2, 2, y < 3 ? T.lt : T.md); }));
+    b.rect(9,26,2,2,T.dd); return b.outline(T.ol).done(); },
+  heart(){ const T = tones('#ff7eb6'), b = pixBuf(26, 24);
+    b.each((x, y) => { const X = (x + .5 - 13)/9.5, Y = -(y + .5 - 11.5)/9.5, f = (X*X + Y*Y - 1)**3 - X*X*Y**3;
+      if (f > 0) return; const s = -X*.6 + Y*.5; return s > .55 ? T.lt : s < -.55 ? T.dk : T.md; });
+    b.rect(7,5,2,1,T.hi); b.set(7,6,T.hi); return b.outline(T.ol).done(); },
+  clock(){ const R = tones('#d0193a'), b = pixBuf(30, 30), c = 14.5;
+    b.each((x, y) => { const dx = x - c, dy = y - c, d = Math.hypot(dx, dy); if (d > 13) return;
+      if (d > 10.6){ const s = (-dx - dy)/d; return s > .6 ? R.lt : s < -.55 ? R.dk : R.md; }
+      return d > 9.8 ? '#c9bfa8' : '#f3ead7'; });
+    for (let i = 0; i < 12; i++){ const a = i/12*Math.PI*2, r0 = i % 3 ? 8.4 : 7.2; b.line(c + Math.cos(a)*r0, c + Math.sin(a)*r0, c + Math.cos(a)*9.2, c + Math.sin(a)*9.2, '#3a2a2a'); }
+    b.line(c, c, c + Math.cos(-2.1)*5, c + Math.sin(-2.1)*5, '#2a1a1a', 2);
+    b.line(c, c, c + Math.cos(-.55)*7.8, c + Math.sin(-.55)*7.8, '#2a1a1a');
+    b.rect(14,14,2,2,R.md); [[6,7],[7,6],[8,5]].forEach(([x, y]) => b.set(x, y, R.hi));
+    return b.outline(R.ol).done(); },
+  bell(){ const T = tones('#ffd23f'), b = pixBuf(28, 30), cx = 13.5;
+    b.each((x, y) => { const d = Math.hypot(x - cx, y - 3); if (d <= 2.7 && d >= 1.3) return T.dk; });
+    for (let y = 5; y <= 22; y++){ const hw = y >= 21 ? 12 : 2.5 + 8.5*Math.sqrt((y - 5)/16);
+      for (let x = Math.ceil(cx - hw); x <= Math.floor(cx + hw); x++){ const u = (x - cx)/hw;
+        b.set(x, y, y >= 21 ? (u < -.4 ? T.lt : u > .4 ? T.dk : T.md) : u < -.6 ? T.lt : (u > -.45 && u < -.2 && y > 7 && y < 19) ? T.hi : u > .45 ? T.dk : T.md); } }
+    b.rect(5, 18, 18, 1, T.dk);
+    b.each((x, y) => { if (Math.hypot(x - cx, y - 25) <= 2.2) return x < cx ? T.md : T.dk; });
+    return b.outline(T.ol).done(); },
+  katamari(){ const T = tones('#7ddc5a'), b = pixBuf(30, 30), c = 14.5, R = 11;
+    b.each((x, y) => { const dx = (x - c)/R, dy = (y - c)/R, d2 = dx*dx + dy*dy; if (d2 > 1) return;
+      const lam = -dx*.55 - dy*.6 + Math.sqrt(1 - d2)*.58; return lam > .85 ? T.hi : lam > .6 ? T.lt : lam > .2 ? T.md : T.dk; });
+    [[-.3,-.3],[.35,.1],[-.1,.45],[.1,-.55],[.5,-.35]].forEach(([u, v]) => { b.set(c + u*R, c + v*R, T.dd); b.set(c + u*R + 1, c + v*R, T.dk); });
+    [[-.92,-.5,'#ff5c5c',4],[.98,-.2,'#4f7dff',3],[.3,-1.02,'#ffd23f',4],[-.4,.98,'#f4f4f4',3],[.75,.78,'#ff9a3d',4],[-1.02,.3,'#c77dff',3]]
+      .forEach(([u, v, col, s]) => { const t = tones(col), x = Math.round(c + u*R - s/2), y = Math.round(c + v*R - s/2);
+        b.rect(x, y, s, s, t.md); b.set(x, y, t.hi); b.rect(x + s - 1, y + 1, 1, s - 1, t.dk); });
+    return b.outline(T.ol).done(); },
+  vx(){ const T = tones('#d4fb69'), b = pixBuf(36, 28);
+    b.line(4,10,10,24,T.md,3); b.line(10,24,16,10,T.md,3); b.line(20,10,32,24,T.md,3); b.line(32,10,20,24,T.md,3);
+    b.each((x, y, c) => { if (c && y < 13) return T.lt; if (c && y > 22) return T.dk; });
+    b.rect(16,2,4,4,T.hi); b.rect(11,5,3,3,T.lt); b.rect(8,9,2,2,T.dk);
+    return b.outline(T.ol).done(); },
+  gear(){ const T = tones('#5ce1e6'), b = pixBuf(30, 30), c = 14.5;
+    b.each((x, y) => { const dx = x - c, dy = y - c, d = Math.hypot(dx, dy), k = ((Math.atan2(dy, dx) + Math.PI)/(Math.PI*2)*10) % 1;
+      if (d > (k > .22 && k < .64 ? 13 : 10) || d < 4) return; const s = (-dx - dy)/(d || 1);
+      return d < 5.5 ? T.dk : s > .55 ? T.lt : s < -.55 ? T.dk : T.md; });
+    return b.outline(T.ol).done(); },
+  floppy(){ return artCells(ART.floppy); },
+  cassette(){ const T = tones('#ff4d6d'), b = pixBuf(34, 24);
+    b.rect(1,1,32,22,T.md); b.rect(1,1,32,1,T.lt); b.rect(1,1,1,22,T.lt); b.rect(1,22,32,1,T.dk); b.rect(32,1,1,22,T.dk);
+    b.rect(4,3,26,12,'#f3ead7'); b.rect(4,3,26,2,'#ffd23f');
+    b.rect(8,7,18,6,'#2a2a2a'); b.rect(14,8,6,4,'#5a3a22');
+    [11,22].forEach(x => { b.rect(x - 2, 8, 5, 4, '#6a6a6a'); b.rect(x, 9, 1, 2, '#f4f4f4'); });
+    b.poly([[8,23],[10,17],[24,17],[26,23]], T.dk); [12,21].forEach(x => b.rect(x, 19, 2, 2, '#1b1b1b'));
+    [[2,2],[31,2],[2,21],[31,21]].forEach(([x, y]) => b.set(x, y, T.dd));
+    return b.outline(T.ol).done(); },
+  notes(){ const T = tones('#ff4d6d'), b = pixBuf(26, 26);
+    NOTE.forEach((r, y) => [...r].forEach((ch, x) => { if (ch === 'K') b.rect(2 + x*2, 2 + y*2, 2, 2, y < 2 ? T.lt : y > 8 ? T.dk : T.md); }));
+    b.set(4,17,T.hi); b.set(18,17,T.hi); return b.outline(T.ol).done(); },
+  shh(){ return bubble('shh...', '#a78bfa'); },
+  gem(){ const T = tones('#ffd23f'), b = pixBuf(30, 26), A = [8,2], Bq = [21,2], C = [28,9], D = [1,9], E = [14.5,24], m1 = [11,9], m2 = [18,9], tp = [14.5,2];
+    b.poly([A, tp, m1, D], T.lt); b.poly([tp, Bq, m2, m1], T.hi); b.poly([Bq, C, m2], T.md);
+    b.poly([D, m1, E], T.lt); b.poly([m1, m2, E], T.md); b.poly([m2, C, E], T.dk);
+    return b.outline(T.ol).done(); },
+  mic(){ const T = tones('#b8bcc6'), A = tones('#d4fb69'), b = pixBuf(22, 32), cx = 10.5;
+    b.each((x, y) => { const dx = x - cx; if (y < 16 && (Math.hypot(dx, y - 7) <= 6.5 || (y >= 7 && Math.abs(dx) <= 6.5))){
+      if (y >= 7 && y % 3 === 0 && Math.abs(dx) < 6) return T.dk; return dx < -3.5 ? T.lt : dx > 3.5 ? T.dk : T.md; } });
+    b.set(7,3,T.hi); b.set(6,4,T.hi);
+    b.rect(4,16,14,2,A.md);
+    b.line(2,11,2,20,A.dk,2); b.line(19,11,19,20,A.dk,2); b.line(2,20,5,23,A.dk,2); b.line(19,20,16,23,A.dk,2); b.line(5,23,16,23,A.dk,2);
+    b.rect(10,24,2,5,A.dk); b.rect(5,29,12,2,A.md);
+    return b.outline(T.ol).done(); },
+  cube(){ return isoCube('#4dd9ff'); },
+  dice(){ return isoCube('#f4f4f4', true); },
+  torus(){ const T = tones('#ff9a3d'); return sdfPix(34, 26, 14.5, p => [sdTorus(rotX(p, -1.05), .62, .27), T]).outline(T.ol).done(); },
+  sphere(){ const T = tones('#ffffff'); T.hi = '#ffffff'; T.lt = '#e2e2e2'; T.md = '#b4b4b4'; T.dk = '#6e6e6e'; T.dd = '#3c3c3c';
+    return sdfPix(30, 30, 13.5, p => [Math.hypot(...p) - .95, T]).outline('#1a1a1a').done(); },
+  planet(){ const T = tones('#c89bff'), Rg = tones('#ffd8a8');
+    return sdfPix(40, 26, 15.5, p => { const s = Math.hypot(...p) - .6, q = rotX(p, -.38), ring = Math.max(Math.abs(q[1]) - .035, Math.abs(Math.hypot(q[0], q[2]) - 1) - .14);
+      return s < ring ? [s, T] : [ring, Rg]; }).outline(T.ol).done(); },
+  pyramid(){ const T = tones('#ffd23f'), b = pixBuf(32, 28), ap = [16,1], L = [1,21], F = [13,26], R = [30,20];
+    b.poly([ap, L, F], T.lt); b.poly([ap, F, R], T.dk); b.line(16,1,13,25,T.hi); b.line(2,21,12,25,T.md);
+    return b.outline(T.ol).done(); },
+  helix(){ const A = tones('#7dff9a'), Bc = tones('#4dd9ff'), b = pixBuf(24, 34), cx = 11.5, pts = [];
+    for (let y = 2; y <= 31; y += .25) pts.push([y, (y - 2)/29*Math.PI*4]);
+    const strands = front => pts.forEach(([y, a]) => [0, Math.PI].forEach((o, s) => { const z = Math.cos(a + o); if ((z > 0) !== front) return;
+      const t = s ? Bc : A, x = cx + Math.sin(a + o)*8; b.set(x, y, front ? (z > .7 ? t.lt : t.md) : t.dd); b.set(x + 1, y, front ? t.md : t.dd); }));
+    strands(false);
+    for (let k = 0; k < 10; k++){ const y = 3.5 + k*2.9, a = (y - 2)/29*Math.PI*4; b.line(cx + Math.sin(a)*8, y, cx + Math.sin(a + Math.PI)*8, y, '#5a6e6a'); }
+    strands(true);
+    return b.outline('#0d1f14').done(); },
+  star(){ const T = tones('#ff6fb5'), b = pixBuf(30, 30), c = [15, 16];
+    const P = k => { const a = -Math.PI/2 + k*Math.PI/5, r = k % 2 ? 5.8 : 14; return [c[0] + Math.cos(a)*r, c[1] + Math.sin(a)*r]; };
+    for (let i = 0; i < 10; i++){ const a = -Math.PI/2 + (i + .5)*Math.PI/5, lam = Math.cos(a + 2.3); b.poly([c, P(i), P(i + 1)], lam > .5 ? T.lt : lam > -.25 ? T.md : T.dk); }
+    b.set(14,5,T.hi); b.set(14,6,T.hi); return b.outline(T.ol).done(); },
+  galaxy(){ const b = pixBuf(36, 26), cx = 17.5, cy = 12.5; let s = 7; const rr = () => (s = (s*16807) % 2147483647)/2147483647;
+    for (let i = 0; i < 900; i++){ const arm = i % 2, k = rr(), r = 1.5 + k*15, a = arm*Math.PI + k*4.2 + (rr() - .5)*.5*(1 - k*.5);
+      const col = k < .15 ? '#ffffff' : k < .4 ? '#cfefff' : k < .7 ? '#9ad7ff' : '#4f7dff';
+      b.set(cx + Math.cos(a)*r, cy + Math.sin(a)*r*.55, col); }
+    b.rect(16,11,4,3,'#ffffff'); b.rect(15,12,6,1,'#fff7d6');
+    for (let i = 0; i < 14; i++) b.set(rr()*36, rr()*26, '#7d8fb0');
+    return b.done(); },
+  wave(){ const T = tones('#5ce1e6'), b = pixBuf(36, 22);
+    for (let x = 1; x < 35; x++){ const sn = Math.sin(x*.36), top = Math.round(9 + sn*4 - Math.sin(x*.12)*1.5);
+      for (let y = top; y < 20; y++) b.set(x, y, y === top ? T.hi : y < top + 2 ? T.lt : y < 15 ? T.md : T.dk);
+      if (sn < -.85) b.set(x, top - 1, '#ffffff'); }
+    return b.outline(T.ol).done(); },
+  mobius(){ const T = tones('#ffa8e0'), b = pixBuf(38, 22), cx = 18.5, cy = 10.5;
+    // fita torcida em forma de ∞: a cor troca de lado no meio do caminho, como na fita de Möbius
+    const at = t => { const d = 1 + Math.sin(t)**2; return [cx + 16*Math.cos(t)/d, cy + 16*Math.sin(t)*Math.cos(t)/d]; };
+    const pass = (t0, t1) => { for (let t = t0; t < t1; t += .004){ const [x, y] = at(t), [x2, y2] = at(t + .01), side = Math.cos(t/2);
+      const nx = -(y2 - y), ny = x2 - x, l = Math.hypot(nx, ny) || 1, wdt = 2.2*Math.abs(side) + .6;
+      for (let k = -wdt; k <= wdt; k += .5){ const edge = Math.abs(k) > wdt - .6; b.set(x + nx/l*k, y + ny/l*k, edge ? (side > 0 ? T.hi : T.md) : side > 0 ? (k < 0 ? T.lt : T.md) : (k < 0 ? T.dk : T.dd)); } } };
+    pass(Math.PI*.5, Math.PI*1.5); pass(Math.PI*1.5, Math.PI*2.5);
+    return b.outline(T.ol).done(); },
+};
+// qual desenho cada item usa no monitor (as saudações viram balões com o texto em fonte de pixel)
+const PIXOF = {'p-jackbox8':'phone', 'p-katamari':'katamari', 'p-date':'heart', 'p-hush':'clock', 'p-hunie2':'bell', 'p-voxstage':'vx', 'p-legado':'floppy', 'p-labs':'gear',
+  'old-cassette':'cassette', 'old-notes':'notes', 'old-shh':'shh', 'old-gem':'gem', 'old-mic':'mic',
+  'geo-cubo':'cube', 'geo-toro':'torus', 'geo-pirâmide':'pyramid', 'geo-hélice dupla':'helix', 'geo-planeta':'planet', 'geo-estrela':'star', 'geo-galáxia':'galaxy',
+  'new-esfera':'sphere', 'new-mobius':'mobius', 'new-onda':'wave', 'new-dado':'dice'};
+const pixOf = it => PIXOF[it.id] ? PIX[PIXOF[it.id]]() : it.id.startsWith('say-') ? bubble(it.name) : null;
+
 const gridCache = new Map();
 function gridOf(it){
   if (!gridCache.has(it.id)) gridCache.set(it.id,
+    PIXOF[it.id] || it.id.startsWith('say-') ? Promise.resolve(cellsGrid(pixOf(it))) :
     it.art ? Promise.resolve(cellsGrid(artCells(ART[it.art]))) :
     it.img ? imageCells(it.img).then(r => r ? cellsGrid(r) : cellsGrid(artCells(ART.floppy))) :
     ptsOf(it).then(pts => ptsGrid(pts, it)));
@@ -668,7 +864,7 @@ function rotation(getList, onShow, opts = {}){
 }
 
 window.Bolinhas = { N, PROJETOS, LEAVES, ITEMS, byId, CATS, DEF, STYLES, VIEWS, KEY,
-  loadConfig, saveConfig, defaults, rotationList, particles, monitor, rotation, ptsOf };
+  loadConfig, saveConfig, defaults, rotationList, particles, monitor, rotation, ptsOf, gridOf, GW, GH };
 
 // as fontes do japonês e do chinês só entram se alguém usar essas saudações
 const cjkReady = document.fonts ? Promise.all([document.fonts.load('800 170px "Noto Sans JP"', 'こんにちは'), document.fonts.load('800 170px "Noto Sans SC"', '你好')]).catch(() => {}) : Promise.resolve();

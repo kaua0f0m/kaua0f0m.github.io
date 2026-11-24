@@ -157,6 +157,9 @@
   @media (prefers-reduced-motion:reduce){ .fa,.fb{animation:none} .fb{display:none} }
   .ia-tag{border:1px dashed currentColor; border-radius:4px; padding:0 6px; opacity:.85}
   .depot pre{font-family:"JetBrains Mono",monospace; font-size:13px; line-height:1.7; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:14px 16px; overflow-x:auto; margin:10px 0; white-space:pre}
+  .online-alert{margin:16px 0 6px; padding:14px 16px; border:1px solid #ffcc33; border-left-width:4px; border-radius:10px; background:rgba(255,204,51,.08); font-size:14.5px; line-height:1.55; color:var(--soft); overflow-wrap:anywhere}
+  .online-alert b{color:#ffcc33; display:block; margin-bottom:4px}
+  .online-alert a{color:var(--text); text-decoration:underline; text-underline-offset:3px}
   .depot code{word-break:break-all} .depot li{overflow-wrap:anywhere}
 </style>
 </head>
@@ -239,6 +242,9 @@
 
     <div class="group depot">
       <h2 class="mono"><b>Se o jogo atualizar</b><span>e a tradução quebrar</span></h2>
+      <div class="online-alert" role="note">
+        <b>⚠ Atenção: o Party Pack 8 é um jogo online.</b> Os jogadores entram pelo jackbox.tv, e depois de um update os servidores podem deixar de aceitar a versão antiga, então voltar a versão pode simplesmente parar de funcionar. O caminho mais seguro é <a href="https://github.com/kaua0f0m/jackbox-party-pack-8-ptbr/fork" target="_blank" rel="noopener">fazer um fork da tradução no GitHub</a> e atualizar os textos para a versão nova do jogo. Use o passo a passo abaixo só como último recurso.
+      </div>
       <ul class="notes">
         <li><b>Ache a versão certa no SteamDB:</b> abra <a href="https://steamdb.info/app/1552350/depots/" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:3px">steamdb.info/app/1552350/depots</a>, entre no depot do Windows e, na aba <b>Manifests</b>, anote o número do manifest de por volta de 18/11/2026, quando a tradução v1.0 saiu.</li>
         <li><b>Baixe pelo console da Steam:</b> cole <code>steam://open/console</code> na barra do navegador e digite (troque DEPOT e MANIFEST pelos números que você anotou):
