@@ -6,7 +6,10 @@
 <title>Kauã</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
+<!-- só os caracteres das saudações em japonês e chinês (usadas se você ligar no Labs) -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@800&family=Noto+Sans+SC:wght@800&text=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF%E4%BD%A0%E5%A5%BD&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bolinhas.css">
 <style>
   :root{ --bg:#000; --text:#f4f4f4; --muted:#6e6e6e; --line:#1d1d1d; }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -15,6 +18,7 @@
   body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; overflow-x:hidden}
   .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
   a{color:inherit; text-decoration:none}
+  [hidden]{display:none !important}
 
   header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:fixed; top:0; left:0; right:0; z-index:10; background:linear-gradient(#000 40%, transparent)}
   .logo{font-weight:800; font-size:20px; letter-spacing:-.03em}
@@ -53,6 +57,17 @@
   .proj.on .tags span.ai{border-color:rgba(0,0,0,.45); color:rgba(0,0,0,.8)}
   .proj .tags span{border:1px solid #2c2c2c; border-radius:999px; padding:3px 9px; font-size:10.5px; color:#9a9a9a; white-space:nowrap; transition:border-color .25s, color .25s}
   .proj .ar{transition:transform .3s}
+  /* menu que abre (ex.: Jackbox Games) */
+  .proj.parent{width:100%; text-align:left; font:inherit; color:inherit; background:none; border:0; border-bottom:1px solid var(--line); cursor:pointer}
+  .proj.parent[aria-expanded=true] .ar, .proj.parent.on[aria-expanded=true] .ar{transform:rotate(180deg)}
+  .proj.parent.on .ar{transform:none}
+  .kids{display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)}
+  .kids.open{grid-template-rows:1fr}
+  .kids > div{overflow:hidden; min-height:0}
+  .proj.kid{padding-left:26px}
+  .proj.kid.on{padding-left:38px}
+  .proj.kid .t{font-size:20px}
+  .soon{padding:14px 0 16px 26px; color:#4a4a4a; border-bottom:1px dashed #1d1d1d}
   .proj.on{color:#000; padding-left:14px}
   .proj.on::before{transform:scaleY(1)}
   .proj.on .dot{background:#000; box-shadow:none}
@@ -62,6 +77,7 @@
 
   .right{position:sticky; top:0; height:100vh; min-height:480px}
   canvas{position:absolute; inset:0; width:100%; height:100%; cursor:pointer}
+  .mon{position:absolute; inset:0; padding:70px 24px 0; cursor:pointer}
   .caption{position:absolute; left:50%; bottom:7%; transform:translateX(-50%); color:var(--muted); display:flex; gap:14px; align-items:center; white-space:nowrap; pointer-events:none}
   .caption b{color:var(--text); font-weight:500}
   .dots{display:flex; gap:6px; transition:opacity .3s}
@@ -80,6 +96,7 @@
     .right{order:-1; position:sticky; top:0; height:30vh; min-height:210px; margin:0 -16px; z-index:3; background:#000}
     .right::after{content:""; position:absolute; left:0; right:0; bottom:-48px; height:48px; background:linear-gradient(#000, transparent); pointer-events:none}
     .caption{bottom:4%}
+    .mon{padding:58px 0 8px}
     .left{padding:4vh 0 30vh}
     .status{margin-bottom:22px}
     #projetos{margin-top:12vh}
@@ -111,8 +128,9 @@
     <div id="projetos"></div>
   </section>
 
-  <section class="right" aria-label="Esfera 3D feita de pequenas esferas que muda de forma para cada projeto">
+  <section class="right" id="stage" aria-label="Esfera 3D feita de pequenas esferas que muda de forma para cada projeto">
     <canvas id="c"></canvas>
+    <div class="mon" id="mon" hidden></div>
     <div class="caption mono" id="cap"><span class="dots" id="dots"></span><b id="word">—</b><span id="lang"></span></div>
   </section>
 </main>
@@ -123,418 +141,106 @@
   <span class="soc"><a href="labs.html">Labs</a><a href="https://github.com/kaua0f0m" target="_blank" rel="noopener">GitHub</a><a href="#">Discord</a></span>
 </footer>
 
+<script src="bolinhas.js"></script>
 <script>
-/* =====================================================================
-   PROJETOS — edite aqui.
-   shape: forma feita de bolinhas (veja SHAPES lá embaixo)
-   logo:  se quiser usar uma imagem PNG com fundo transparente no lugar
-          da forma, coloque o caminho aqui, ex.: logo:'logos/katamari.png'
-   ===================================================================== */
-const GROUPS = [
-  { title:'Traduções & mods', note:'GitHub', items:[
-    { name:'Jackbox Party Pack 8', ai:'Claude Code', desc:'Tradução PT-BR não oficial, com instalador', tags:['Python','instalador'], color:'#ffcc33', shape:'phone',
-      url:'jackbox-8.html' },
-    { name:'UNBEATABLE', ai:'Claude Code', desc:'Tradução PT-BR (feita por IA) — mod BepInEx', tags:['C#','BepInEx'], color:'#ff4d6d', shape:'cassette',
-      url:'unbeatable.html' },
-    { name:'Katamari Damacy REROLL', ai:'Codex', desc:'Tradução PT-BR + Katamari Plus', tags:['C#','mod'], color:'#7ddc5a', shape:'katamari',
-      url:'katamari.html' },
-    { name:'Date Everything!', ai:'Codex', desc:'Tradução PT-BR (IA + curadoria), instalador sem arquivos do jogo', tags:['Python','instalador'], color:'#ff7eb6', shape:'heart',
-      url:'date-everything.html' },
-    { name:'Hush Hush', ai:'Claude Code', desc:'Tradução PT-BR (IA + curadoria em certas linhas)', tags:['Python','+18'], color:'#d0193a', shape:'clock',
-      url:'hush-hush.html' },
-    { name:'HuniePop 2', ai:'Gemini', desc:'Localização PT-BR — plugin BepInEx 5', tags:['C#','BepInEx','+18'], color:'#ffd23f', shape:'bell',
-      url:'huniepop-2.html' },
-  ]},
-  { title:'Standalone', note:'apps', items:[
-    { name:'VoxStage', ai:'Codex', desc:'Karaokê local para Windows, Android e Google TV', tags:['JavaScript','app'], color:'#d4fb69', shape:'vx',
-      url:'voxstage.html' },
-  ]},
-  { title:'Legado', note:'arquivo', items:[
-    { name:'Traduções legado', ai:'sem IA', desc:'Todas as traduções antigas reunidas em uma página', tags:['10 jogos'], color:'#9aa4b2', shape:'floppy',
-      url:'legado.html' },
-  ]},
-];
-// saudações da rotação das bolinhas (intercaladas com os símbolos dos projetos)
-const SAY = [['Oi!','português']];
-
-/* ---------- monta a lista ---------- */
-const list = document.getElementById('projetos'); const ALL = [];
-GROUPS.forEach(g => {
-  const sec = document.createElement('div'); sec.className = 'group';
-  sec.innerHTML = `<h2 class="mono"><b>${g.title}</b><span>${g.note} — ${String(g.items.length).padStart(2,'0')}</span></h2>`;
-  g.items.forEach(p => {
-    const a = document.createElement('a'); a.className = 'proj'; a.href = p.url; a.style.setProperty('--c', p.color);
-    if (p.url.startsWith('http')){ a.target = '_blank'; a.rel = 'noopener'; }
-    a.innerHTML = `<span class="dot"></span><span class="t">${p.name}<span class="d">${p.desc}</span><span class="tags mono">${p.tags.map(t => `<span>${t}</span>`).join('')}${p.ai ? `<span class="ai">${p.ai === 'sem IA' ? 'feito sem IA' : 'IA · ' + p.ai}</span>` : ''}</span></span><span class="ar">→</span>`;
-    p.el = a; ALL.push(p); sec.appendChild(a);
-  });
-  list.appendChild(sec);
-});
-
+/* Os projetos, as formas e o motor ficam em bolinhas.js (o mesmo arquivo do Labs). */
 (() => {
-  const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
-  const N = 1500;
+  const B = Bolinhas, $ = id => document.getElementById(id);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const touch = matchMedia('(hover: none)').matches;
 
-  /* ---------- sprites de mini esfera (um por cor) ---------- */
-  const sprites = {};
-  function sprite(color){
-    if (sprites[color]) return sprites[color];
-    const SP = 64, c = document.createElement('canvas'); c.width = c.height = SP;
-    const g = c.getContext('2d'), r = SP/2, grd = g.createRadialGradient(r*.65, r*.6, r*.05, r, r, r);
-    const n = parseInt(color.slice(1), 16), R = n>>16, G = n>>8&255, B = n&255, sh = f => `rgb(${R*f|0},${G*f|0},${B*f|0})`;
-    if (color === '#ffffff'){ grd.addColorStop(0,'#fff'); grd.addColorStop(.35,'#d9d9d9'); grd.addColorStop(.8,'#5a5a5a'); grd.addColorStop(1,'#1a1a1a'); }
-    else { grd.addColorStop(0,'#fff'); grd.addColorStop(.3, color); grd.addColorStop(.8, sh(.35)); grd.addColorStop(1, '#070707'); }
-    g.fillStyle = grd; g.beginPath(); g.arc(r, r, r-1, 0, Math.PI*2); g.fill();
-    return sprites[color] = c;
+  /* ---------- monta a lista ---------- */
+  const list = $('projetos'), ROWS = [];
+  const tagsOf = p => `${p.tags.map(t => `<span>${t}</span>`).join('')}${p.ai ? `<span class="ai">${p.ai === 'sem IA' ? 'feito sem IA' : 'IA · ' + p.ai}</span>` : ''}`;
+  function row(p, cls = ''){
+    const a = document.createElement('a'); a.className = 'proj ' + cls; a.href = p.url; a.style.setProperty('--c', p.color);
+    if (p.url.startsWith('http')){ a.target = '_blank'; a.rel = 'noopener'; }
+    a.innerHTML = `<span class="dot"></span><span class="t">${p.name}<span class="d">${p.desc}</span><span class="tags mono">${tagsOf(p)}</span></span><span class="ar">→</span>`;
+    return a;
+  }
+  B.PROJETOS.forEach(g => {
+    const sec = document.createElement('div'); sec.className = 'group';
+    const n = g.items.reduce((s, p) => s + (p.children ? p.children.length : 1), 0);
+    sec.innerHTML = `<h2 class="mono"><b>${g.title}</b><span>${g.note} — ${String(n).padStart(2,'0')}</span></h2>`;
+    g.items.forEach(p => {
+      if (!p.children){ const el = row(p); ROWS.push({el, p, item:B.byId['p-' + p.key]}); sec.appendChild(el); return; }
+      // menu que abre: um jogo por linha, e espaço para os próximos
+      const head = document.createElement('button'); head.type = 'button'; head.className = 'proj parent'; head.style.setProperty('--c', p.color);
+      head.setAttribute('aria-expanded', 'false');
+      const packs = p.children.length + (p.children.length === 1 ? ' jogo' : ' jogos');
+      head.innerHTML = `<span class="dot"></span><span class="t">${p.name}<span class="d">${p.desc}</span><span class="tags mono">${p.tags.map(t => `<span>${t}</span>`).join('')}<span class="ai">${packs}</span></span></span><span class="ar">▾</span>`;
+      const kids = document.createElement('div'); kids.className = 'kids'; const inner = document.createElement('div'); kids.appendChild(inner);
+      head.onclick = () => { const open = head.getAttribute('aria-expanded') !== 'true'; head.setAttribute('aria-expanded', open); kids.classList.toggle('open', open); };
+      ROWS.push({el:head, p, item:B.byId['p-' + p.children[0].key]});
+      p.children.forEach(c => { const el = row(c, 'kid'); ROWS.push({el, p:c, item:B.byId['p-' + c.key]}); inner.appendChild(el); });
+      if (p.soon){ const s = document.createElement('div'); s.className = 'soon mono'; s.textContent = '+ ' + p.soon; inner.appendChild(s); }
+      sec.appendChild(head); sec.appendChild(kids);
+    });
+    list.appendChild(sec);
+  });
+
+  /* ---------- bolinhas ou monitor 8-bit (escolhido no Labs) ---------- */
+  let cfg = B.loadConfig();
+  const right = $('stage'), canvas = $('c'), mon = $('mon'), cap = $('cap'), word = $('word'), lang = $('lang'), dots = $('dots');
+  const stage = B.particles(canvas); let screen = null;
+  function applyView(){
+    const m = cfg.view === 'monitor';
+    canvas.hidden = m; cap.hidden = m; mon.hidden = !m; stage.active = !m; stage.style = cfg.style;
+    if (m && !screen) screen = B.monitor(mon);
+  }
+  applyView();
+  const show = (it, dur) => cfg.view === 'monitor' ? screen.show(it) : stage.show(it, dur);
+  function label(it, isProj){
+    word.textContent = it.project ? it.project.name : it.name;
+    lang.textContent = it.project ? it.project.tags[0] : it.cat === 'geo' ? 'forma' : it.sub.replace('balão · ', '');
+    cap.classList.toggle('proj-mode', !!isProj);
   }
 
-  /* ---------- formas ---------- */
-  const rnd = (a,b) => a + Math.random()*(b-a);
-  function sphere(n, R = 1){ const a = []; for (let i = 0; i < n; i++){ const y = 1 - 2*(i+.5)/n, r = Math.sqrt(1-y*y), t = i*2.399963; a.push({x:Math.cos(t)*r*R, y:y*R, z:Math.sin(t)*r*R}); } return a; }
-
-  // desenha uma forma 2D num canvas e transforma em "almofada" 3D de bolinhas
-  function fromDrawing(draw, n, depth = .3){
-    const S = 400, U = 150, a = document.createElement('canvas'); a.width = a.height = S;
-    const g = a.getContext('2d'); g.translate(S/2, S/2); g.scale(U, U); g.fillStyle = g.strokeStyle = '#fff'; g.lineCap = 'round'; g.lineJoin = 'round';
-    draw(g);
-    return fromCanvas(a, n, depth, U);
-  }
-  function fromCanvas(a, n, depth, U){
-    const S = a.width, b = document.createElement('canvas'); b.width = b.height = S;
-    const gb = b.getContext('2d'); gb.filter = 'blur(14px)'; gb.drawImage(a, 0, 0);
-    const da = a.getContext('2d').getImageData(0,0,S,S).data, db = gb.getImageData(0,0,S,S).data, cand = [];
-    for (let y = 0; y < S; y += 2) for (let x = 0; x < S; x += 2){ const i = (y*S+x)*4+3; if (da[i] > 128) cand.push([x, y, db[i]/255]); }
-    const out = [];
-    for (let i = 0; i < n; i++){
-      const [x, y, bl] = cand[(Math.random()*cand.length)|0], d = Math.max(0, (bl - .45)/.55);
-      out.push({x:(x - S/2)/U + rnd(-.008,.008), y:-(y - S/2)/U + rnd(-.008,.008), z:(Math.random() < .5 ? -1 : 1)*depth*Math.sqrt(d) + rnd(-.02,.02)});
-    }
-    return out;
-  }
-  function fromImage(src, n){
-    return new Promise(res => { const img = new Image(); img.onload = () => {
-      const S = 400, a = document.createElement('canvas'); a.width = a.height = S; const g = a.getContext('2d');
-      const k = Math.min(360/img.width, 300/img.height); g.drawImage(img, (S - img.width*k)/2, (S - img.height*k)/2, img.width*k, img.height*k);
-      res(fromCanvas(a, n, .18, 150)); }; img.onerror = () => res(null); img.src = src; });
+  let rot = null, active = null, leaveTimer = 0;
+  function onRot(it, i){
+    const n = B.rotationList(cfg).length;
+    if (dots.children.length !== n) dots.innerHTML = '<i></i>'.repeat(n);
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+    if (active) return;
+    show(it, 1.7); label(it);
   }
 
-  function textPoints(word, n, maxW = 1.55, maxH = .68, dy = .04){
-    const w = 640, h = 260, c = document.createElement('canvas'); c.width = w; c.height = h;
-    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = '800 170px "Inter Tight", system-ui, sans-serif'; g.fillText(word, w/2, h/2);
-    const d = g.getImageData(0,0,w,h).data, cand = [];
-    let minX = w, maxX = 0, minY = h, maxY = 0;
-    for (let y = 0; y < h; y += 3) for (let x = 0; x < w; x += 3) if (d[(y*w+x)*4+3] > 128){ cand.push([x,y]); minX = Math.min(minX,x); maxX = Math.max(maxX,x); minY = Math.min(minY,y); maxY = Math.max(maxY,y); }
-    const s = Math.min(maxW/(maxX-minX), maxH/(maxY-minY)), cx = (minX+maxX)/2, cy = (minY+maxY)/2, out = [];
-    for (let i = 0; i < n; i++){ const [x,y] = cand[(Math.random()*cand.length)|0]; out.push({x:(x-cx)*s + rnd(-.006,.006), y:-(y-cy)*s + dy + rnd(-.006,.006), z:rnd(-.05,.05)}); }
-    return out;
-  }
-
-  function bubbleOutline(){
-    const W = 1.2, H = .66, R = .42, pts = [];
-    const arc = (cx, cy, a0, a1) => { for (let i = 0; i <= 16; i++){ const a = a0 + (a1-a0)*i/16; pts.push([cx+Math.cos(a)*R, cy+Math.sin(a)*R]); } };
-    pts.push([-.12,-H]); arc(W-R,-H+R,-Math.PI/2,0); arc(W-R,H-R,0,Math.PI/2); arc(-W+R,H-R,Math.PI/2,Math.PI); arc(-W+R,-H+R,Math.PI,Math.PI*1.5);
-    pts.push([-.62,-H], [-.86,-1.08], [-.12,-H]);
-    const seg = []; let L = 0;
-    for (let i = 0; i < pts.length-1; i++){ const d = Math.hypot(pts[i+1][0]-pts[i][0], pts[i+1][1]-pts[i][1]); seg.push(d); L += d; }
-    const M = 170, tube = [];
-    for (let k = 0; k < M; k++){
-      let s = k/M*L, i = 0; while (s > seg[i]) { s -= seg[i]; i++; }
-      const [x0,y0] = pts[i], [x1,y1] = pts[i+1], f = s/seg[i], nx = (y1-y0)/seg[i], ny = -(x1-x0)/seg[i], x = x0+(x1-x0)*f, y = y0+(y1-y0)*f;
-      for (let j = 0; j < 3; j++){ const a = j/3*Math.PI*2 + k*.7; tube.push({x:x+nx*Math.cos(a)*.055, y:y+ny*Math.cos(a)*.055, z:Math.sin(a)*.055}); }
-    }
-    return tube;
-  }
-  const OUTLINE = bubbleOutline();
-  const bubbleWith = word => OUTLINE.map(p => ({...p})).concat(textPoints(word, N - OUTLINE.length));
-
-  // formas originais de cada projeto (não são logos oficiais)
-  const SHAPES = {
-    heart: n => fromDrawing(g => { g.beginPath(); for (let i = 0; i <= 120; i++){ const t = i/120*Math.PI*2, x = 16*Math.sin(t)**3, y = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t); g.lineTo(x/14.5, -y/14.5 - .05); } g.fill(); }, n, .38),
-    shh: n => OUTLINE.map(p => ({...p})).concat(textPoints('shh…', n - OUTLINE.length)),
-    phone: n => fromDrawing(g => {
-      g.beginPath(); g.roundRect(-.62,-1.08,1.24,2.16,.22); g.fill();
-      g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.roundRect(-.5,-.86,1,1.6,.06); g.fill();
-      g.globalCompositeOperation = 'source-over'; g.font = '800 1.15px "Inter Tight"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('8', 0, -.02);
-      g.beginPath(); g.arc(0,.92,.08,0,7); g.fill();
-    }, n, .16),
-    notes: n => fromDrawing(g => {
-      g.save(); g.translate(-.55,.62); g.rotate(-.4); g.beginPath(); g.ellipse(0,0,.34,.24,0,0,7); g.fill(); g.restore();
-      g.save(); g.translate(.62,.42); g.rotate(-.4); g.beginPath(); g.ellipse(0,0,.34,.24,0,0,7); g.fill(); g.restore();
-      g.lineWidth = .13; g.beginPath(); g.moveTo(-.25,.55); g.lineTo(-.25,-.78); g.moveTo(.92,.35); g.lineTo(.92,-.98); g.stroke();
-      g.beginPath(); g.moveTo(-.31,-.72); g.lineTo(.98,-.94); g.lineTo(.98,-.64); g.lineTo(-.31,-.42); g.closePath(); g.fill();
-    }, n, .2),
-    cassette: n => fromDrawing(g => {   // fita K7: corpo, etiqueta, bobinas, janelinha e a parte de baixo
-      g.beginPath(); g.roundRect(-1.15, -.74, 2.3, 1.48, .12); g.fill();
-      g.globalCompositeOperation = 'destination-out';
-      g.lineWidth = .06; g.beginPath(); g.roundRect(-.96, -.6, 1.92, .92, .07); g.stroke();                    // borda da etiqueta
-      g.beginPath(); g.arc(-.5, -.13, .21, 0, Math.PI*2); g.arc(.5, -.13, .21, 0, Math.PI*2); g.fill();          // bobinas
-      g.beginPath(); g.roundRect(-.22, -.24, .44, .22, .04); g.fill();                                            // janelinha
-      g.lineWidth = .07; g.beginPath(); g.moveTo(-.72, .74); g.lineTo(-.56, .44); g.lineTo(.56, .44); g.lineTo(.72, .74); g.stroke();
-      g.globalCompositeOperation = 'source-over';
-      for (const cx of [-.5, .5]){ for (let i = 0; i < 6; i++){ const a = i/6*Math.PI*2; g.beginPath(); g.arc(cx + Math.cos(a)*.1, -.13 + Math.sin(a)*.1, .035, 0, Math.PI*2); g.fill(); } }
-    }, n, .2),
-    clock: n => fromDrawing(g => {   // relógio de parede: aro, marcações, ponteiros e centro
-      g.lineWidth = .17; g.beginPath(); g.arc(0, 0, .92, 0, Math.PI*2); g.stroke();
-      g.lineWidth = .09;
-      for (let i = 0; i < 12; i++){ const a = i/12*Math.PI*2, r0 = i % 3 ? .66 : .56; g.beginPath(); g.moveTo(Math.cos(a)*r0, Math.sin(a)*r0); g.lineTo(Math.cos(a)*.76, Math.sin(a)*.76); g.stroke(); }
-      g.lineWidth = .12; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(-2.1)*.42, Math.sin(-2.1)*.42); g.stroke();   // horas
-      g.lineWidth = .08; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(-.55)*.62, Math.sin(-.55)*.62); g.stroke();   // minutos
-      g.beginPath(); g.arc(0, 0, .1, 0, Math.PI*2); g.fill();
-    }, n, .18),
-    vx: n => {   // logo do VoxStage: V e X + pontinho que pula entre eles, com rastro
-      const DOT = [[80, 4.5, 0], [30, 2.8, .07], [20, 2.3, .14], [12, 1.8, .21]];   // [bolinhas, raio no SVG, atraso em s]
-      const nd = DOT.reduce((a, d) => a + d[0], 0);
-      const pts = fromDrawing(g => { g.scale(1/26, 1/26); g.translate(-55, -51); g.lineWidth = 8;
-        g.beginPath(); g.moveTo(26, 49); g.lineTo(39, 78); g.lineTo(52, 49); g.moveTo(66, 49); g.lineTo(84, 78); g.moveTo(84, 49); g.lineTo(66, 78); g.stroke(); }, n - nd, .22);
-      DOT.forEach(([q, r, lag], k) => { for (const o of sphere(q, r/26)) pts.push({x:o.x, y:o.y, z:o.z, dot:k, lag, ox:o.x, oy:o.y, oz:o.z}); });
-      return pts;
-    },
-    mic: n => fromDrawing(g => {
-      g.beginPath(); g.roundRect(-.4,-1.15,.8,1.2,.4); g.fill();
-      g.globalCompositeOperation = 'destination-out'; g.lineWidth = .05; g.beginPath();
-      for (const y of [-.75,-.55,-.35]){ g.moveTo(-.45,y); g.lineTo(.45,y); } g.stroke();
-      g.globalCompositeOperation = 'source-over'; g.lineWidth = .12;
-      g.beginPath(); g.arc(0,-.3,.66,.05,Math.PI-.05); g.stroke();
-      g.beginPath(); g.moveTo(0,.36); g.lineTo(0,.88); g.moveTo(-.42,.92); g.lineTo(.42,.92); g.stroke();
-    }, n, .3),
-    bell: n => fromDrawing(g => {
-      // sino: cúpula, aba larga embaixo, badalo e argola em cima
-      g.beginPath(); g.moveTo(-.72,.55); g.quadraticCurveTo(-.7,-.95,0,-.95); g.quadraticCurveTo(.7,-.95,.72,.55);
-      g.lineTo(.92,.66); g.lineTo(-.92,.66); g.closePath(); g.fill();
-      g.beginPath(); g.arc(0,.84,.17,0,Math.PI*2); g.fill();
-      g.lineWidth = .1; g.beginPath(); g.arc(0,-1.06,.13,0,Math.PI*2); g.stroke();
-      g.globalCompositeOperation = 'destination-out'; g.lineWidth = .06;
-      g.beginPath(); g.moveTo(-.66,.36); g.lineTo(.66,.36); g.stroke();
-    }, n, .32),
-    gem: n => fromDrawing(g => {
-      g.beginPath(); g.moveTo(-.55,-.8); g.lineTo(.55,-.8); g.lineTo(1.05,-.25); g.lineTo(0,1.05); g.lineTo(-1.05,-.25); g.closePath(); g.fill();
-      g.globalCompositeOperation = 'destination-out'; g.lineWidth = .06; g.beginPath();
-      g.moveTo(-1.05,-.25); g.lineTo(1.05,-.25); g.moveTo(-.55,-.8); g.lineTo(-.3,-.25); g.lineTo(0,1.05); g.lineTo(.3,-.25); g.lineTo(.55,-.8);
-      g.moveTo(0,-.8); g.lineTo(-.3,-.25); g.moveTo(0,-.8); g.lineTo(.3,-.25); g.stroke();
-    }, n, .3),
-    floppy: n => fromDrawing(g => {
-      g.beginPath(); g.moveTo(-.95,-.95); g.lineTo(.7,-.95); g.lineTo(.95,-.7); g.lineTo(.95,.95); g.lineTo(-.95,.95); g.closePath(); g.fill();
-      g.globalCompositeOperation = 'destination-out';
-      g.fillRect(-.56,-.95,1.02,.66);                                  // vão em volta da tampa de metal
-      g.beginPath(); g.roundRect(-.68,.06,1.36,.89,.08); g.fill();    // etiqueta
-      g.globalCompositeOperation = 'source-over';
-      g.fillRect(-.47,-.95,.84,.56);                                   // tampa de metal
-      g.lineWidth = .08; g.beginPath(); g.moveTo(-.5,.36); g.lineTo(.5,.36); g.moveTo(-.5,.62); g.lineTo(.28,.62); g.stroke();
-      g.globalCompositeOperation = 'destination-out'; g.fillRect(.1,-.88,.2,.4); // fenda
-    }, n, .14),
-    katamari: n => { // bola 3D com objetos grudados
-      const core = sphere(Math.floor(n*.55), .72), out = [...core]; let left = n - core.length;
-      while (left > 0){
-        const u = rnd(-1,1), t = rnd(0,Math.PI*2), r = Math.sqrt(1-u*u), dir = [Math.cos(t)*r, u, Math.sin(t)*r];
-        if (Math.random() < .55){ const R = rnd(.1,.2), c = dir.map(v => v*(.72+R*.7)), k = Math.min(left, 40|0);
-          for (const p of sphere(k, R)) out.push({x:c[0]+p.x, y:c[1]+p.y, z:c[2]+p.z}); left -= k; }
-        else { const L = rnd(.35,.6), k = Math.min(left, 22);
-          for (let i = 0; i < k; i++){ const s = .68 + L*i/k; out.push({x:dir[0]*s+rnd(-.02,.02), y:dir[1]*s+rnd(-.02,.02), z:dir[2]*s+rnd(-.02,.02)}); } left -= k; }
-      }
-      return out;
-    },
-  };
-
-  /* ---------- partículas ---------- */
-  const SPHERE = sphere(N), WHITE = '#ffffff';
-  const P = SPHERE.map(p => ({fx:p.x, fy:p.y, fz:p.z, tx:p.x, ty:p.y, tz:p.z, x:p.x, y:p.y, z:p.z, d:0, ph:Math.random()*6.28, sa:WHITE, sb:WHITE}));
-  let morphT = 1, morphDur = 1.7, mode = 'sphere', active = null, faceFront = false, spin = false, glowColor = '#ffffff';
-  let ry = 0, rz = 0, gi = -1, holdT = 0, vxActive = false;
-  // posição do pontinho do logo VX: mesmo caminho e tempo da animação do app (2,6 s, ida e volta com pausas)
-  function vxDot(t){
-    const T = 2.6, u = (((t % T) + T) % T)/T;
-    const k = u < .38 ? ease(u/.38)*.5 : u < .5 ? .5 : u < .88 ? .5 + ease((u - .5)/.38)*.5 : 1;
-    const [A, B, s] = k <= .5 ? [39, 75, k*2] : [75, 39, (k - .5)*2];
-    const x = (1-s)*(1-s)*A + 2*(1-s)*s*57 + s*s*B, y = (1-s)*(1-s)*35 + 2*(1-s)*s*5 + s*s*35;
-    return [(x - 55)/26, -(y - 51)/26];
-  }
-
-  function morphTo(target, color = WHITE, dur = 1.7){
-    const key = p => p.x + p.y*.25;
-    const cur = P.slice().sort((a,b) => key(a) - key(b)), tg = target.slice().sort((a,b) => key(a) - key(b));
-    const spread = dur < 1.5 ? .2 : .3;
-    cur.forEach((p,i) => { p.sa = p.k > .5 ? p.sb : p.sa; p.fx = p.x; p.fy = p.y; p.fz = p.z;
-      p.tx = tg[i].x; p.ty = tg[i].y; p.tz = tg[i].z; p.sb = color; p.d = (i/N)*spread + Math.random()*.1; p.k = 0;
-      p.dot = tg[i].dot ?? -1; p.lag = tg[i].lag || 0; p.ox = tg[i].ox; p.oy = tg[i].oy; p.oz = tg[i].oz; });
-    vxActive = target.some(q => q.dot != null);
-    morphT = 0; morphDur = dur; holdT = 0;
-  }
-
-  const cap = document.getElementById('cap'), word = document.getElementById('word'), lang = document.getElementById('lang'), dots = document.getElementById('dots');
-  // formas 3D que entram quando as saudações acabam
-  function fill(pts, n){ const out = pts.slice(0, n); while (out.length < n){ const q = pts[(Math.random()*pts.length)|0]; out.push({x:q.x + rnd(-.01,.01), y:q.y + rnd(-.01,.01), z:q.z + rnd(-.01,.01)}); } return out; }
-  const GEO = [
-    { name:'cubo', color:'#4dd9ff', make(n){ const pts = [], m = Math.floor(Math.sqrt(n/6)), a = .72;
-        for (let f = 0; f < 6; f++) for (let i = 0; i < m; i++) for (let j = 0; j < m; j++){
-          const u = (i/(m-1)*2 - 1)*a, v = (j/(m-1)*2 - 1)*a, axis = f >> 1, sgn = f & 1 ? a : -a;
-          pts.push(axis === 0 ? {x:sgn, y:u, z:v} : axis === 1 ? {x:u, y:sgn, z:v} : {x:u, y:v, z:sgn}); }
-        return fill(pts, n); } },
-    { name:'toro', color:'#ff9a3d', make(n){ const pts = [], A = 50, B = Math.ceil(n/50), R = .72, r = .3, t = .55;
-        for (let i = 0; i < A; i++) for (let j = 0; j < B; j++){
-          const u = i/A*Math.PI*2, v = j/B*Math.PI*2, x = (R + r*Math.cos(v))*Math.cos(u), y = r*Math.sin(v), z = (R + r*Math.cos(v))*Math.sin(u);
-          pts.push({x, y:y*Math.cos(t) - z*Math.sin(t), z:y*Math.sin(t) + z*Math.cos(t)}); }
-        return fill(pts, n); } },
-    { name:'pirâmide', color:'#ffd23f', make(n){ const pts = [], b = .78, yb = -.62, top = {x:0, y:.98, z:0};
-        const base = [{x:-b, y:yb, z:-b}, {x:b, y:yb, z:-b}, {x:b, y:yb, z:b}, {x:-b, y:yb, z:b}];
-        const tri = (A, B, C) => { let u = Math.random(), v = Math.random(); if (u + v > 1){ u = 1 - u; v = 1 - v; }
-          return {x:A.x + u*(B.x - A.x) + v*(C.x - A.x), y:A.y + u*(B.y - A.y) + v*(C.y - A.y), z:A.z + u*(B.z - A.z) + v*(C.z - A.z)}; };
-        const edges = [...base.map((q, i) => [q, base[(i+1) % 4]]), ...base.map(q => [q, top])];
-        for (let i = 0; i < n*.3; i++){ const [A, B] = edges[i % edges.length], k = Math.random(); pts.push({x:A.x + (B.x - A.x)*k, y:A.y + (B.y - A.y)*k, z:A.z + (B.z - A.z)*k}); }
-        while (pts.length < n){ const f = (Math.random()*5)|0;
-          pts.push(f < 4 ? tri(base[f], base[(f+1) % 4], top) : (Math.random() < .5 ? tri(base[0], base[1], base[2]) : tri(base[0], base[2], base[3]))); }
-        return pts; } },
-    { name:'hélice dupla', color:'#7dff9a', make(n){ const pts = [], strand = Math.floor(n*.36), R = .5;
-        for (let s = 0; s < 2; s++) for (let i = 0; i < strand; i++){ const t = i/strand, ang = t*Math.PI*4 + s*Math.PI;
-          pts.push({x:Math.cos(ang)*R + rnd(-.04,.04), y:-1.05 + t*2.1, z:Math.sin(ang)*R + rnd(-.04,.04)}); }
-        const rungs = 16, per = Math.floor((n - pts.length)/rungs);
-        for (let k = 0; k < rungs; k++){ const t = (k + .5)/rungs, ang = t*Math.PI*4, y = -1.05 + t*2.1;
-          for (let i = 0; i < per; i++){ const q = i/(per - 1)*2 - 1; pts.push({x:Math.cos(ang)*R*q, y:y + rnd(-.015,.015), z:Math.sin(ang)*R*q}); } }
-        return fill(pts, n); } },
-    { name:'planeta', color:'#c89bff', make(n){ const pts = sphere(Math.floor(n*.58), .6), t = .42, ring = n - pts.length;
-        for (let i = 0; i < ring; i++){ const a = Math.random()*Math.PI*2, r = .82 + Math.random()*.36, x = Math.cos(a)*r, z = Math.sin(a)*r, y = rnd(-.015,.015);
-          pts.push({x, y:y*Math.cos(t) - z*Math.sin(t), z:y*Math.sin(t) + z*Math.cos(t)}); }
-        return pts; } },
-    { name:'estrela', color:'#ff6fb5', make(n){ return fromDrawing(g => { g.beginPath();
-        for (let i = 0; i < 10; i++){ const a = -Math.PI/2 + i*Math.PI/5, r = i % 2 ? .44 : 1.05; g.lineTo(Math.cos(a)*r, Math.sin(a)*r); }
-        g.closePath(); g.fill(); }, n, .34); } },
-    { name:'galáxia', color:'#9ad7ff', make(n){ const pts = [], arms = 3, t = .9, core = Math.floor(n*.18);
-        for (const q of sphere(core, .2)) pts.push(q);
-        for (let i = pts.length; i < n; i++){ const arm = i % arms, k = Math.random(), r = .18 + k*.95, a = arm/arms*Math.PI*2 + k*3.6 + rnd(-.18,.18)*(1 - k*.5);
-          const x = Math.cos(a)*r, z = Math.sin(a)*r, y = rnd(-.05,.05)*(1 - k);
-          pts.push({x, y:y*Math.cos(t) - z*Math.sin(t), z:y*Math.sin(t) + z*Math.cos(t)}); }
-        return pts; } },
-  ];
-  GEO.forEach(g => g.pts = g.make(N));
-
-  // rotação: saudação/forma, projeto, saudação/forma, projeto... (sem voltar para a esfera)
-  const EXTRA = [...SAY.map(say => ({say})), ...GEO.map(geo => ({geo}))];
-  const ROT = []; for (let i = 0; i < Math.max(EXTRA.length, ALL.length); i++){ if (EXTRA[i]) ROT.push(EXTRA[i]); if (ALL[i]) ROT.push({p:ALL[i]}); }
-  dots.innerHTML = ROT.map(() => '<i></i>').join('');
-  function label(a, b, isProj){ word.textContent = a; lang.textContent = b; cap.classList.toggle('proj-mode', !!isProj); }
-
-  function showItem(it, dur = 1.7){
-    if (it.say){ faceFront = true; spin = false; glowColor = WHITE; morphTo(bubbleWith(it.say[0]), WHITE, dur); label(it.say[0], it.say[1]); }
-    else if (it.geo){ faceFront = false; spin = false; glowColor = it.geo.color; morphTo(it.geo.pts, it.geo.color, dur); label(it.geo.name, 'forma'); }
-    else {
-      const p = it.p; faceFront = p.shape !== 'katamari' || !!p.logo; spin = p.shape === 'katamari' && !p.logo; glowColor = p.color;
-      label(p.name, p.tags[0]);
-      shapeOf(p).then(pts => { if (mode === 'bubble' && ROT[gi] === it) morphTo(pts, p.color, dur); });
-    }
-  }
-  // vai direto de uma forma para a próxima (a esfera inteira só aparece ao abrir a página)
-  function nextGreeting(){
-    holdT = 0;
-    gi = (gi+1) % ROT.length; mode = 'bubble';
-    [...dots.children].forEach((d,i) => d.classList.toggle('on', i === gi));
-    showItem(ROT[gi]);
-  }
-
-  // cache de formas por projeto
-  const cache = new Map();
-  async function shapeOf(p){
-    if (cache.has(p)) return cache.get(p);
-    let pts = p.logo ? await fromImage(p.logo, N) : null;
-    if (!pts) pts = SHAPES[p.shape](N);
-    cache.set(p, pts); return pts;
-  }
-
-  let leaveTimer = 0;
-  async function activate(p){
+  function activate(r){
     clearTimeout(leaveTimer);
-    if (active === p) return;
-    active = p; ALL.forEach(q => q.el.classList.toggle('on', q === p));
-    const pts = await shapeOf(p); if (active !== p) return;
-    mode = 'project'; faceFront = p.shape !== 'katamari' || !!p.logo; spin = p.shape === 'katamari' && !p.logo;
-    glowColor = p.color; morphTo(pts, p.color, 1.15); label(p.name, p.tags[0], true);
+    ROWS.forEach(q => q.el.classList.toggle('on', q === r));
+    if (active === r.item) return;
+    active = r.item; rot && rot.hold(true);
+    show(r.item, 1.15); label(r.item, true);
   }
   function deactivate(){
-    if (!active) return; active = null; ALL.forEach(q => q.el.classList.remove('on'));
-    holdT = 0;
-    if (gi < 0){ mode = 'sphere'; faceFront = false; spin = false; glowColor = WHITE; morphTo(SPHERE, WHITE, 1.3); label('—', ''); }
-    else { mode = 'bubble'; showItem(ROT[gi], 1.3); }   // volta para a forma atual da rotação
+    if (!active) return; active = null; ROWS.forEach(q => q.el.classList.remove('on'));
+    rot && rot.hold(false);
+    if (rot && rot.cur){ show(rot.cur, 1.3); label(rot.cur); }   // volta para a forma atual da rotação
+    else if (cfg.view !== 'monitor'){ stage.sphere(); word.textContent = '—'; lang.textContent = ''; }
   }
-
   if (!touch){
-    ALL.forEach(p => { p.el.addEventListener('mouseenter', () => activate(p)); p.el.addEventListener('focus', () => activate(p));
-      p.el.addEventListener('mouseleave', () => { clearTimeout(leaveTimer); leaveTimer = setTimeout(deactivate, 350); }); });
+    ROWS.forEach(r => { r.el.addEventListener('mouseenter', () => activate(r)); r.el.addEventListener('focus', () => activate(r));
+      r.el.addEventListener('mouseleave', () => { clearTimeout(leaveTimer); leaveTimer = setTimeout(deactivate, 350); }); });
   } else {
     // no celular: o projeto no meio da tela é o ativo
-    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) activate(ALL.find(p => p.el === e.target)); }), {rootMargin:'-55% 0px -40% 0px'});
-    ALL.forEach(p => io.observe(p.el));
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) activate(ROWS.find(r => r.el === e.target)); }), {rootMargin:'-55% 0px -40% 0px'});
+    ROWS.forEach(r => io.observe(r.el));
     const top = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) deactivate(); }), {threshold:.6});
     top.observe(document.querySelector('h1'));
   }
-  canvas.addEventListener('click', () => { if (mode !== 'project') nextGreeting(); });
+  right.addEventListener('click', () => { if (!active && rot) rot.next(); });
 
-  /* ---------- render ---------- */
-  let mx = 0, my = 0, tmx = 0, tmy = 0;
-  addEventListener('pointermove', e => { const r = canvas.getBoundingClientRect(); tmx = Math.max(-1, Math.min(1, ((e.clientX - r.left)/r.width - .5)*2)); tmy = Math.max(-1, Math.min(1, ((e.clientY - r.top)/r.height - .5)*2)); });
+  // mudou algo no Labs (em outra aba)? a inicial acompanha na hora
+  addEventListener('storage', e => { if (e.key !== B.KEY) return;
+    cfg = B.loadConfig(); applyView();
+    const it = active || (rot && rot.cur); if (it) show(it, 1.2); });
 
-  let W = 0, H = 0;
-  function resize(){ const dpr = Math.min(devicePixelRatio || 1, 2); W = canvas.clientWidth; H = canvas.clientHeight; canvas.width = W*dpr; canvas.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
-  addEventListener('resize', resize); resize();
-
-  const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-  const order = new Array(N); let last = 0, time = 0;
-  const TAU = Math.PI*2, nearest = v => Math.round(v/TAU)*TAU;
-
-  function frame(now){
-    const dt = Math.min((now - last)/1000, .05); last = now; time += dt;
-    mx += (tmx - mx)*.05; my += (tmy - my)*.05;
-
-    if (morphT < 1) morphT = Math.min(1, morphT + dt/morphDur);
-    else if (mode !== 'project'){ holdT += dt; if (!reduce && holdT > (mode === 'sphere' ? 3 : 3.4)) nextGreeting(); }
-
-    if (!faceFront) ry += dt*(spin ? .9 : .45); else ry += (nearest(ry) - ry)*Math.min(1, dt*2.6);
-    if (spin) rz += dt*.6; else rz += (nearest(rz) - rz)*Math.min(1, dt*2);
-    const wob = faceFront ? Math.sin(time*1.3)*.1 : 0;
-    const a = ry + wob + mx*.35, b = -.18 + my*.25 + (faceFront ? Math.sin(time*.9)*.05 : 0);
-    const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b), cz = Math.cos(rz), sz = Math.sin(rz);
-
-    const S = Math.min(W, H) * (W < 600 ? .3 : .33), cx = W/2, cy = H/2 - H*.04;
-    const spread = morphDur < 1.5 ? .2 : .3, win = 1 - spread - .1;
-    if (vxActive) for (const p of P) if (p.dot >= 0){ const c = vxDot(time - p.lag); p.tx = c[0] + p.ox; p.ty = c[1] + p.oy; p.tz = p.oz; }
-    for (let i = 0; i < N; i++){
-      const p = P[i];
-      const k = p.k = ease(Math.max(0, Math.min(1, (morphT - p.d)/win)));
-      const burst = Math.sin(k*Math.PI) * .3;
-      p.x = p.fx + (p.tx - p.fx)*k; p.y = p.fy + (p.ty - p.fy)*k; p.z = p.fz + (p.tz - p.fz)*k;
-      const br = 1 + burst*.6 + (mode === 'sphere' && morphT >= 1 ? Math.sin(time*2 + p.ph)*.012 : 0);
-      let x = p.x*br, y = p.y*br, z = p.z*br + burst*Math.sin(p.ph)*.4;
-      const x0 = x*cz - y*sz, y0 = x*sz + y*cz;
-      const x1 = x0*ca - z*sa, z1 = x0*sa + z*ca;
-      const y1 = y0*cb - z1*sb, z2 = y0*sb + z1*cb;
-      const f = 3.4/(3.4 - z2);
-      p.sx = cx + x1*S*f; p.sy = cy - y1*S*f; p.sz = z2; p.sf = f;
-      order[i] = i;
-    }
-    order.sort((i,j) => P[i].sz - P[j].sz);
-
-    ctx.clearRect(0,0,W,H);
-    const glowC = glowColor, n = parseInt(glowC.slice(1),16);
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, S*1.6);
-    glow.addColorStop(0, `rgba(${n>>16},${n>>8&255},${n&255},${glowC !== WHITE ? .1 : .06})`); glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
-
-    const base = S*.055, small = mode !== 'sphere' && morphT > .6 ? .82 : 1;
-    for (let j = 0; j < N; j++){
-      const p = P[order[j]], s = base*p.sf*small;
-      ctx.globalAlpha = Math.max(.12, Math.min(1, .55 + p.sz*.5));
-      ctx.drawImage(sprite(p.k > .5 ? p.sb : p.sa), p.sx - s/2, p.sy - s/2, s, s);
-    }
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(frame);
-  }
-
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
-    ALL.forEach(p => setTimeout(() => shapeOf(p), 50)); // pré-calcula as formas
-    requestAnimationFrame(t => { last = t; frame(t); });
+  B.ready.then(() => {
+    ROWS.forEach(r => setTimeout(() => B.ptsOf(r.item), 50)); // pré-calcula as formas
+    rot = B.rotation(() => B.rotationList(cfg), onRot, {speed:() => cfg.speed, extra:() => cfg.view === 'monitor' ? 1 : 1.7, autoplay:!reduce, firstDelay:cfg.view === 'monitor' ? .6 : 3});
   });
 
-  const clock = document.getElementById('clock');
+  const clock = $('clock');
   const tick = () => clock.textContent = 'Brasil — ' + new Date().toLocaleTimeString('pt-BR', {timeZone:'America/Sao_Paulo', hour:'2-digit', minute:'2-digit'});
   tick(); setInterval(tick, 10000);
 })();
