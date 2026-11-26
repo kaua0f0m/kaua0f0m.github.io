@@ -13,33 +13,33 @@ const N = 1500;
    children: vira um menu que abre (ex.: Jackbox Games, com um pack por linha)
    soon: linha apagadinha no fim do menu, para o que ainda vai entrar */
 const PROJETOS = [
-  { title:'Traduções & mods', note:'GitHub', items:[
-    { key:'jackbox', name:'Jackbox Games', desc:'Traduções PT-BR dos packs da Jackbox, com instalador', tags:['Python','instalador'], color:'#ffcc33', shape:'phone',
-      soon:'Outros packs da Jackbox entram aqui', children:[
-      { key:'jackbox8', name:'The Jackbox Party Pack 8', ai:'Claude Code', desc:'Tradução PT-BR não oficial, com instalador', tags:['Python','instalador'], color:'#ffcc33', shape:'phone',
+  { title:'Traduções & mods', items:[
+    { key:'jackbox', name:'Jackbox Games', desc:'Traduções PT-BR dos packs da Jackbox, com instalador', tags:['Python'], color:'#ffcc33', shape:'phone',
+      soon:'mais jogos em breve', children:[
+      { key:'jackbox8', name:'The Jackbox Party Pack 8', ai:'Claude Code', desc:'Tradução PT-BR não oficial, com instalador', tags:['Python'], color:'#ffcc33', shape:'phone',
         url:'jackbox-8.html' },
     ]},
-    { key:'unbeatable', name:'UNBEATABLE', ai:'Claude Code', desc:'Tradução PT-BR (feita por IA) — mod BepInEx', tags:['C#','BepInEx'], color:'#ff4d6d', art:'proibido',
+    { key:'unbeatable', name:'UNBEATABLE', ai:'Claude Code', desc:'Tradução PT-BR em mod BepInEx', tags:['C#'], color:'#ff4d6d', art:'proibido',
       url:'unbeatable.html' },
     { key:'katamari', name:'Katamari Damacy REROLL', ai:'Codex', desc:'Tradução PT-BR + Katamari Plus', tags:['C#','mod'], color:'#7ddc5a', shape:'katamari', spin:true,
       url:'katamari.html' },
-    { key:'date', name:'Date Everything!', ai:'Codex', desc:'Tradução PT-BR (IA + curadoria), instalador sem arquivos do jogo', tags:['Python','instalador'], color:'#ff7eb6', shape:'heart',
+    { key:'date', name:'Date Everything!', ai:'Codex', desc:'Tradução PT-BR com curadoria e instalador sem arquivos do jogo', tags:['Python'], color:'#ff7eb6', shape:'heart',
       url:'date-everything.html' },
-    { key:'hush', name:'Hush Hush', ai:'Claude Code', desc:'Tradução PT-BR (IA + curadoria em certas linhas)', tags:['Python','+18'], color:'#d0193a', shape:'clock',
+    { key:'hush', name:'Hush Hush', ai:'Claude Code', desc:'Tradução PT-BR com curadoria em certas linhas', tags:['Python','+18'], color:'#d0193a', shape:'clock',
       url:'hush-hush.html' },
-    { key:'hunie2', name:'HuniePop 2', ai:'Gemini', desc:'Localização PT-BR — plugin BepInEx 5', tags:['C#','BepInEx','+18'], color:'#ffd23f', shape:'bell',
+    { key:'hunie2', name:'HuniePop 2', ai:'Gemini', desc:'Localização PT-BR em plugin BepInEx 5', tags:['C#','+18'], color:'#ffd23f', shape:'bell',
       url:'huniepop-2.html' },
-    { key:'niko', name:'Here Comes Niko!', ai:'Claude Code', desc:'Tradução PT-BR com instalador e acentos nas fontes do jogo', tags:['Python','instalador'], color:'#7cc4ff', shape:'cloud',
+    { key:'niko', name:'Here Comes Niko!', ai:'Claude Code', desc:'Tradução PT-BR com instalador e acentos nas fontes do jogo', tags:['Python'], color:'#7cc4ff', shape:'cloud',
       url:'here-comes-niko.html' },
   ]},
-  { title:'Standalone', note:'apps', items:[
+  { title:'Standalone', items:[
     { key:'voxstage', name:'VoxStage', ai:'Codex', desc:'Karaokê local para Windows, Android e Google TV', tags:['JavaScript','app'], color:'#d4fb69', shape:'vx',
       url:'voxstage.html' },
   ]},
-  { title:'Legado & labs', note:'arquivo', items:[
+  { title:'Legado & labs', items:[
     { key:'legado', name:'Traduções legado', ai:'sem IA', desc:'Todas as traduções antigas reunidas em uma página', tags:['10 jogos'], color:'#9aa4b2', shape:'floppy',
       url:'legado.html' },
-    { key:'labs', name:'Configurações das bolinhas', desc:'Labs: escolha quais formas aparecem aqui, a ordem, o estilo e o monitor 8-bit', tags:['Labs'], color:'#5ce1e6', shape:'gear',
+    { key:'labs', name:'Configurações das bolinhas', desc:'Escolha quais formas aparecem aqui, a ordem, o estilo e o monitor 8-bit', tags:['Labs'], color:'#5ce1e6', shape:'gear',
       url:'labs.html' },
   ]},
 ];

@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
 <!-- só os caracteres das saudações em japonês e chinês (usadas se você ligar no Labs) -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@800&family=Noto+Sans+SC:wght@800&text=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF%E4%BD%A0%E5%A5%BD&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="bolinhas.css?v=202611261527">
+<link rel="stylesheet" href="bolinhas.css?v=202611261539">
 <style>
   :root{ --bg:#000; --text:#f4f4f4; --muted:#6e6e6e; --line:#1d1d1d; }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -29,9 +29,6 @@
 
   main{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); padding:0 48px; gap:24px}
   .left{position:relative; z-index:2; padding:22vh 0 12vh}
-  .status{display:inline-flex; align-items:center; gap:10px; color:var(--muted); margin-bottom:36px}
-  .status::before{content:""; width:7px; height:7px; border-radius:50%; background:#fff; box-shadow:0 0 0 4px rgba(255,255,255,.12); animation:pulse 2s infinite}
-  @keyframes pulse{50%{box-shadow:0 0 0 8px rgba(255,255,255,0)}}
   h1{font-size:clamp(52px,7.6vw,128px); line-height:.9; letter-spacing:-.055em; font-weight:800}
   h1 .dim{color:#3a3a3a; transition:color .6s}
   h1:hover .dim{color:var(--text)}
@@ -39,15 +36,12 @@
   @keyframes in{to{opacity:1; transform:none; filter:none}}
   .lead{margin-top:32px; max-width:460px; font-size:18px; line-height:1.55; color:#9a9a9a}
   .lead b{color:var(--text); font-weight:500}
-  .scrollhint{margin-top:56px; color:var(--muted); display:flex; align-items:center; gap:12px}
-  .scrollhint::before{content:""; width:1px; height:36px; background:linear-gradient(var(--text),transparent); animation:drop 1.8s infinite}
-  @keyframes drop{0%{transform:scaleY(0); transform-origin:top}50%{transform:scaleY(1); transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0); transform-origin:bottom}}
 
   #projetos{margin-top:22vh; scroll-margin-top:100px}
   .group{margin-bottom:56px}
   .group h2{display:flex; justify-content:space-between; color:var(--muted); padding-bottom:14px; border-bottom:1px solid var(--line)}
   .group h2 b{color:var(--text); font-weight:500}
-  .proj{--c:#fff; display:grid; grid-template-columns:14px 1fr 20px; align-items:center; gap:16px; padding:20px 12px 20px 0; border-bottom:1px solid var(--line); position:relative; isolation:isolate; transition:color .25s, padding .35s cubic-bezier(.2,.8,.2,1)}
+  .proj{--c:#fff; display:grid; grid-template-columns:14px 1fr; align-items:center; gap:16px; padding:20px 12px 20px 0; border-bottom:1px solid var(--line); position:relative; isolation:isolate; transition:color .25s, padding .35s cubic-bezier(.2,.8,.2,1)}
   .proj::before{content:""; position:absolute; inset:0; background:var(--c); transform:scaleY(0); transform-origin:bottom; transition:transform .35s cubic-bezier(.2,.8,.2,1); z-index:-1}
   .proj .dot{width:9px; height:9px; border-radius:50%; background:var(--c); box-shadow:0 0 12px var(--c); transition:background .25s}
   .proj .t{font-size:24px; font-weight:700; letter-spacing:-.02em; line-height:1.1}
@@ -58,7 +52,7 @@
   .proj .tags span{border:1px solid #2c2c2c; border-radius:999px; padding:3px 9px; font-size:10.5px; color:#9a9a9a; white-space:nowrap; transition:border-color .25s, color .25s}
   .proj .ar{transition:transform .3s}
   /* menu que abre (ex.: Jackbox Games) */
-  .proj.parent{width:100%; text-align:left; font:inherit; color:inherit; background:none; border:0; border-bottom:1px solid var(--line); cursor:pointer}
+  .proj.parent{grid-template-columns:14px 1fr 20px; width:100%; text-align:left; font:inherit; color:inherit; background:none; border:0; border-bottom:1px solid var(--line); cursor:pointer}
   .proj.parent[aria-expanded=true] .ar, .proj.parent.on[aria-expanded=true] .ar{transform:rotate(180deg)}
   .proj.parent.on .ar{transform:none}
   .kids{display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)}
@@ -73,7 +67,6 @@
   .proj.on .dot{background:#000; box-shadow:none}
   .proj.on .d{color:rgba(0,0,0,.65)}
   .proj.on .tags span{border-color:rgba(0,0,0,.3); color:rgba(0,0,0,.7)}
-  .proj.on .ar{transform:rotate(-45deg)}
 
   .right{position:sticky; top:0; height:100vh; min-height:480px}
   canvas{position:absolute; inset:0; width:100%; height:100%; cursor:pointer}
@@ -98,9 +91,9 @@
     .caption{bottom:4%}
     .mon{padding:58px 0 8px}
     .left{padding:4vh 0 30vh}
-    .status{margin-bottom:22px}
     #projetos{margin-top:12vh}
-    .proj{grid-template-columns:12px 1fr 18px; gap:12px}
+    .proj{grid-template-columns:12px 1fr; gap:12px}
+    .proj.parent{grid-template-columns:12px 1fr 18px}
     footer{padding:20px 16px 26px}
   }
   @media (prefers-reduced-motion:reduce){ h1 .w{animation:none; opacity:1; transform:none; filter:none} }
@@ -114,7 +107,6 @@
 
 <main>
   <section class="left">
-    <p class="status mono">Traduções · mods · apps — Brasil</p>
     <h1>
       <span class="w" style="animation-delay:.05s">Oi,</span>
       <span class="w" style="animation-delay:.12s">eu</span>
@@ -122,8 +114,7 @@
       <span class="w dim" style="animation-delay:.26s">o</span>
       <span class="w" style="animation-delay:.33s">Kauã!</span>
     </h1>
-    <p class="lead">Traduzo jogos para o <b>português do Brasil</b>, faço mods e crio apps. Passe o mouse num projeto e veja as bolinhas mudarem de forma.</p>
-    <p class="scrollhint mono">Projetos</p>
+    <p class="lead">Traduzo jogos para o <b>português do Brasil</b>, faço mods e crio apps.</p>
 
     <div id="projetos"></div>
   </section>
@@ -138,10 +129,10 @@
 <footer class="mono">
   <span>© 2026 Kauã</span>
   <span id="clock">Brasil</span>
-  <span class="soc"><a href="labs.html">Labs</a><a href="https://github.com/kaua0f0m" target="_blank" rel="noopener">GitHub</a><a href="#">Discord</a></span>
+  <span class="soc"><a href="labs.html">Labs</a><a href="https://github.com/kaua0f0m" target="_blank" rel="noopener">GitHub</a></span>
 </footer>
 
-<script src="bolinhas.js?v=202611261527"></script>
+<script src="bolinhas.js?v=202611261539"></script>
 <script>
 /* Os projetos, as formas e o motor ficam em bolinhas.js (o mesmo arquivo do Labs). */
 (() => {
@@ -155,13 +146,12 @@
   function row(p, cls = ''){
     const a = document.createElement('a'); a.className = 'proj ' + cls; a.href = p.url; a.style.setProperty('--c', p.color);
     if (p.url.startsWith('http')){ a.target = '_blank'; a.rel = 'noopener'; }
-    a.innerHTML = `<span class="dot"></span><span class="t">${p.name}<span class="d">${p.desc}</span><span class="tags mono">${tagsOf(p)}</span></span><span class="ar">→</span>`;
+    a.innerHTML = `<span class="dot"></span><span class="t">${p.name}<span class="d">${p.desc}</span><span class="tags mono">${tagsOf(p)}</span></span>`;
     return a;
   }
   B.PROJETOS.forEach(g => {
     const sec = document.createElement('div'); sec.className = 'group';
-    const n = g.items.reduce((s, p) => s + (p.children ? p.children.length : 1), 0);
-    sec.innerHTML = `<h2 class="mono"><b>${g.title}</b><span>${g.note} — ${String(n).padStart(2,'0')}</span></h2>`;
+    sec.innerHTML = `<h2 class="mono"><b>${g.title}</b></h2>`;
     g.items.forEach(p => {
       if (!p.children){ const el = row(p); ROWS.push({el, p, item:B.byId['p-' + p.key]}); sec.appendChild(el); return; }
       // menu que abre: um jogo por linha, e espaço para os próximos
@@ -173,7 +163,7 @@
       head.onclick = () => { const open = head.getAttribute('aria-expanded') !== 'true'; head.setAttribute('aria-expanded', open); kids.classList.toggle('open', open); };
       ROWS.push({el:head, p, item:B.byId['p-' + p.children[0].key]});
       p.children.forEach(c => { const el = row(c, 'kid'); ROWS.push({el, p:c, item:B.byId['p-' + c.key]}); inner.appendChild(el); });
-      if (p.soon){ const s = document.createElement('div'); s.className = 'soon mono'; s.textContent = '+ ' + p.soon; inner.appendChild(s); }
+      if (p.soon){ const s = document.createElement('div'); s.className = 'soon mono'; s.textContent = p.soon; inner.appendChild(s); }
       sec.appendChild(head); sec.appendChild(kids);
     });
     list.appendChild(sec);
@@ -241,7 +231,7 @@
   });
 
   const clock = $('clock');
-  const tick = () => clock.textContent = 'Brasil — ' + new Date().toLocaleTimeString('pt-BR', {timeZone:'America/Sao_Paulo', hour:'2-digit', minute:'2-digit'});
+  const tick = () => clock.textContent = 'Brasil, ' + new Date().toLocaleTimeString('pt-BR', {timeZone:'America/Sao_Paulo', hour:'2-digit', minute:'2-digit'});
   tick(); setInterval(tick, 10000);
 })();
 </script>
