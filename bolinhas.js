@@ -29,6 +29,8 @@ const PROJETOS = [
       url:'hush-hush.html' },
     { key:'hunie2', name:'HuniePop 2', ai:'Gemini', desc:'Localização PT-BR — plugin BepInEx 5', tags:['C#','BepInEx','+18'], color:'#ffd23f', shape:'bell',
       url:'huniepop-2.html' },
+    { key:'niko', name:'Here Comes Niko!', ai:'Claude Code', desc:'Tradução PT-BR com instalador e acentos nas fontes do jogo', tags:['Python','instalador'], color:'#7cc4ff', shape:'cloud',
+      url:'here-comes-niko.html' },
   ]},
   { title:'Standalone', note:'apps', items:[
     { key:'voxstage', name:'VoxStage', ai:'Codex', desc:'Karaokê local para Windows, Android e Google TV', tags:['JavaScript','app'], color:'#d4fb69', shape:'vx',
@@ -191,6 +193,10 @@ const SHAPES = {
     g.lineWidth = .08; g.beginPath(); g.moveTo(-.5,.36); g.lineTo(.5,.36); g.moveTo(-.5,.62); g.lineTo(.28,.62); g.stroke();
     g.globalCompositeOperation = 'destination-out'; g.fillRect(.1,-.88,.2,.4); // fenda
   }, n, .14),
+  cloud: n => fromDrawing(g => {   // nuvem fofinha: três bolas e a base reta
+    g.beginPath(); g.arc(-.55, .12, .42, 0, Math.PI*2); g.arc(-.02, -.12, .6, 0, Math.PI*2); g.arc(.58, .12, .44, 0, Math.PI*2); g.fill();
+    g.beginPath(); g.roundRect(-1.0, .05, 2.0, .5, .25); g.fill();
+  }, n, .38),
   gear: n => fromDrawing(g => {   // engrenagem: 10 dentes e um furo no meio
     g.beginPath(); for (let i = 0; i < 40; i++){ const a = i/40*Math.PI*2 - Math.PI/2, r = i % 4 < 2 ? 1.02 : .8; g.lineTo(Math.cos(a)*r, Math.sin(a)*r); }
     g.closePath(); g.fill(); g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(0, 0, .34, 0, Math.PI*2); g.fill();
@@ -390,7 +396,7 @@ const add = (id, name, sub, cat, color, make, opt = {}) => ITEMS.push({id, name,
 // projetos: cada linha da lista (sem os menus) vira uma forma
 const LEAVES = [];
 PROJETOS.forEach(g => g.items.forEach(p => (p.children || [p]).forEach(c => LEAVES.push(c))));
-const SUBS = {phone:'celular com o 8', proibido:'placa de proibido música', katamari:'bola com tralhas', heart:'coração', clock:'relógio', bell:'sino', vx:'logo VX com o pontinho', floppy:'disquete', gear:'engrenagem'};
+const SUBS = {phone:'celular com o 8', proibido:'placa de proibido música', katamari:'bola com tralhas', heart:'coração', clock:'relógio', bell:'sino', cloud:'nuvem', vx:'logo VX com o pontinho', floppy:'disquete', gear:'engrenagem'};
 LEAVES.forEach(p => add('p-' + p.key, p.name, SUBS[p.art || p.shape] || '', 'proj', p.color,
   p.art ? n => pixelPoints(ART[p.art], n) : n => SHAPES[p.shape](n), {art:p.art, front:!p.spin, spin:!!p.spin, project:p}));
 
@@ -430,7 +436,7 @@ const ptsOf = it => { if (!ptsCache.has(it.id)) ptsCache.set(it.id, Promise.reso
 /* ---------- configurações (escolhidas no Labs, valem para a inicial também) ---------- */
 // rotação padrão: saudação/forma, projeto, saudação/forma, projeto...
 const DEF = ['say-oi','p-jackbox8','geo-cubo','p-unbeatable','geo-toro','p-katamari','geo-pirâmide','p-date','geo-hélice dupla','p-hush',
-             'geo-planeta','p-hunie2','geo-estrela','p-voxstage','geo-galáxia','p-legado','p-labs'];
+             'geo-planeta','p-hunie2','p-niko','geo-estrela','p-voxstage','geo-galáxia','p-legado','p-labs'];
 const KEY = 'bolinhas-config-v2';
 const STYLES = {esferas:'Esferas', pixels:'Pixels', neon:'Neon'};
 const VIEWS = {bolinhas:'Bolinhas', monitor:'Monitor 8-bit'};
@@ -699,6 +705,12 @@ const PIX = {
       return d < 5.5 ? T.dk : s > .55 ? T.lt : s < -.55 ? T.dk : T.md; });
     return b.outline(T.ol).done(); },
   floppy(){ return artCells(ART.floppy); },
+  cloud(){ const b = pixBuf(36, 22), C = {hi:'#ffffff', lt:'#f3f9ff', md:'#dcecff', dk:'#aacdf2', ol:'#3f72aa'};
+    const bolas = [[10, 12, 6.5], [18, 8.5, 8.5], [27, 12, 6.2]];
+    b.each((x, y) => { const X = x + .5, Y = y + .5, dentro = bolas.some(([cx, cy, r]) => Math.hypot(X - cx, Y - cy) <= r) || (Y >= 12 && Y <= 19 && X >= 4 && X <= 33);
+      if (!dentro) return; const luz = Math.min(...bolas.map(([cx, cy, r]) => Math.hypot(X - (cx - 2), Y - (cy - 2.5))/r));
+      return Y > 17 ? C.dk : luz < .45 ? C.hi : luz < .8 ? C.lt : C.md; });
+    return b.outline(C.ol).done(); },
   cassette(){ const T = tones('#ff4d6d'), b = pixBuf(34, 24);
     b.rect(1,1,32,22,T.md); b.rect(1,1,32,1,T.lt); b.rect(1,1,1,22,T.lt); b.rect(1,22,32,1,T.dk); b.rect(32,1,1,22,T.dk);
     b.rect(4,3,26,12,'#f3ead7'); b.rect(4,3,26,2,'#ffd23f');
@@ -768,7 +780,7 @@ const PIX = {
     return b.outline(T.ol).done(); },
 };
 // qual desenho cada item usa no monitor (as saudações viram balões com o texto em fonte de pixel)
-const PIXOF = {'p-jackbox8':'phone', 'p-katamari':'katamari', 'p-date':'heart', 'p-hush':'clock', 'p-hunie2':'bell', 'p-voxstage':'vx', 'p-legado':'floppy', 'p-labs':'gear',
+const PIXOF = {'p-jackbox8':'phone', 'p-katamari':'katamari', 'p-date':'heart', 'p-hush':'clock', 'p-hunie2':'bell', 'p-voxstage':'vx', 'p-niko':'cloud', 'p-legado':'floppy', 'p-labs':'gear',
   'old-cassette':'cassette', 'old-notes':'notes', 'old-shh':'shh', 'old-gem':'gem', 'old-mic':'mic',
   'geo-cubo':'cube', 'geo-toro':'torus', 'geo-pirâmide':'pyramid', 'geo-hélice dupla':'helix', 'geo-planeta':'planet', 'geo-estrela':'star', 'geo-galáxia':'galaxy',
   'new-esfera':'sphere', 'new-mobius':'mobius', 'new-onda':'wave', 'new-dado':'dice'};

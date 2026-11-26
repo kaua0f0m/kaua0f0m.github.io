@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR" class="dia">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Here Comes Niko! — Kauã</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script>
+  // o céu acompanha a hora no Brasil: dia, pôr do sol e noite
+  (() => { const h = +new Date().toLocaleString('en-US', {timeZone:'America/Sao_Paulo', hour:'numeric', hour12:false}) % 24;
+    document.documentElement.className = h >= 6 && h < 17 ? 'dia' : h >= 17 && h < 19 ? 'tarde' : 'noite'; })();
+</script>
+<style>
+  /* ---------- céu: dia (padrão), tarde (pôr do sol) e noite ---------- */
+  :root{ --sky1:#3d8fe0; --sky2:#7cc4ff; --sky3:#cdeaff; --sky4:#fff3dc;
+    --text:#0f2a4a; --muted:#4d6f93; --soft:#24476f; --line:rgba(15,42,74,.14); --acc:#1f6fd1; --card:rgba(255,255,255,.62); --cardline:rgba(255,255,255,.9);
+    --cloud:#ffffff; --sun:rgba(255,236,170,.9); --btn:#0f2a4a; --btntext:#fff; --code:rgba(15,42,74,.08); --pre:rgba(255,255,255,.55); }
+  .tarde{ --sky1:#2a3f86; --sky2:#7b5fb5; --sky3:#ff9a76; --sky4:#ffd08a;
+    --text:#fff8f0; --muted:#ffd9c2; --soft:#ffe9dc; --line:rgba(255,255,255,.2); --acc:#ffd08a; --card:rgba(40,30,80,.38); --cardline:rgba(255,255,255,.28);
+    --cloud:#ffc6a8; --sun:rgba(255,190,110,.95); --btn:#fff8f0; --btntext:#2a1f4f; --code:rgba(255,255,255,.14); --pre:rgba(20,15,50,.35); }
+  .noite{ --sky1:#060c24; --sky2:#0d1d4a; --sky3:#1c3a7a; --sky4:#2f5aa0;
+    --text:#eef4ff; --muted:#9fb4dc; --soft:#cddaf5; --line:rgba(255,255,255,.14); --acc:#9fd0ff; --card:rgba(10,20,55,.5); --cardline:rgba(255,255,255,.18);
+    --cloud:#3a5694; --sun:rgba(220,235,255,.55); --btn:#eef4ff; --btntext:#0d1d4a; --code:rgba(255,255,255,.1); --pre:rgba(0,0,0,.3); }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--sky2); scroll-behavior:smooth}
+  body{color:var(--text); font-family:"Inter Tight",system-ui,sans-serif; overflow-x:hidden}
+  .mono{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+  a{color:inherit; text-decoration:none}
+
+  .sky{position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden;
+    background:linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 38%, var(--sky3) 78%, var(--sky4) 100%)}
+  .sun{position:absolute; width:46vmax; height:46vmax; right:-12vmax; top:-14vmax; border-radius:50%; background:radial-gradient(circle, var(--sun) 0%, transparent 62%)}
+  .noite .sun{width:9vmax; height:9vmax; right:12vw; top:12vh; background:radial-gradient(circle at 38% 38%, #fbfdff 0 52%, rgba(220,235,255,.25) 56%, transparent 70%)}
+  .stars{position:absolute; inset:0; opacity:0; transition:opacity 1s;
+    background-image:radial-gradient(1.4px 1.4px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 28% 42%, #fff, transparent), radial-gradient(1.2px 1.2px at 46% 12%, #fff, transparent),
+      radial-gradient(1px 1px at 64% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 82% 52%, #fff, transparent), radial-gradient(1px 1px at 92% 14%, #fff, transparent),
+      radial-gradient(1px 1px at 7% 64%, #fff, transparent), radial-gradient(1.3px 1.3px at 36% 72%, #fff, transparent), radial-gradient(1px 1px at 58% 58%, #fff, transparent), radial-gradient(1px 1px at 74% 80%, #fff, transparent)}
+  .noite .stars{opacity:.85}
+  .cloud{position:absolute; left:0; width:var(--w); height:calc(var(--w)*.32); top:var(--y); opacity:var(--o,.9); animation:drift var(--t) linear infinite; animation-delay:var(--d)}
+  .cloud i{position:absolute; border-radius:50%; background:var(--cloud); filter:blur(.5px)}
+  .cloud i:nth-child(1){left:0; bottom:0; width:100%; height:48%; border-radius:999px}
+  .cloud i:nth-child(2){left:14%; bottom:18%; width:38%; height:78%}
+  .cloud i:nth-child(3){left:40%; bottom:22%; width:46%; height:100%}
+  .cloud i:nth-child(4){left:68%; bottom:14%; width:26%; height:60%}
+  @keyframes drift{from{transform:translateX(-40vw)} to{transform:translateX(130vw)}}
+
+  header{display:flex; justify-content:space-between; align-items:center; padding:28px 48px; position:fixed; inset:0 0 auto; z-index:10;
+    background:linear-gradient(color-mix(in srgb, var(--sky1) 85%, transparent) 30%, transparent)}
+  .dia header{color:#fff} .dia header nav a{color:rgba(255,255,255,.8)} .dia header nav a:hover{color:#fff} .dia .logo span, .dia .logo i{color:rgba(255,255,255,.75)}
+  .logo{font-weight:800; font-size:20px; letter-spacing:-.03em; display:flex; gap:10px; align-items:center}
+  .logo span{color:var(--muted); font-weight:500; transition:transform .2s}
+  .logo:hover span{transform:translateX(-3px)}
+  .logo i{font-style:normal; color:var(--muted)}
+  header nav{display:flex; gap:28px}
+  header nav a{color:var(--muted); transition:color .2s}
+  header nav a:hover{color:var(--text)}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 48px}
+  .intro{padding:22vh 0 10px; display:grid; gap:34px}
+  .intro > div:last-child{display:grid; grid-template-columns:1.2fr 1fr; gap:48px; align-items:end}
+  .kicker{color:var(--muted); margin-bottom:22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .dia .kicker{color:#fff; text-shadow:0 1px 10px rgba(20,70,140,.55), 0 0 2px rgba(20,70,140,.5)}
+  .dia .tag{text-shadow:0 1px 12px rgba(20,70,140,.5)}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:#ffd23f; box-shadow:0 0 10px #ffd23f}
+  h1{font-size:clamp(60px,9.6vw,146px); line-height:.86; letter-spacing:-.06em; font-weight:900}
+  .dia h1{color:#fff; text-shadow:0 6px 40px rgba(20,70,140,.25)}
+  h1 .dim{opacity:.55; font-weight:800}
+  .tag{font-family:"Instrument Serif"; font-style:italic; font-size:clamp(24px,2.8vw,38px); margin-top:14px; letter-spacing:-.01em; color:var(--acc)}
+  .dia .tag{color:#fff7c2}
+  .lead{font-size:19px; line-height:1.55; color:var(--soft)}
+  .lead b{color:var(--text); font-weight:600}
+  .facts{display:flex; gap:28px; color:var(--muted); flex-wrap:wrap}
+  .facts b{display:block; color:var(--text); font-family:"Inter Tight"; font-size:26px; font-weight:700; letter-spacing:-.02em; text-transform:none; margin-bottom:2px}
+
+  .hl{margin-top:56px; display:grid; grid-template-columns:1.2fr 1fr; border:1px solid var(--cardline); border-radius:18px; background:var(--card); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); overflow:hidden; scroll-margin-top:100px; box-shadow:0 30px 80px -30px rgba(15,42,74,.45)}
+  .hl-part{padding:30px}
+  .hl-part + .hl-part{border-left:1px solid var(--line)}
+  .hl-lbl{color:var(--text); display:flex; gap:12px; align-items:baseline; margin-bottom:18px}
+  .hl-lbl span, .hl-lbl em{color:var(--muted)}
+  .hl-lbl em{font-style:normal; margin-left:auto}
+  .hl-btn{display:inline-flex; align-items:center; gap:14px; background:var(--btn); color:var(--btntext); font-weight:700; font-size:20px; letter-spacing:-.02em; padding:14px 22px; border-radius:999px; transition:transform .2s, box-shadow .2s}
+  .hl-btn span{transition:transform .2s}
+  .hl-btn:hover{transform:translateY(-2px); box-shadow:0 12px 30px -8px rgba(15,42,74,.5)}
+  .hl-btn:hover span{transform:translateX(4px)}
+  .steps{list-style:none; counter-reset:s; margin-top:18px}
+  .steps li{counter-increment:s; position:relative; padding:12px 0 12px 40px; border-bottom:1px solid var(--line); font-size:15px; line-height:1.6; color:var(--soft)}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(s, decimal-leading-zero); position:absolute; left:0; top:15px; font-family:"JetBrains Mono"; font-size:12px; color:var(--muted)}
+  code{font-family:"JetBrains Mono"; font-size:13px; color:var(--text); background:var(--code); padding:1px 6px; border-radius:4px; word-break:break-word}
+  .hl-alt{color:var(--muted); margin-top:10px; line-height:1.8}
+  .hl-alt a, .txt a, .notes a{text-decoration:underline; text-underline-offset:3px}
+  .txt{color:var(--soft); font-size:15px; line-height:1.6}
+  .txt + .txt{margin-top:12px}
+  .txt b{color:var(--text); font-weight:600}
+
+  .group{margin-top:110px; scroll-margin-top:110px; display:grid; grid-template-columns:280px minmax(0,1fr); gap:48px}
+  .group h2{font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.05}
+  .group h2 small{display:block; margin-top:10px; color:var(--muted); font-family:"JetBrains Mono"; font-size:12px; font-weight:400; letter-spacing:.04em; text-transform:uppercase}
+  .notes{list-style:none; border-top:1px solid var(--line)}
+  .notes li{position:relative; padding:16px 0 16px 40px; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; line-height:1.6; overflow-wrap:anywhere}
+  .notes li::before{content:"—"; position:absolute; left:0; color:var(--muted)}
+  .notes b{color:var(--text); font-weight:600}
+  .big{font-family:"Instrument Serif"; font-style:italic; font-size:clamp(26px,2.8vw,36px); line-height:1.15; margin-bottom:22px}
+  .big em{color:var(--acc)}
+  pre{font-family:"JetBrains Mono"; font-size:13px; line-height:1.7; background:var(--pre); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow-x:auto; margin:10px 0; white-space:pre}
+  .credits{list-style:none; border-top:1px solid var(--line)}
+  .credits li{padding:14px 0; border-bottom:1px solid var(--line); color:var(--soft); font-size:15px; display:grid; grid-template-columns:200px 1fr; gap:16px}
+  .credits li span{color:var(--muted)}
+  .ia-tag{border:1px dashed currentColor; border-radius:4px; padding:0 6px; opacity:.9}
+
+  footer{margin-top:120px; display:flex; justify-content:space-between; padding:24px 48px 28px; color:var(--muted); gap:16px; flex-wrap:wrap; border-top:1px solid var(--line)}
+  footer a:hover{color:var(--text)}
+
+  @media (max-width:900px){
+    header{padding:18px 16px} header nav{gap:16px}
+    .wrap{padding:0 16px}
+    .intro{padding-top:16vh}
+    .intro > div:last-child{grid-template-columns:minmax(0,1fr); gap:22px}
+    .hl{grid-template-columns:minmax(0,1fr)}
+    .hl-part{padding:22px 18px}
+    .hl-part + .hl-part{border-left:0; border-top:1px solid var(--line)}
+    .hl-lbl em{display:none}
+    .hl-btn{width:100%; justify-content:space-between}
+    .group{grid-template-columns:minmax(0,1fr); gap:18px; margin-top:80px}
+    .credits li{grid-template-columns:1fr; gap:2px}
+    footer{padding:20px 16px 26px}
+  }
+  @media (prefers-reduced-motion:reduce){ .cloud{animation:none; transform:translateX(calc(var(--x, 20) * 1vw))} }
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="sun"></div>
+  <div class="cloud" style="--w:280px; --y:16vh; --t:140s; --d:-30s; --x:10"><i></i><i></i><i></i><i></i></div>
+  <div class="cloud" style="--w:180px; --y:34vh; --t:110s; --d:-80s; --o:.75; --x:62"><i></i><i></i><i></i><i></i></div>
+  <div class="cloud" style="--w:360px; --y:58vh; --t:170s; --d:-120s; --o:.8; --x:30"><i></i><i></i><i></i><i></i></div>
+  <div class="cloud" style="--w:220px; --y:78vh; --t:125s; --d:-15s; --o:.7; --x:78"><i></i><i></i><i></i><i></i></div>
+</div>
+
+<header>
+  <a class="logo" href="index.html#projetos"><span>←</span> kauã<i>.</i></a>
+  <nav class="mono"><a href="#instalar">Instalar</a><a href="#traducao">Tradução</a><a href="https://github.com/kaua0f0m/here-comes-niko-ptbr" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="kicker mono">Tradução PT-BR — PC / Steam <span class="ia-tag">feita com Claude Code</span></p>
+      <h1>Here Comes<br>Niko! <span class="dim">em português.</span></h1>
+      <p class="tag">Fazendo amigos, agora em português.</p>
+    </div>
+    <div>
+      <p class="lead">Um jogo de plataforma 3D bem tranquilo: explore ilhas, converse com todo mundo e ajude cada um com o seu problema. Agora com <b>todos os diálogos em português</b> e os acentos aparecendo nas fontes do próprio jogo.</p>
+      <div class="facts mono">
+        <span><b>722</b>falas</span>
+        <span><b>á ã ê ç</b>acentos no jogo</span>
+        <span><b>6</b>fontes ajustadas</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hl" id="instalar">
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>01</span> Instalar a tradução <em>v1.0.0 · Windows</em></p>
+      <a class="hl-btn" href="https://github.com/kaua0f0m/here-comes-niko-ptbr/releases/latest" target="_blank" rel="noopener">Baixar a tradução <span>→</span></a>
+      <ol class="steps">
+        <li>Baixe o <code>.zip</code> da última versão e extraia.</li>
+        <li>Feche o jogo.</li>
+        <li>Abra o <code>Instalar-HereComesNiko-PTBR.exe</code> e escolha <code>1 — Instalar</code>. Leva de 1 a 2 minutos.</li>
+        <li>Abra o jogo pela Steam com o idioma em <b>English</b>: a tradução fica no lugar do inglês.</li>
+      </ol>
+      <p class="hl-alt mono">Para desfazer: rode de novo e escolha <code>2 — Restaurar</code> · <a href="https://store.steampowered.com/app/925950/Here_Comes_Niko/" target="_blank" rel="noopener">Jogo na Steam</a></p>
+    </div>
+    <div class="hl-part">
+      <p class="hl-lbl mono"><span>02</span> Antes de instalar</p>
+      <p class="txt">O instalador <b>não traz nenhum arquivo do jogo</b>: ele altera a sua cópia e guarda os originais em <code>_backup_ptbr</code>, dentro da pasta do jogo (cerca de 1 GB).</p>
+      <p class="txt">O <code>.exe</code> não é assinado e o Windows pode avisar. Clique em <b>Mais informações → Executar assim mesmo</b>, ou use o código-fonte em Python, que faz a mesma coisa.</p>
+      <p class="txt">Testada na <b>build 12160917</b> da Steam. Depois de uma atualização do jogo, é só rodar o instalador de novo.</p>
+    </div>
+  </div>
+
+  <section class="group" id="traducao">
+    <h2>O que está traduzido<small>o jogo todo</small></h2>
+    <ul class="notes">
+      <li>Todas as <b>722 falas</b>: as conversas de cada ilha, a casa, o trem e os textos gerais.</li>
+      <li><b>Acentos funcionando:</b> as fontes do jogo só tinham letras sem acento, então o instalador monta <code>á à â ã é ê í ó ô õ ú ç</code> com o traço de cada fonte (Frog Scribble, Sniglet, Milkshake, Vanilla, Pixel e Bubblegum).</li>
+      <li>Os nomes de personagens e lugares ficam em inglês, como no original. Os palavrões têm a mesma força do inglês.</li>
+    </ul>
+  </section>
+
+  <section class="group">
+    <h2>Bom saber<small>problemas conhecidos</small></h2>
+    <ul class="notes">
+      <li>Textos desenhados dentro de imagens, como o logo do jogo, continuam em inglês.</li>
+      <li>Se uma atualização trouxer falas novas, elas aparecem em inglês até sair uma versão nova da tradução.</li>
+      <li>Achou um erro? <a href="https://github.com/kaua0f0m/here-comes-niko-ptbr/issues" target="_blank" rel="noopener">Abra uma issue</a> dizendo onde foi.</li>
+    </ul>
+  </section>
+
+  <section class="group">
+    <h2>Se o jogo atualizar<small>e a tradução quebrar</small></h2>
+    <div>
+      <p class="big">Eu <em>não vou conseguir</em> manter a tradução a cada atualização. Mas dá para resolver sem mim.</p>
+      <ul class="notes">
+        <li><b>Rode o instalador de novo primeiro.</b> Ele procura os textos e as fontes mesmo se os arquivos do jogo mudarem de nome.</li>
+        <li><b>Faça um fork e atualize com a ajuda de uma IA.</b> O repositório tem as falas em <code>dados/</code> e o instalador inteiro em Python, pequeno o bastante para uma IA entender e ajustar.</li>
+        <li><b>Ou baixe a versão compatível do jogo pelos depots da Steam</b> (precisa ter o jogo na sua conta). Abra <a href="https://steamdb.info/app/925950/depots/" target="_blank" rel="noopener">steamdb.info/app/925950/depots</a>, entre no depot do Windows e, na aba <b>Manifests</b>, anote o manifest da <b>build 12160917</b>. Depois cole <code>steam://open/console</code> na barra do navegador e digite:
+          <pre>download_depot 925950 DEPOT MANIFEST</pre>
+          O download vai para <code>steamapps/content/app_925950/</code>. Copie por cima da pasta do jogo e rode o instalador.</li>
+        <li>Para a Steam não atualizar sozinha: <b>Propriedades → Atualizações</b> → “Atualizar este jogo somente quando eu o iniciar”.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Créditos<small>quem fez o quê</small></h2>
+    <ul class="credits">
+      <li><span class="mono">Criação</span>kaua0f0m</li>
+      <li><span class="mono">Tradução</span>Claude Code (Sonnet), da Anthropic, com testes no jogo feitos pelo criador</li>
+      <li><span class="mono">Jogo original</span>Frog Vibes</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="mono">
+  <span>Tradução de fãs, sem fins lucrativos e sem vínculo com a Frog Vibes · feito com IA (Claude Code)</span>
+  <span><a href="index.html#projetos">← voltar aos projetos</a></span>
+</footer>
+</body>
+</html>
